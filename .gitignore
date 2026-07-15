@@ -4,3 +4,11 @@ server/node_modules/
 
 # Environment files
 server/.env
+
+# Build output
+/dist
+/.angular
+
+
+# IDEs
+.vscode/
