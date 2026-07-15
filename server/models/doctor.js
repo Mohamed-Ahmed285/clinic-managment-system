@@ -3,9 +3,9 @@ const bcrypt = require("bcrypt");
 
 const workingHourSchema = new mongoose.Schema(
     {
-        day:{type:String,
+        day:[{type:String,
             enum:["saturday","sunday","monday","tuesday","wednesday","thursday","friday"],
-            required:true},
+            required:true}],
         startTime:{type:String, required:true}, 
         endTime:{type:String, required:true}    
     },

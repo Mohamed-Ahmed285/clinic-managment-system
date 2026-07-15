@@ -21,10 +21,6 @@ const patientSchema = new mongoose.Schema(
         },
         favoriteDoctors:[{type:mongoose.Schema.Types.ObjectId, ref:"doctor"}],
         preferredPaymentMethod:{type:String, enum:["online","cash"], default:"cash"},
-        insurance:{
-            companyId:{type:mongoose.Schema.Types.ObjectId, ref:"insuranceCompany"},
-            planId:{type:mongoose.Schema.Types.ObjectId, ref:"insurancePlan"}
-        },
         notificationsEnabled:{type:Boolean, default:true}
     },
     {timestamps:true}

@@ -16,7 +16,6 @@ const adminSchema = new mongoose.Schema(
                 "manageDoctors",     
                 "manageClinics",     
                 "manageSpecialties", 
-                "manageInsurance",   
                 "monitorAppointments", 
                 "moderateReviews",   
                 "viewAnalytics"      
