@@ -9,7 +9,6 @@ const patientSchema = new mongoose.Schema(
         email:{type:String, required:[true,"email is required"], unique:true, lowercase:true, trim:true},
         password:{type:String, required:[true,"password is required"],
             minLength:[8,"minlength is 8"]},
-        role:{type:String, default:"patient", enum:["patient"]},
         phone:{type:String},
         profileImage:{type:String}, 
         dateOfBirth:{type:Date},
