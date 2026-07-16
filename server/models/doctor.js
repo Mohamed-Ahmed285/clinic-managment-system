@@ -24,15 +24,7 @@ const clinicAssignmentSchema = new mongoose.Schema(
 
 const doctorSchema = new mongoose.Schema(
     {
-        name:{type:String, required:[true,"name is required"],
-            minLength:[3,"minlength is 3"],
-            maxLength:[50,"maxlength is 50"]},
-        email:{type:String, required:[true,"email is required"], unique:true, lowercase:true, trim:true},
-        password:{type:String, required:[true,"password is required"],
-            minLength:[8,"minlength is 8"]},
-        role:{type:String, default:"doctor", enum:["doctor"]},
-        phone:{type:String},
-        profileImage:{type:String},
+        userId:{type:mongoose.Schema.Types.ObjectId, ref:"user", required:true, unique:true},
         bio:{type:String, maxLength:1000},
         experienceYears:{type:Number, min:0, default:0},
         specialtyId:{type:mongoose.Schema.Types.ObjectId, ref:"specialty", required:true},
