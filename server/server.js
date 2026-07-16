@@ -8,7 +8,7 @@ const connectDB = require("./config/db.js");
 // Initialize Express App
 // ========================
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 // ========================
 // Middleware
@@ -29,3 +29,6 @@ app.use("/patient", patientRouter);
 // Database Connection & Server Start
 // ========================
 connectDB();
+
+
+app.listen(PORT,()=>{console.log(`server is running on port https://localhost:${PORT}`);});
