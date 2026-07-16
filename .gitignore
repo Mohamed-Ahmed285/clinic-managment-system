@@ -12,3 +12,7 @@ server/.env
 
 # IDEs
 .vscode/
+
+# MD FILES
+CONSOLIDATION_NOTES.md
+PROJECT_DOCUMENTATION.md
