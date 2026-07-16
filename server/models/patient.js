@@ -2,15 +2,8 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const patientSchema = new mongoose.Schema(
-    {
-        name:{type:String, required:[true,"name is required"],
-            minLength:[3,"minlength is 3"],
-            maxLength:[50,"maxlength is 50"]},
-        email:{type:String, required:[true,"email is required"], unique:true, lowercase:true, trim:true},
-        password:{type:String, required:[true,"password is required"],
-            minLength:[8,"minlength is 8"]},
-        phone:{type:String},
-        profileImage:{type:String}, 
+    { 
+        userId:{type:mongoose.Schema.Types.ObjectId, ref:"user", required:true, unique:true},
         dateOfBirth:{type:Date},
         gender:{type:String, enum:["male","female"]},
         address:{
