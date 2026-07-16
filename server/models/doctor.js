@@ -42,16 +42,6 @@ const doctorSchema = new mongoose.Schema(
     {timestamps:true}
 );
 
-// hash password
-doctorSchema.pre("save", async function(){
-    if(!this.isModified("password")){
-        return;
-    }
-    var salt = await bcrypt.genSalt(15);
-    var hashPassword = await bcrypt.hash(this.password, salt);
-    this.password = hashPassword;
-});
-
 var doctorModel = mongoose.model("doctor", doctorSchema);
 module.exports = doctorModel;
 //
