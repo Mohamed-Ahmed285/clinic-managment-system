@@ -24,7 +24,7 @@ const clinicAssignmentSchema = new mongoose.Schema(
 
 const doctorSchema = new mongoose.Schema(
     {
-        userId:{type:mongoose.Schema.Types.ObjectId, ref:"user", required:true, unique:true},
+        _id:{type:mongoose.Schema.Types.ObjectId, ref:"user"},
         bio:{type:String, maxLength:1000},
         experienceYears:{type:Number, min:0, default:0},
         specialtyId:{type:mongoose.Schema.Types.ObjectId, ref:"specialty", required:true},

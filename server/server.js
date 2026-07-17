@@ -24,12 +24,14 @@ const patientRouter = require("./routes/patient");
 const clinicRouter = require("./routes/clinic");
 const doctorRouter = require("./routes/doctor");
 const appointmentRouter = require("./routes/appointment");
+const todoRouter = require("./routes/todo.js");
 
 app.use("/user", userRouter);
 app.use("/patient", patientRouter);
 app.use("/clinic", clinicRouter);
 app.use("/doctor", doctorRouter);
 app.use("/appointment", appointmentRouter);
+app.use("/todo", todoRouter);
 
 // ========================
 // Database Connection & Server Start

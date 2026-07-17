@@ -25,34 +25,33 @@ const addToBlacklist = async(token)=>{
 const verifyToken = async(req,res,next)=>{
     var token = extractToken(req);
     if(!token){
-        return res.status(401).send("access denied, no token provided");
+        return res.status(401).json("access denied, no token provided");
     }
     try{
         var blacklisted = await tokenBlacklistModel.findOne({token});
         if(blacklisted){
-            return res.status(401).send("token is no longer valid, please login again");
+            return res.status(401).json("token is no longer valid, please login again");
         }
-        var decoded = jwt.verify(token, process.env.JWT_SECRET || "mySecretKey");
+        var decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded; 
         req.token = token;
         next();
     }catch(err){
-        return res.status(401).send("invalid or expired token");
+        return res.status(401).json("invalid or expired token");
     }
 };
 
-// دالة عامة بتسمح بأدوار معينة بس
-const allowRoles = (...roles)=>{
-    return (req,res,next)=>{
-        if(!req.user || !roles.includes(req.user.role)){
-            return res.status(403).send(`access denied, allowed roles: ${roles.join(", ")}`);
-        }
-        next();
-    };
-};
+// // دالة عامة بتسمح بأدوار معينة بس
+// const allowRoles = (...roles)=>{
+//     return (req,res,next)=>{
+//         if(!req.user || !roles.includes(req.user.role)){
+//             return res.status(403).send(`access denied, allowed roles: ${roles.join(", ")}`);
+//         }
+//         next();
+//     };
+// };
+// const isAdmin = allowRoles("admin");
+// const isDoctor = allowRoles("doctor");
+// const isPatient = allowRoles("patient");
 
-const isAdmin = allowRoles("admin");
-const isDoctor = allowRoles("doctor");
-const isPatient = allowRoles("patient");
-
-module.exports = {verifyToken, isAdmin, isDoctor, isPatient, allowRoles, addToBlacklist};
+module.exports = {verifyToken, addToBlacklist};

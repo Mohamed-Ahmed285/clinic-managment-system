@@ -6,13 +6,17 @@ const {
     addFavoriteDoctor,
     removeFavoriteDoctor,
     getMyFavorites
+    ,getMyTodos
 } = require("../controllers/patient");
-const {verifyToken, isPatient, isAdmin} = require("../middlewares/auth");
- 
+const {verifyToken,} = require("../middlewares/auth");
+const authorize = require("../middlewares/authorize");
+
+
 router.post("/register", register);
-router.put("/updateMyProfile", verifyToken, isPatient, updateMyProfile);
-router.post("/favorites/:doctorId", verifyToken, isPatient, addFavoriteDoctor);
-router.delete("/favorites/:doctorId", verifyToken, isPatient, removeFavoriteDoctor);
-router.get("/favorites", verifyToken, isPatient, getMyFavorites);
+router.put("/updateMyProfile", verifyToken, authorize("profile:update"), updateMyProfile);
+router.post("/favorites/:doctorId", verifyToken, authorize("favorite:create"), addFavoriteDoctor);
+router.delete("/favorites/:doctorId", verifyToken, authorize("favorite:delete"), removeFavoriteDoctor);
+router.get("/favorites", verifyToken, authorize("favorite:read"), getMyFavorites);
+router.get("/todos", verifyToken, authorize("todo:read"), getMyTodos);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const patientModel = require("../models/patient");
 const doctorModel = require("../models/doctor");
 const userModel = require("../models/user");
+const todoModel = require("../models/todo");
 
 //register only forr patient 
 const register = async(req,res)=>{
@@ -22,7 +23,7 @@ try{
     savedUser = await newUser.save();
 
     var profile = await patientModel.create({
-        userId:savedUser._id,
+        _id: savedUser._id,
         dateOfBirth:req.body.dateOfBirth,
         gender:req.body.gender,
         address:req.body.address,
@@ -43,7 +44,7 @@ try{
 const updateMyProfile = async(req,res)=>{
 try{
     var updated = await patientModel.findOneAndUpdate(
-        {userId:req.user.id},
+        req.user.id,
         {
             dateOfBirth:req.body.dateOfBirth,
             gender:req.body.gender,
@@ -69,7 +70,7 @@ try{
         return res.status(404).send("doctor not found");
     }
     var patient = await patientModel.findOneAndUpdate(
-        {userId:req.user.id},
+        req.user.id,
         {$addToSet:{favoriteDoctors:req.params.doctorId}},
         {new:true}
     );
@@ -85,7 +86,7 @@ try{
 const removeFavoriteDoctor = async(req,res)=>{
 try{
     var patient = await patientModel.findOneAndUpdate(
-        {userId:req.user.id},
+        req.user.id,
         {$pull:{favoriteDoctors:req.params.doctorId}},
         {new:true}
     );
@@ -100,10 +101,10 @@ try{
 //patient gets all favorite doctors
 const getMyFavorites = async(req,res)=>{
 try{
-    var patient = await patientModel.findOne({userId:req.user.id}).populate({
+    var patient = await patientModel.findOne(req.user.id).populate({
         path:"favoriteDoctors",
         populate:[
-            {path:"userId", select:"name email phone profileImage"},
+            {path:"_id", select:"name email phone profileImage"},
             {path:"specialtyId"}
         ]
     });
@@ -115,6 +116,18 @@ try{
     return res.status(500).send(err.message);
 }};
 //
+// get todos for the current patient
+const getMyTodos = async (req, res) => {
+    try {
+        const patient = await patientModel.findOne(req.user.id);
+        if (!patient) return res.status(404).send("patient profile not found");
+
+        const todos = await todoModel.find({ patientId: patient._id }).sort({ createdAt: -1 });
+        return res.status(200).json(todos);
+    } catch (err) {
+        return res.status(500).send(err.message);
+    }
+};
 
 
 module.exports = {
@@ -123,4 +136,5 @@ module.exports = {
     addFavoriteDoctor,
     removeFavoriteDoctor,
     getMyFavorites
+    ,getMyTodos
 };
