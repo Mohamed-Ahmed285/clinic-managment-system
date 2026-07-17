@@ -20,7 +20,12 @@ const permissions = {
     doctor: [
     "medicalRecord:create",
 
-    "update:appointments"
+    "update:appointments",
+
+    "get:doctorprofile",
+    "update:doctorprofile",
+    "update:clinicToDoctor",
+    "delete:clinicFromDoctor"
     ],
 
     patient: [
