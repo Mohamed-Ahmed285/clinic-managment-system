@@ -26,21 +26,21 @@ const doctorRouter = require("./routes/doctor");
 const appointmentRouter = require("./routes/appointment");
 const specialtyRoutes = require("./routes/specialty");
 const adminUserRoutes = require("./routes/adminUserRoutes");
-const doctorRoutes = require("./routes/doctor");
-
+const adminDoctorRoutes = require("./routes/adminDoctor");
 
 app.use("/user", userRouter);
 app.use("/patient", patientRouter);
 app.use("/clinic", clinicRouter);
 app.use("/doctor", doctorRouter);
 app.use("/appointment", appointmentRouter);
-app.use("/api/specialty", specialtyRoutes);
-app.use("/api/admin/users", adminUserRoutes);
-app.use("/api/doctors", doctorRoutes);
+app.use("/specialty", specialtyRoutes);
+app.use("/admin/users", adminUserRoutes);
+app.use("/admin/doctors", adminDoctorRoutes);
 // ========================
 // Database Connection & Server Start
 // ========================
 connectDB();
 
-
-app.listen(PORT,()=>{console.log(`server is running on port http://localhost:${PORT}`);});
+app.listen(PORT, () => {
+  console.log(`server is running on port http://localhost:${PORT}`);
+});
