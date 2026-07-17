@@ -34,7 +34,7 @@ try{
     var profile = null;
     if(role === "patient"){
         profile = await patientModel.create({
-            userId:savedUser._id,
+            _id:savedUser._id,
             dateOfBirth:req.body.dateOfBirth,
             gender:req.body.gender,
             address:req.body.address,
@@ -46,7 +46,7 @@ try{
             throw new Error("specialtyId is required for doctor accounts");
         }
         profile = await doctorModel.create({
-            userId:savedUser._id,
+            _id:savedUser._id,
             bio:req.body.bio,
             experienceYears:req.body.experienceYears,
             specialtyId:req.body.specialtyId
@@ -108,9 +108,9 @@ try{
     }
     var profile = null;
     if(user.role === "patient"){
-        profile = await patientModel.findOne({userId:user._id}).populate("favoriteDoctors");
+        profile = await patientModel.findOne(user._id).populate("favoriteDoctors");
     }else if(user.role === "doctor"){
-        profile = await doctorModel.findOne({userId:user._id})
+        profile = await doctorModel.findOne(user._id)
             .populate("specialtyId")
             .populate("clinics.clinicId");
     }
