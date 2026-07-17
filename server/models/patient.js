@@ -3,11 +3,7 @@ const bcrypt = require("bcrypt");
 
 const patientSchema = new mongoose.Schema(
     { 
-<<<<<<< Updated upstream
-        userId:{type:mongoose.Schema.Types.ObjectId, ref:"user", required:true, unique:true},
-=======
         _id:{type:mongoose.Schema.Types.ObjectId, ref:"user"},
->>>>>>> Stashed changes
         dateOfBirth:{type:Date},
         gender:{type:String, enum:["male","female"]},
         address:{
