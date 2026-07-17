@@ -1,6 +1,6 @@
 const permissions = {
     admin: [
-   "user:create",
+    "user:create",
     "user:update",
     "user:delete",
 
