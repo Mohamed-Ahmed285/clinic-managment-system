@@ -16,9 +16,9 @@ router.get("/",verifyToken,authorize("todo:read"),getMyTodos);
 
 router.get("/:id",verifyToken,authorize("todo:read"),getTodoById);
 
-router.patch("/:todoId/items/:itemIndex/schedule/:scheduleIndex",verifyToken,authorize("todo:update"),completeMedication);
+router.patch("/:todoId/items/:itemId/schedule/:scheduleId",verifyToken,authorize("todo:update"),completeMedication);
 
-router.patch("/:todoId/items/:itemIndex/schedule/:scheduleIndex/reset",verifyToken,authorize("todo:update"),uncompleteMedication,);
+router.patch("/:todoId/items/:itemId/schedule/:scheduleId/reset",verifyToken,authorize("todo:update"),uncompleteMedication,);
 
 router.delete( "/:id",verifyToken,authorize("todo:delete"),deleteTodo);
 
