@@ -1,4 +1,6 @@
-const { verifyToken, isAdmin } = require("../middlewares/auth");
+const { verifyToken } = require("../middlewares/auth");
+const authorize = require("../middlewares/authorize");
+
 const express = require("express");
 const router = express.Router();
 const {
@@ -11,8 +13,8 @@ const {
 
 router.get("/", getAllUsers);
 router.get("/:id", getUserById);
-router.put("/:id", verifyToken, isAdmin, updateUser);
-router.delete("/:id", verifyToken, isAdmin, deleteUser);
-router.post("/patient", verifyToken, isAdmin, addPatient);
+router.put("/:id", verifyToken,authorize("user:update"), updateUser);
+router.delete("/:id", verifyToken,authorize("user:delete"), deleteUser);
+router.post("/patient", verifyToken, authorize("user:create"), addPatient);
 
 module.exports = router;

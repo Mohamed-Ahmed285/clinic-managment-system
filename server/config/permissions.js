@@ -1,22 +1,53 @@
 const permissions = {
     admin: [
-   "user:create",
+    "user:create",
     "user:update",
     "user:delete",
 
     "doctor:create",
     "doctor:update",
-    "doctor:delete"
+    "doctor:delete",
+
+    "get:appointments",
+    "update:appointments",
+
+    "create:clinic",
+    "update:clinic",
+    "delete:clinic",
+
+    "update:user",
+    "delete:user",
+    "add:patient",
+
+
+    "create:speciality",
+    "update:speciality",
+    "delete:speciality"
     ],
 
     doctor: [
-    "medicalRecord:create"
+    "medicalRecord:create",
+
+    "update:appointments",
+
+    "get:doctorprofile",
+    "update:doctorprofile",
+    "update:clinicToDoctor",
+    "delete:clinicFromDoctor"
     ],
 
     patient: [
-    "favorite:create",
-    "favorite:delete",
-    "favorite:read"
+        "favorite:create",
+        "favorite:delete",
+        "favorite:read",
+
+
+        "create:appointment",
+
+
+        "todo:read",
+        "todo:update",
+        "todo:delete"
     ]
 };
 
