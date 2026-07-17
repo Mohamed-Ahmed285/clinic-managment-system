@@ -29,7 +29,12 @@ const permissions = {
         "favorite:read",
 
 
-        "create:appointment"
+        "create:appointment",
+
+
+        "todo:read",
+        "todo:update",
+        "todo:delete"
     ]
 };
 

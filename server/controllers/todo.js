@@ -3,11 +3,7 @@ const todoModel = require("../models/todo");
 // Get all todos for the logged-in patient
 const getMyTodos = async (req, res) => {
     try {
-        const todos = await todoModel
-            .find({ patientId: req.user.id })
-            .populate("appointmentId")
-            .populate("prescriptionId");
-
+        const todos = await todoModel.find({ patientId: req.user.id }).populate("appointmentId").populate("prescriptionId");
         return res.status(200).json(todos);
     } catch (err) {
         return res.status(500).json({ message: err.message });
@@ -17,10 +13,7 @@ const getMyTodos = async (req, res) => {
 // Get a specific todo
 const getTodoById = async (req, res) => {
     try {
-        const todo = await todoModel
-            .findById(req.params.id)
-            .populate("appointmentId")
-            .populate("prescriptionId");
+        const todo = await todoModel.findById(req.params.id).populate("appointmentId").populate("prescriptionId");
 
         if (!todo) {
             return res.status(404).json({
@@ -29,10 +22,7 @@ const getTodoById = async (req, res) => {
         }
 
         // Patient can only access their own todos
-        if (
-            req.user.role === "patient" &&
-            todo.patientId.toString() !== req.user.id
-        ) {
+        if (todo.patientId.toString() !== req.user.id) {
             return res.status(403).json({
                 message: "Access denied."
             });
