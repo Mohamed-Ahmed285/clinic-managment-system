@@ -19,4 +19,7 @@ router.post("/me/clinics", verifyToken, isDoctor, addClinicToMyProfile);
 router.put("/me/clinics/:clinicId", verifyToken, isDoctor, updateClinicAssignment);
 router.delete("/me/clinics/:clinicId", verifyToken, isDoctor, removeClinicFromMyProfile);
 
+
+
+
 module.exports = router;
