@@ -92,7 +92,6 @@ try {
         return res.status(404).send("clinic assignment not found");
     }
 
-    assignment.clinicId = req.body.clinicId || assignment.clinicId;
     assignment.consultationFee = req.body.consultationFee ?? assignment.consultationFee;
     assignment.availability = req.body.availability ?? assignment.availability;
     assignment.isActiveAtClinic = req.body.isActiveAtClinic ?? assignment.isActiveAtClinic;
