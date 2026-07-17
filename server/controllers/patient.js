@@ -22,7 +22,7 @@ try{
     savedUser = await newUser.save();
 
     var profile = await patientModel.create({
-        userId:savedUser._id,
+        _id: savedUser._id,
         dateOfBirth:req.body.dateOfBirth,
         gender:req.body.gender,
         address:req.body.address,
@@ -43,7 +43,7 @@ try{
 const updateMyProfile = async(req,res)=>{
 try{
     var updated = await patientModel.findOneAndUpdate(
-        {userId:req.user.id},
+        req.user.id,
         {
             dateOfBirth:req.body.dateOfBirth,
             gender:req.body.gender,
@@ -69,7 +69,7 @@ try{
         return res.status(404).send("doctor not found");
     }
     var patient = await patientModel.findOneAndUpdate(
-        {userId:req.user.id},
+        req.user.id,
         {$addToSet:{favoriteDoctors:req.params.doctorId}},
         {new:true}
     );
@@ -85,7 +85,7 @@ try{
 const removeFavoriteDoctor = async(req,res)=>{
 try{
     var patient = await patientModel.findOneAndUpdate(
-        {userId:req.user.id},
+        req.user.id,
         {$pull:{favoriteDoctors:req.params.doctorId}},
         {new:true}
     );
@@ -100,7 +100,7 @@ try{
 //patient gets all favorite doctors
 const getMyFavorites = async(req,res)=>{
 try{
-    var patient = await patientModel.findOne({userId:req.user.id}).populate({
+    var patient = await patientModel.findOne(req.user.id).populate({
         path:"favoriteDoctors",
         populate:[
             {path:"userId", select:"name email phone profileImage"},

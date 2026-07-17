@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 
 const patientSchema = new mongoose.Schema(
     { 
-        userId:{type:mongoose.Schema.Types.ObjectId, ref:"user", required:true, unique:true},
+        _id:{type:mongoose.Schema.Types.ObjectId, ref:"user", required:true, unique:true},
         dateOfBirth:{type:Date},
         gender:{type:String, enum:["male","female"]},
         address:{
