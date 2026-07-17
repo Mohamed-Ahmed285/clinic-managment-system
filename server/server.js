@@ -27,6 +27,7 @@ const appointmentRouter = require("./routes/appointment");
 const specialtyRoutes = require("./routes/specialty");
 const adminUserRoutes = require("./routes/adminUserRoutes");
 const adminDoctorRoutes = require("./routes/adminDoctor");
+const adminAnalyticsRoutes = require("./routes/adminAnalytics");
 
 app.use("/user", userRouter);
 app.use("/patient", patientRouter);
@@ -36,6 +37,8 @@ app.use("/appointment", appointmentRouter);
 app.use("/specialty", specialtyRoutes);
 app.use("/admin/users", adminUserRoutes);
 app.use("/admin/doctors", adminDoctorRoutes);
+app.use("/admin/analytics", adminAnalyticsRoutes);
+
 // ========================
 // Database Connection & Server Start
 // ========================
