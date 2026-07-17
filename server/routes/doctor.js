@@ -9,7 +9,8 @@ const {
     updateClinicAssignment,
     removeClinicFromMyProfile
 } = require("../controllers/doctor");
-const { verifyToken, isDoctor } = require("../middlewares/auth");
+const { verifyToken } = require("../middlewares/auth");
+const authorize = require("../middlewares/authorize");
 
 router.get("/", getDoctors);
 router.get("/me", verifyToken, isDoctor, getMyDoctorProfile);

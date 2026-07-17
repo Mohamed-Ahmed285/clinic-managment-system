@@ -2,17 +2,20 @@ const appointmentModel = require("../models/appointment");
 const patientModel = require("../models/patient");
 const doctorModel = require("../models/doctor");
 const clinicModel = require("../models/clinic");
+const prescriptionModel = require("../models/prescription");
+const todoModel = require("../models/todo");
+const todoService = require("../services/todoService");
 
 const populateAppointment = [
-    { path: "patientId", populate: { path: "userId", select: "name email phone profileImage" } },
-    { path: "doctorId", populate: [{ path: "userId", select: "name email phone profileImage" }, { path: "specialtyId" }] },
+    { path: "patientId", populate: { path: "_id", select: "name email phone profileImage" } },
+    { path: "doctorId", populate: [{ path: "_id", select: "name email phone profileImage" }, { path: "specialtyId" }] },
     { path: "clinicId" },
     { path: "rescheduledFrom" }
 ];
 
 const createAppointment = async (req, res) => {
 try {
-    const patient = await patientModel.findOne({ userId: req.user.id });
+    const patient = await patientModel.findOne( req.user.id );
     if (!patient) {
         return res.status(404).send("patient profile not found");
     }
@@ -66,8 +69,8 @@ try {
 
 const getMyAppointments = async (req, res) => {
 try {
-    const patient = await patientModel.findOne({ userId: req.user.id });
-    const doctor = await doctorModel.findOne({ userId: req.user.id });
+    const patient = await patientModel.findOne(req.user.id );
+    const doctor = await doctorModel.findOne(req.user.id);
 
     let query = {};
     if (patient) {
@@ -92,8 +95,8 @@ try {
     }
 
     if (req.user.role !== "admin") {
-        const patient = await patientModel.findOne({ userId: req.user.id });
-        const doctor = await doctorModel.findOne({ userId: req.user.id });
+        const patient = await patientModel.findOne( req.user.id );
+        const doctor = await doctorModel.findOne( req.user.id );
         const canAccess =
             (patient && appointment.patientId && appointment.patientId._id.toString() === patient._id.toString()) ||
             (doctor && appointment.doctorId && appointment.doctorId._id.toString() === doctor._id.toString());
@@ -131,8 +134,8 @@ try {
     }
 
     if (req.user.role !== "admin") {
-        const patient = await patientModel.findOne({ userId: req.user.id });
-        const doctor = await doctorModel.findOne({ userId: req.user.id });
+        const patient = await patientModel.findOne(req.user.id );
+        const doctor = await doctorModel.findOne(req.user.id );
         const canCancel =
             (patient && appointment.patientId.toString() === patient._id.toString()) ||
             (doctor && appointment.doctorId.toString() === doctor._id.toString());
@@ -157,11 +160,70 @@ try {
     return res.status(500).send(err.message);
 }};
 
+const completeAppointment = async (req, res) => {
+    try {
+
+        const appointment = await appointmentModel.findById(req.params.id);
+
+        if (!appointment) {
+            return res.status(404).json({
+                message: "Appointment not found."
+            });
+        }
+
+        // Prevent completing twice
+        if (appointment.status === "completed") {
+            return res.status(400).json({
+                message: "Appointment is already completed."
+            });
+        }
+
+        // Doctor authorization
+        if (req.user.role === "doctor" && appointment.doctorId.toString() !== req.user.id) {
+            return res.status(403).json({
+                message: "You are not allowed to complete this appointment."
+            });
+        }
+
+        // Find prescription
+        const prescription = await prescriptionModel.findOne({
+            appointmentId: appointment._id
+        });
+
+        if (!prescription) {
+            return res.status(400).json({
+                message: "Cannot complete appointment without a prescription."
+            });
+        }
+
+        // Create patient todo
+        await todoService.createFromPrescription(prescription);
+
+        // Complete appointment
+        appointment.status = "completed";
+
+        await appointment.save();
+
+        return res.status(200).json({
+            message: "Appointment completed successfully.",
+            appointment
+        });
+
+    } catch (err) {
+
+        return res.status(500).json({
+            message: err.message
+        });
+
+    }
+};
+
 module.exports = {
     createAppointment,
     getAppointments,
     getMyAppointments,
     getAppointmentById,
     updateAppointment,
-    cancelAppointment
+    cancelAppointment,
+    completeAppointment
 };

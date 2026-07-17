@@ -6,15 +6,17 @@ const {
     getMyAppointments,
     getAppointmentById,
     updateAppointment,
-    cancelAppointment
+    cancelAppointment,
+    completeAppointment
 } = require("../controllers/appointment");
-const { verifyToken, isAdmin, isDoctor, isPatient } = require("../middlewares/auth");
+const { verifyToken} = require("../middlewares/auth");
+const authorize = require("../middlewares/authorize");
 
-router.post("/", verifyToken, isPatient, createAppointment);
-router.get("/", verifyToken, isAdmin, getAppointments);
+router.post("/", verifyToken, authorize("create:appointment"), createAppointment);
+router.get("/", verifyToken, authorize("get:appointments"), getAppointments);
 router.get("/my", verifyToken, getMyAppointments);
 router.get("/:id", verifyToken, getAppointmentById);
-router.put("/:id", verifyToken, isAdmin, updateAppointment);
+router.put("/:id", verifyToken, authorize("update:appointments"), updateAppointment);
 router.patch("/:id/cancel", verifyToken, cancelAppointment);
-
+router.patch("/:id/complete",verifyToken,authorize("update:appointment:"),completeAppointment);
 module.exports = router;

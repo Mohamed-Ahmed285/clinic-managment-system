@@ -6,17 +6,30 @@ const permissions = {
 
     "doctor:create",
     "doctor:update",
-    "doctor:delete"
+    "doctor:delete",
+
+    "get:appointments",
+    "update:appointments",
+
+    "create:clinic",
+    "update:clinic",
+    "delete:clinic"
+
     ],
 
     doctor: [
-    "medicalRecord:create"
+    "medicalRecord:create",
+
+    "update:appointments"
     ],
 
     patient: [
-    "favorite:create",
-    "favorite:delete",
-    "favorite:read"
+        "favorite:create",
+        "favorite:delete",
+        "favorite:read",
+
+
+        "create:appointment"
     ]
 };
 

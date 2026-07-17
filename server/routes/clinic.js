@@ -7,12 +7,13 @@ const {
     updateClinic,
     deleteClinic
 } = require("../controllers/clinic");
-const { verifyToken, isAdmin } = require("../middlewares/auth");
+const { verifyToken } = require("../middlewares/auth");
+const authorize = require("../middlewares/authorize");
 
 router.get("/", getClinics);
 router.get("/:id", getClinicById);
-router.post("/", verifyToken, isAdmin, createClinic);
-router.put("/:id", verifyToken, isAdmin, updateClinic);
-router.delete("/:id", verifyToken, isAdmin, deleteClinic);
+router.post("/", verifyToken, authorize("create:clinic"), createClinic);
+router.put("/:id", verifyToken, authorize("update:clinic"), updateClinic);
+router.delete("/:id", verifyToken, authorize("delete:clinic"), deleteClinic);
 
 module.exports = router;
