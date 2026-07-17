@@ -33,7 +33,16 @@ try {
     if (!clinicMatch) {
         return res.status(400).send("doctor is not assigned to this clinic");
     }
+const exists = await appointmentModel.findOne({
+  doctorId: req.body.doctorId,
+  clinicId: req.body.clinicId,
+  date: req.body.date,
+  startTime: req.body.startTime
+});
 
+if (exists) {
+  return res.status(400).send("This time slot is already booked");
+}
     const appointment = await appointmentModel.create({
         patientId: patient._id,
         doctorId: req.body.doctorId,
@@ -49,12 +58,34 @@ try {
         cancelledBy: req.body.cancelledBy,
         cancellationReason: req.body.cancellationReason
     });
+const doctor = await doctorModel.findById(appointment.doctorId);
 
+await notificationModel.create({
+  recipientId: doctor.userId,
+  recipientType: "doctor",
+  title: "New Appointment",
+  message: "A new appointment has been booked.",
+  type: "appointmentBooked",
+  relatedAppointmentId: appointment._id
+});
+
+await notificationModel.create({
+  recipientId: patient.userId,
+  recipientType: "patient",
+  title: "Appointment Confirmed",
+  message: "Your appointment has been booked successfully.",
+  type: "appointmentBooked",
+  relatedAppointmentId: appointment._id
+});
     await appointment.populate(populateAppointment);
+
+
     return res.status(201).json(appointment);
 } catch (err) {
     return res.status(500).send(err.message);
 }};
+
+
 
 const getAppointments = async (req, res) => {
 try {
@@ -125,34 +156,83 @@ try {
 
 const cancelAppointment = async (req, res) => {
 try {
-    const appointment = await appointmentModel.findById(req.params.id);
-    if (!appointment) {
-        return res.status(404).send("appointment not found");
+  const appointment = await appointmentModel.findById(req.params.id);
+  if (!appointment) {
+    return res.status(404).send("appointment not found");
+  }
+
+  if (req.user.role !== "admin") {
+    const patient = await patientModel.findOne({ userId: req.user.id });
+    const doctor = await doctorModel.findOne({ userId: req.user.id });
+    const canCancel =
+      (patient &&
+        appointment.patientId.toString() === patient._id.toString()) ||
+      (doctor && appointment.doctorId.toString() === doctor._id.toString());
+
+    if (!canCancel) {
+      return res.status(403).send("access denied");
     }
+  }
 
-    if (req.user.role !== "admin") {
-        const patient = await patientModel.findOne({ userId: req.user.id });
-        const doctor = await doctorModel.findOne({ userId: req.user.id });
-        const canCancel =
-            (patient && appointment.patientId.toString() === patient._id.toString()) ||
-            (doctor && appointment.doctorId.toString() === doctor._id.toString());
+  const updated = await appointmentModel
+    .findByIdAndUpdate(
+      req.params.id,
+      {
+        status: "cancelled",
+        cancelledBy: req.body.cancelledBy || req.user.role,
+        cancellationReason: req.body.cancellationReason
+      },
+      { new: true, runValidators: true }
+    )
+    .populate(populateAppointment);
 
-        if (!canCancel) {
-            return res.status(403).send("access denied");
-        }
-    }
 
-    const updated = await appointmentModel.findByIdAndUpdate(
-        req.params.id,
-        {
-            status: "cancelled",
-            cancelledBy: req.body.cancelledBy || req.user.role,
-            cancellationReason: req.body.cancellationReason
-        },
-        { new: true, runValidators: true }
-    ).populate(populateAppointment);
+  if (req.user.role === "patient") {
+    await notificationModel.create({
+      recipientId: updated.doctorId.userId._id,
+      recipientType: "doctor",
+      title: "Appointment Cancelled",
+      message: "A patient cancelled the appointment.",
+      type: "appointmentCancelled",
+      relatedAppointmentId: updated._id
+    });
+  }
 
-    return res.status(200).json(updated);
+
+  else if (req.user.role === "doctor") {
+    await notificationModel.create({
+      recipientId: updated.patientId.userId._id,
+      recipientType: "patient",
+      title: "Appointment Cancelled",
+      message: "Your appointment has been cancelled by the doctor.",
+      type: "appointmentCancelled",
+      relatedAppointmentId: updated._id
+    });
+  }
+
+
+  else if (req.user.role === "admin") {
+    await notificationModel.create([
+      {
+        recipientId: updated.doctorId.userId._id,
+        recipientType: "doctor",
+        title: "Appointment Cancelled",
+        message: "An appointment has been cancelled by the administration.",
+        type: "appointmentCancelled",
+        relatedAppointmentId: updated._id
+      },
+      {
+        recipientId: updated.patientId.userId._id,
+        recipientType: "patient",
+        title: "Appointment Cancelled",
+        message: "Your appointment has been cancelled by the administration.",
+        type: "appointmentCancelled",
+        relatedAppointmentId: updated._id
+      }
+    ]);
+  }
+
+  return res.status(200).json(updated);
 } catch (err) {
     return res.status(500).send(err.message);
 }};
