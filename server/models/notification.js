@@ -10,7 +10,7 @@ const notificationSchema = new mongoose.Schema(
 
         type:{
             type:String,
-            enum:["appointmentBooked","appointmentCancelled","appointmentReminder","reviewReceived","system"],
+            enum:["appointmentBooked","appointmentCancelled","appointmentReminder","reviewReceived","system","MedicalReminder"],
             default:"system"
         },
 
