@@ -13,8 +13,16 @@ const permissions = {
 
     "create:clinic",
     "update:clinic",
-    "delete:clinic"
+    "delete:clinic",
 
+    "update:user",
+    "delete:user",
+    "add:patient",
+
+
+    "create:speciality",
+    "update:speciality",
+    "delete:speciality"
     ],
 
     doctor: [

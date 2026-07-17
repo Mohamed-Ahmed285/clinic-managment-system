@@ -6,7 +6,8 @@ const {
   markAllAsRead,
   deleteNotification
 } = require("../controllers/notification");
-const { verifyToken, isPatient, isAdmin } = require("../middlewares/auth");
+const { verifyToken, } = require("../middlewares/auth");
+
 router.get("/", verifyToken, getMyNotifications);
 router.put("/:id/read", verifyToken, markAsRead);
 router.delete("/:id", verifyToken, deleteNotification);

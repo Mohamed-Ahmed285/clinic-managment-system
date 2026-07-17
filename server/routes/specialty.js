@@ -1,4 +1,5 @@
-const { verifyToken, isAdmin } = require("../middlewares/auth");
+const { verifyToken } = require("../middlewares/auth");
+const authorize = require("../middlewares/authorize");
 const express = require("express");
 const router = express.Router();
 const {
@@ -9,10 +10,10 @@ const {
     deleteSpecialty
 } = require("../controllers/specialty");
 
-router.post("/", verifyToken, isAdmin, createSpecialty);
+router.post("/", verifyToken, authorize("create:speciality"), createSpecialty);
 router.get("/", getAllSpecialties);
 router.get("/:id", getSpecialtyById);
-router.put("/:id", verifyToken, isAdmin, updateSpecialty);
-router.delete("/:id", verifyToken, isAdmin,deleteSpecialty);
+router.put("/:id", verifyToken, authorize("update:speciality"), updateSpecialty);
+router.delete("/:id", verifyToken, authorize("delete:speciality"),deleteSpecialty);
 
 module.exports = router;
