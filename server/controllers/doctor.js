@@ -2,7 +2,7 @@ const doctorModel = require("../models/doctor");
 const userModel = require("../models/user");
 
 const populateDoctor = [
-    { path: "userId", select: "name email phone profileImage role" },
+    { path: "_id", select: "name email phone profileImage role" },
     { path: "specialtyId" },
     { path: "clinics.clinicId" }
 ];
@@ -28,7 +28,7 @@ try {
 
 const getMyDoctorProfile = async (req, res) => {
 try {
-    const doctor = await doctorModel.findOne({ userId: req.user.id }).populate(populateDoctor);
+    const doctor = await doctorModel.findOne( req.user.id ).populate(populateDoctor);
     if (!doctor) {
         return res.status(404).send("doctor profile not found");
     }
@@ -40,7 +40,7 @@ try {
 const updateMyDoctorProfile = async (req, res) => {
 try {
     const doctor = await doctorModel.findOneAndUpdate(
-        { userId: req.user.id },
+         req.user.id,
         {
             bio: req.body.bio,
             experienceYears: req.body.experienceYears,
@@ -59,7 +59,7 @@ try {
 
 const addClinicToMyProfile = async (req, res) => {
 try {
-    const doctor = await doctorModel.findOne({ userId: req.user.id });
+    const doctor = await doctorModel.findOne( req.user.id );
     if (!doctor) {
         return res.status(404).send("doctor profile not found");
     }
@@ -82,7 +82,7 @@ try {
 
 const updateClinicAssignment = async (req, res) => {
 try {
-    const doctor = await doctorModel.findOne({ userId: req.user.id });
+    const doctor = await doctorModel.findOne(req.user.id );
     if (!doctor) {
         return res.status(404).send("doctor profile not found");
     }
@@ -105,7 +105,7 @@ try {
 
 const removeClinicFromMyProfile = async (req, res) => {
 try {
-    const doctor = await doctorModel.findOne({ userId: req.user.id });
+    const doctor = await doctorModel.findOne( req.user.id );
     if (!doctor) {
         return res.status(404).send("doctor profile not found");
     }
