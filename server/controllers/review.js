@@ -31,7 +31,7 @@ const createReview = async (req, res) => {
             return res.status(403).send("you cannot review this appointment");
         }
 
-        if (appointment.status !== "completed") {
+        if (appointment.status !== "confirmed") {
             return res.status(400).send("you can only review completed appointments");
         }
 
