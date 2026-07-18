@@ -6,6 +6,7 @@ const prescriptionModel = require("../models/prescription");
 const todoModel = require("../models/todo");
 const todoService = require("../services/todoService");
 const notificationService = require("../services/notificationService");
+const notificationModel = require("../models/notification")
 
 const populateAppointment = [
     { path: "patientId", populate: { path: "_id", select: "name email phone profileImage" } },
@@ -16,7 +17,7 @@ const populateAppointment = [
 
 const createAppointment = async (req, res) => {
 try {
-    const patient = await patientModel.findOne( req.user.id );
+    const patient = await patientModel.findOne( {_id : req.user.id} );
     if (!patient) {
         return res.status(404).send("patient profile not found");
     }
@@ -65,7 +66,7 @@ if (exists) {
 const dr = await doctorModel.findById(appointment.doctorId);
 
 await notificationModel.create({
-  recipientId: dr.userId,
+  recipientId: dr._id,
   recipientType: "doctor",
   title: "New Appointment",
   message: "A new appointment has been booked.",
