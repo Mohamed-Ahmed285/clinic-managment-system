@@ -102,8 +102,8 @@ try {
 
 const getMyAppointments = async (req, res) => {
 try {
-    const patient = await patientModel.findOne(req.user.id );
-    const doctor = await doctorModel.findOne(req.user.id);
+    const patient = await patientModel.findById( req.user.id );
+    const doctor = await doctorModel.findById(req.user.id);
 
     let query = {};
     if (patient) {
