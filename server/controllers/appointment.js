@@ -5,6 +5,8 @@ const clinicModel = require("../models/clinic");
 const prescriptionModel = require("../models/prescription");
 const todoModel = require("../models/todo");
 const todoService = require("../services/todoService");
+const notificationService = require("../services/notificationService");
+const notificationModel = require("../models/notification")
 
 const populateAppointment = [
     { path: "patientId", populate: { path: "_id", select: "name email phone profileImage" } },
@@ -15,7 +17,7 @@ const populateAppointment = [
 
 const createAppointment = async (req, res) => {
 try {
-    const patient = await patientModel.findOne( req.user.id );
+    const patient = await patientModel.findOne( {_id : req.user.id} );
     if (!patient) {
         return res.status(404).send("patient profile not found");
     }
@@ -64,7 +66,7 @@ if (exists) {
 const dr = await doctorModel.findById(appointment.doctorId);
 
 await notificationModel.create({
-  recipientId: dr.userId,
+  recipientId: dr._id,
   recipientType: "doctor",
   title: "New Appointment",
   message: "A new appointment has been booked.",
@@ -72,8 +74,8 @@ await notificationModel.create({
   relatedAppointmentId: appointment._id
 });
 
-await notificationModel.create({
-  recipientId: patient.userId,
+await notificationService.createNotification({
+  recipientId: patient._id,
   recipientType: "patient",
   title: "Appointment Confirmed",
   message: "Your appointment has been booked successfully.",
@@ -190,8 +192,8 @@ try {
 
 
   if (req.user.role === "patient") {
-    await notificationModel.create({
-      recipientId: updated.doctorId.userId._id,
+    await notificationService.createNotification({
+      recipientId: updated.doctorId._id,
       recipientType: "doctor",
       title: "Appointment Cancelled",
       message: "A patient cancelled the appointment.",
@@ -202,8 +204,8 @@ try {
 
 
   else if (req.user.role === "doctor") {
-    await notificationModel.create({
-      recipientId: updated.patientId.userId._id,
+    await notificationService.createNotification({
+      recipientId: updated.patientId._id,
       recipientType: "patient",
       title: "Appointment Cancelled",
       message: "Your appointment has been cancelled by the doctor.",
@@ -214,23 +216,23 @@ try {
 
 
   else if (req.user.role === "admin") {
-    await notificationModel.create([
-      {
-        recipientId: updated.doctorId.userId._id,
+    await Promise.all([
+      notificationService.createNotification({
+        recipientId: updated.doctorId._id,
         recipientType: "doctor",
         title: "Appointment Cancelled",
         message: "An appointment has been cancelled by the administration.",
         type: "appointmentCancelled",
         relatedAppointmentId: updated._id
-      },
-      {
-        recipientId: updated.patientId.userId._id,
+      }),
+      notificationService.createNotification({
+        recipientId: updated.patientId._id,
         recipientType: "patient",
         title: "Appointment Cancelled",
         message: "Your appointment has been cancelled by the administration.",
         type: "appointmentCancelled",
         relatedAppointmentId: updated._id
-      }
+      })
     ]);
   }
 

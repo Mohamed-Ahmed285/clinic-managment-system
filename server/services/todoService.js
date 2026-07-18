@@ -23,7 +23,8 @@ const createFromPrescription = async (prescription) => {
         schedule: medication.times.map((time) => ({
             time,
             completed: false,
-            completedAt: null
+            completedAt: null,
+            reminderSent: false
         }))
     }));
 

@@ -4,7 +4,8 @@ const {
   getMyNotifications,
   markAsRead,
   markAllAsRead,
-  deleteNotification
+  deleteNotification,
+  testNotification
 } = require("../controllers/notification");
 const { verifyToken, } = require("../middlewares/auth");
 

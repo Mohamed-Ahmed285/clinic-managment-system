@@ -144,7 +144,7 @@ const getMyTodos = async (req, res) => {
         const patient = await patientModel.findById(req.user.id);
         if (!patient) return res.status(404).send("patient profile not found");
 
-        const todos = await todoModel.find({ patientId: patient._id }).sort({ createdAt: -1 });
+        const todos = await todoModel.find({ _id: patient._id }).sort({ createdAt: -1 });
         return res.status(200).json(todos);
     } catch (err) {
         return res.status(500).send(err.message);

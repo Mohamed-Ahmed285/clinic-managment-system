@@ -22,4 +22,5 @@ router.delete("/me/clinics/:clinicId", verifyToken, authorize("delete:clinicFrom
 
 
 
+
 module.exports = router;

@@ -1,14 +1,18 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose");
+const http = require("http");
 const connectDB = require("./config/db.js");
+const notificationService = require("./services/notificationService");
+const { startMedicationReminderJob } = require("./jobs/medicationReminderJob");
+
 
 // ========================
 // Initialize Express App
 // ========================
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
+const server = http.createServer(app);
 
 // ========================
 // Middleware
@@ -28,7 +32,9 @@ const todoRouter = require("./routes/todo.js");
 const specialtyRoutes = require("./routes/specialty");
 const adminUserRoutes = require("./routes/adminUserRoutes");
 const adminDoctorRoutes = require("./routes/adminDoctor");
+const notifications = require("./routes/notification");
 const adminAnalyticsRoutes = require("./routes/adminAnalytics");
+const reviewRouter = require("./routes/routeReview");
 
 app.use("/user", userRouter);
 app.use("/patient", patientRouter);
@@ -40,13 +46,24 @@ app.use("/todo", todoRouter);
 app.use("/specialty", specialtyRoutes);
 app.use("/admin/users", adminUserRoutes);
 app.use("/admin/doctors", adminDoctorRoutes);
+app.use("/notifications", notifications);
 app.use("/admin/analytics", adminAnalyticsRoutes);
+app.use("/review", reviewRouter);
 
 // ========================
 // Database Connection & Server Start
 // ========================
-connectDB();
+notificationService.initSocket(server);
 
-app.listen(PORT, () => {
-  console.log(`server is running on port http://localhost:${PORT}`);
-});
+connectDB()
+  .then(() => {
+    startMedicationReminderJob();
+
+    server.listen(PORT, () => {
+      console.log(`server is running on port http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to start server:", err.message);
+    process.exit(1);
+  });
