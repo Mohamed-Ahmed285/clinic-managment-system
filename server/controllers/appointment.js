@@ -62,10 +62,10 @@ if (exists) {
         cancelledBy: req.body.cancelledBy,
         cancellationReason: req.body.cancellationReason
     });
-const doctorProfile = await doctorModel.findById(appointment.doctorId);
+const dr = await doctorModel.findById(appointment.doctorId);
 
-await notificationService.createNotification({
-  recipientId: doctorProfile._id,
+await notificationModel.create({
+  recipientId: dr.userId,
   recipientType: "doctor",
   title: "New Appointment",
   message: "A new appointment has been booked.",

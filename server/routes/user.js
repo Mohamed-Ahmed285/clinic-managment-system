@@ -16,9 +16,6 @@ const authorize = require("../middlewares/authorize");
 
 router.post("/login", login);
 router.post("/logout", verifyToken, logout);
-
-
-
 router.get("/me", verifyToken, getMe);
 router.put("/me", verifyToken, updateMe);
 router.post("/forgetPassword", forgetPassword);
