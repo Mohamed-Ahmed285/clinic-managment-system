@@ -11,13 +11,13 @@ const patientRouter = require("./routes/patient");
 const clinicRouter = require("./routes/clinic");
 const doctorRouter = require("./routes/doctor");
 const appointmentRouter = require("./routes/appointment");
-
+const notificationsRouter = require("./routes/appointment");
 app.use("/user", userRouter);
 app.use("/patient", patientRouter);
 app.use("/clinic", clinicRouter);
 app.use("/doctor", doctorRouter);
 app.use("/appointment", appointmentRouter);
-
+app.use("/notifications", notificationsRouter);
 mongoose.connect(process.env.DB_URL )
 .then(()=>{console.log("connected to database")})
 .catch((err)=>{console.log(err)});

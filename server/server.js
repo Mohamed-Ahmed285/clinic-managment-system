@@ -31,7 +31,7 @@ const todoRouter = require("./routes/todo.js");
 const specialtyRoutes = require("./routes/specialty");
 const adminUserRoutes = require("./routes/adminUserRoutes");
 const adminDoctorRoutes = require("./routes/adminDoctor");
-
+const notifications = require("./routes/notification");
 app.use("/user", userRouter);
 app.use("/patient", patientRouter);
 app.use("/clinic", clinicRouter);
@@ -42,6 +42,7 @@ app.use("/todo", todoRouter);
 app.use("/specialty", specialtyRoutes);
 app.use("/admin/users", adminUserRoutes);
 app.use("/admin/doctors", adminDoctorRoutes);
+app.use("/notifications", notifications);
 // ========================
 // Database Connection & Server Start
 // ========================
