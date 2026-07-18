@@ -6,7 +6,6 @@ const connectDB = require("./config/db.js");
 const notificationService = require("./services/notificationService");
 const { startMedicationReminderJob } = require("./jobs/medicationReminderJob");
 
-
 // ========================
 // Initialize Express App
 // ========================
@@ -34,9 +33,6 @@ const adminUserRoutes = require("./routes/adminUserRoutes");
 const adminDoctorRoutes = require("./routes/adminDoctor");
 const notifications = require("./routes/notification");
 const adminAnalyticsRoutes = require("./routes/adminAnalytics");
-const reviewRouter = require("./routes/routeReview");
-const medicalRecordRouter = require("./routes/medicalRecord");
-const prescriptionRouter = require("./routes/prescription");
 
 app.use("/user", userRouter);
 app.use("/patient", patientRouter);
@@ -44,14 +40,12 @@ app.use("/clinic", clinicRouter);
 app.use("/doctor", doctorRouter);
 app.use("/appointment", appointmentRouter);
 app.use("/todo", todoRouter);
-app.use("/medicalRecord", medicalRecordRouter);
-app.use("/prescription", prescriptionRouter);
+
 app.use("/specialty", specialtyRoutes);
 app.use("/admin/users", adminUserRoutes);
 app.use("/admin/doctors", adminDoctorRoutes);
 app.use("/notifications", notifications);
 app.use("/admin/analytics", adminAnalyticsRoutes);
-app.use("/review", reviewRouter);
 
 // ========================
 // Database Connection & Server Start

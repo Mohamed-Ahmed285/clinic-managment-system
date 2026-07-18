@@ -39,50 +39,28 @@ try{
 }};
 //
 
-
-// Update patient profile (User + Patient)
-const updateMyProfile = async (req, res) => {
-    try {
-        const updatedUser = await userModel.findByIdAndUpdate(
-            req.user.id,
-            {
-                name: req.body.name,
-                phone: req.body.phone,
-                profileImage: req.body.profileImage
-            },
-            { new: true, runValidators: true }
-        ).select("-password");
-
-        if (!updatedUser) {
-            return res.status(404).send("User not found");
-        }
-
-        const updatedPatient = await patientModel.findByIdAndUpdate(
-            req.user.id,
-            {
-                dateOfBirth: req.body.dateOfBirth,
-                gender: req.body.gender,
-                address: req.body.address,
-                preferredPaymentMethod: req.body.preferredPaymentMethod,
-                notificationsEnabled: req.body.notificationsEnabled
-            },
-            { new: true, runValidators: true }
-        );
-
-        if (!updatedPatient) {
-            return res.status(404).send("Patient profile not found");
-        }
-
-        return res.status(200).json({
-            user: updatedUser,
-            profile: updatedPatient
-        });
-
-    } catch (err) {
-        return res.status(500).send(err.message);
+//update patient profile 
+//to update all data of patient let your frontend send one form and fire both requests together
+const updateMyProfile = async(req,res)=>{
+try{
+    var updated = await patientModel.findOneAndUpdate(
+        req.user.id,
+        {
+            dateOfBirth:req.body.dateOfBirth,
+            gender:req.body.gender,
+            address:req.body.address,
+            preferredPaymentMethod:req.body.preferredPaymentMethod,
+            notificationsEnabled:req.body.notificationsEnabled
+        },
+        {new:true, runValidators:true}
+    );
+    if(!updated){
+        return res.status(404).send("patient profile not found");
     }
-};
-
+    return res.status(200).json(updated);
+}catch(err){
+    return res.status(500).send(err.message);
+}};
 
 //patient saves their favorite doctors
 const addFavoriteDoctor = async(req,res)=>{
@@ -91,7 +69,7 @@ try{
     if(!doctorExists){
         return res.status(404).send("doctor not found");
     }
-    var patient = await patientModel.findByIdAndUpdate(
+    var patient = await patientModel.findOneAndUpdate(
         req.user.id,
         {$addToSet:{favoriteDoctors:req.params.doctorId}},
         {new:true}
@@ -107,7 +85,7 @@ try{
 //remove doctor from favorites
 const removeFavoriteDoctor = async(req,res)=>{
 try{
-    var patient = await patientModel.findByIdAndUpdate(
+    var patient = await patientModel.findOneAndUpdate(
         req.user.id,
         {$pull:{favoriteDoctors:req.params.doctorId}},
         {new:true}
@@ -123,7 +101,7 @@ try{
 //patient gets all favorite doctors
 const getMyFavorites = async(req,res)=>{
 try{
-    var patient = await patientModel.findById(req.user.id).populate({
+    var patient = await patientModel.findOne(req.user.id).populate({
         path:"favoriteDoctors",
         populate:[
             {path:"_id", select:"name email phone profileImage"},
@@ -141,7 +119,7 @@ try{
 // get todos for the current patient
 const getMyTodos = async (req, res) => {
     try {
-        const patient = await patientModel.findById(req.user.id);
+        const patient = await patientModel.findOne(req.user.id);
         if (!patient) return res.status(404).send("patient profile not found");
 
         const todos = await todoModel.find({ _id: patient._id }).sort({ createdAt: -1 });
@@ -157,6 +135,6 @@ module.exports = {
     updateMyProfile,
     addFavoriteDoctor,
     removeFavoriteDoctor,
-    getMyFavorites,
-    getMyTodos
+    getMyFavorites
+    ,getMyTodos
 };

@@ -18,7 +18,7 @@ app.use("/clinic", clinicRouter);
 app.use("/doctor", doctorRouter);
 app.use("/appointment", appointmentRouter);
 app.use("/notifications", notificationsRouter);
-mongoose.connect(process.env.DB_URL )
+mongoose.connect(process.env.MONGO_URI )
 .then(()=>{console.log("connected to database")})
 .catch((err)=>{console.log(err)});
 

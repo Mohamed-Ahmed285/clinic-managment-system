@@ -8,6 +8,7 @@ const appointmentSchema = new mongoose.Schema(
         date:{type:Date, required:true},
         startTime:{type:String, required:true},
         endTime:{type:String},
+        durationMinutes:{type:Number, required:true, min:5},
         status:{
             type:String,
             enum:["pending","confirmed","completed","cancelled","rescheduled"],

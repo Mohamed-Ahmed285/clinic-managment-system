@@ -7,7 +7,6 @@ const crypto = require("crypto");
 const {addToBlacklist} = require("../middlewares/auth");
 const sendEmail = require("../utils/sendEmail");
 
-
 //create user (only admin can create any user)
 const allowedRoles = ["patient","doctor","admin"];
 const createUser = async(req,res)=>{
@@ -41,17 +40,21 @@ try{
             address:req.body.address,
             preferredPaymentMethod:req.body.preferredPaymentMethod
         });
-    }else if(role === "doctor"){
-        // specialtyId مطلوبة في موديل الدكتور
-        if(!req.body.specialtyId){
-            throw new Error("specialtyId is required for doctor accounts");
-        }
-        profile = await doctorModel.create({
-            _id:savedUser._id,
-            bio:req.body.bio,
-            experienceYears:req.body.experienceYears,
-            specialtyId:req.body.specialtyId
-        });
+    }else if (role === "doctor") {
+    if (!req.body.specialtyId) {
+        throw new Error("specialtyId is required for doctor accounts");
+    }
+    const appointmentDurationMinutes = Number(req.body.appointmentDurationMinutes);
+    if (!Number.isFinite(appointmentDurationMinutes) || appointmentDurationMinutes < 5) {
+        throw new Error("appointmentDurationMinutes is required for doctor accounts");
+    }
+    profile = await doctorModel.create({
+        userId: savedUser._id,
+        bio: req.body.bio,
+        experienceYears: req.body.experienceYears,
+        specialtyId: req.body.specialtyId,
+        appointmentDurationMinutes
+    });
     }
  
     return res.status(200).json({user:savedUser, profile});
@@ -62,7 +65,6 @@ try{
     return res.status(500).send(err.message);
 }};
 //
-
 //login
 const login = async(req,res)=>{
 try{
@@ -118,6 +120,19 @@ try{
     return res.status(500).send(err.message);
 }};
 
+// update me for updating basic info(name,phone,profile image)
+const updateMe = async(req,res)=>{
+try{
+    var updated = await userModel.findByIdAndUpdate(
+        req.user.id,
+        {name:req.body.name, phone:req.body.phone, profileImage:req.body.profileImage},
+        {new:true, runValidators:true}
+    ).select("-password");
+    return res.status(200).json(updated);
+}catch(err){
+    return res.status(500).send(err.message);
+}};
+//
 //update password (user is already in)
 const updatePassword = async(req,res)=>{
 try{
@@ -258,10 +273,10 @@ module.exports = {
     login,
     logout,
     getMe,
+    updateMe,
     forgetPassword,
     resetPassword,
     updatePassword,
     createUser
-}
-
+};
 //

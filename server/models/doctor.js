@@ -28,6 +28,7 @@ const doctorSchema = new mongoose.Schema(
         bio:{type:String, maxLength:1000},
         experienceYears:{type:Number, min:0, default:0},
         specialtyId:{type:mongoose.Schema.Types.ObjectId, ref:"specialty", required:true},
+         appointmentDurationMinutes:{type:Number, required:true, default:15,min:5},
         clinics:[clinicAssignmentSchema],
         rating:{
             average:{type:Number, default:0, min:0, max:5},
