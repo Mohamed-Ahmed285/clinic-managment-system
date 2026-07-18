@@ -39,6 +39,7 @@ const permissions = {
     ],
 
     patient: [
+        "profile:update",
         "favorite:create",
         "favorite:delete",
         "favorite:read",

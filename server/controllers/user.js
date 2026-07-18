@@ -7,6 +7,7 @@ const crypto = require("crypto");
 const {addToBlacklist} = require("../middlewares/auth");
 const sendEmail = require("../utils/sendEmail");
 
+
 //create user (only admin can create any user)
 const allowedRoles = ["patient","doctor","admin"];
 const createUser = async(req,res)=>{
@@ -41,6 +42,7 @@ try{
             preferredPaymentMethod:req.body.preferredPaymentMethod
         });
     }else if(role === "doctor"){
+        // specialtyId مطلوبة في موديل الدكتور
         if(!req.body.specialtyId){
             throw new Error("specialtyId is required for doctor accounts");
         }
@@ -60,6 +62,7 @@ try{
     return res.status(500).send(err.message);
 }};
 //
+
 //login
 const login = async(req,res)=>{
 try{
@@ -115,19 +118,6 @@ try{
     return res.status(500).send(err.message);
 }};
 
-// update me for updating basic info(name,phone,profile image)
-const updateMe = async(req,res)=>{
-try{
-    var updated = await userModel.findByIdAndUpdate(
-        req.user.id,
-        {name:req.body.name, phone:req.body.phone, profileImage:req.body.profileImage},
-        {new:true, runValidators:true}
-    ).select("-password");
-    return res.status(200).json(updated);
-}catch(err){
-    return res.status(500).send(err.message);
-}};
-//
 //update password (user is already in)
 const updatePassword = async(req,res)=>{
 try{
@@ -268,10 +258,10 @@ module.exports = {
     login,
     logout,
     getMe,
-    updateMe,
     forgetPassword,
     resetPassword,
     updatePassword,
     createUser
-};
+}
+
 //
