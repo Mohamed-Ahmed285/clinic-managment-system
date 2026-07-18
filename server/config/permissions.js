@@ -3,6 +3,8 @@ const permissions = {
     "user:create",
     "user:update",
     "user:delete",
+    "user:get",
+    "users:get",
 
     "doctor:create",
     "doctor:update",
@@ -10,6 +12,7 @@ const permissions = {
 
     "get:appointments",
     "update:appointments",
+    "cancel:appointment",
 
     "create:clinic",
     "update:clinic",
@@ -31,6 +34,8 @@ const permissions = {
     "medicalRecord:create",
 
     "update:appointments",
+    "get:myappointments",
+    "cancel:appointment",
 
     "get:doctorprofile",
     "update:doctorprofile",
@@ -46,6 +51,8 @@ const permissions = {
 
 
         "create:appointment",
+        "get:myappointments",
+        "cancel:appointment",
 
 
         "todo:read",

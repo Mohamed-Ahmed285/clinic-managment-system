@@ -11,8 +11,8 @@ const {
   addPatient,
 } = require("../controllers/adminUserControl");
 
-router.get("/", getAllUsers);
-router.get("/:id", getUserById);
+router.get("/",authorize("users:get") ,getAllUsers);
+router.get("/:id",authorize("user:get") ,getUserById);
 router.put("/:id", verifyToken,authorize("user:update"), updateUser);
 router.delete("/:id", verifyToken,authorize("user:delete"), deleteUser);
 router.post("/patient", verifyToken, authorize("user:create"), addPatient);
