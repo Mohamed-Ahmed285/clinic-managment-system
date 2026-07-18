@@ -8,6 +8,61 @@ const {addToBlacklist} = require("../middlewares/auth");
 const sendEmail = require("../utils/sendEmail");
 
 
+//create user (only admin can create any user)
+const allowedRoles = ["patient","doctor","admin"];
+const createUser = async(req,res)=>{
+var savedUser;
+try{
+    var role = req.body.role;
+    if(!role || !allowedRoles.includes(role)){
+        return res.status(400).send("role must be one of: patient, doctor, admin");
+    }
+    var existingUser = await userModel.findOne({email:req.body.email});
+    if(existingUser){
+        return res.status(400).send("user already exists");
+    }
+ 
+    var newUser = new userModel({
+        name:req.body.name,
+        email:req.body.email,
+        password:req.body.password,
+        phone:req.body.phone,
+        profileImage:req.body.profileImage,
+        role:role
+    });
+    savedUser = await newUser.save();
+ 
+    var profile = null;
+    if(role === "patient"){
+        profile = await patientModel.create({
+            _id:savedUser._id,
+            dateOfBirth:req.body.dateOfBirth,
+            gender:req.body.gender,
+            address:req.body.address,
+            preferredPaymentMethod:req.body.preferredPaymentMethod
+        });
+    }else if(role === "doctor"){
+        // specialtyId مطلوبة في موديل الدكتور
+        if(!req.body.specialtyId){
+            throw new Error("specialtyId is required for doctor accounts");
+        }
+        profile = await doctorModel.create({
+            _id:savedUser._id,
+            bio:req.body.bio,
+            experienceYears:req.body.experienceYears,
+            specialtyId:req.body.specialtyId
+        });
+    }
+ 
+    return res.status(200).json({user:savedUser, profile});
+}catch(err){
+    if(savedUser){
+        await userModel.findByIdAndDelete(savedUser._id);
+    }
+    return res.status(500).send(err.message);
+}};
+//
+
 //login
 const login = async(req,res)=>{
 try{
@@ -219,6 +274,8 @@ module.exports = {
     updateMe,
     forgetPassword,
     resetPassword,
-    updatePassword
-};
+    updatePassword,
+    createUser
+}
+
 //
