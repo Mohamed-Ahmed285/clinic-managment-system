@@ -15,7 +15,7 @@ const createReview = async (req, res) => {
             return res.status(400).send("invalid appointment id");
         }
 
-        var patient = await patientModel.findOne({ userId: req.user.id });
+        var patient = await patientModel.findOne(req.user.id);
 
         if (!patient) {
             return res.status(404).send("patient profile not found");
@@ -78,7 +78,7 @@ const getDoctorReviews = async (req, res) => {
         }).populate({
             path: "patientId",
             populate: {
-                path: "userId",
+                path: "_id",
                 select: "name profileImage"
             }
         });
@@ -94,9 +94,7 @@ const getDoctorReviews = async (req, res) => {
 const getMyReviews = async (req, res) => {
     try {
 
-        var patient = await patientModel.findOne({
-            userId: req.user.id
-        });
+        var patient = await patientModel.findOne(req.user.id);
 
         if (!patient) {
             return res.status(404).send("patient profile not found");
@@ -108,7 +106,7 @@ const getMyReviews = async (req, res) => {
             path: "doctorId",
             populate: [
                 {
-                    path: "userId",
+                    path: "_id",
                     select: "name profileImage"
                 },
                 {
@@ -128,9 +126,7 @@ const getMyReviews = async (req, res) => {
 const updateReview = async (req, res) => {
     try {
 
-        var patient = await patientModel.findOne({
-            userId: req.user.id
-        });
+        var patient = await patientModel.findOne(req.user.id);
 
         if (!patient) {
             return res.status(404).send("patient profile not found");
@@ -174,9 +170,7 @@ const updateReview = async (req, res) => {
 const deleteReview = async (req, res) => {
     try {
 
-        var patient = await patientModel.findOne({
-            userId: req.user.id
-        });
+        var patient = await patientModel.findOne(req.user.id);
 
         if (!patient) {
             return res.status(404).send("patient profile not found");
