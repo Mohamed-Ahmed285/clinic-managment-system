@@ -34,7 +34,7 @@ const adminUserRoutes = require("./routes/adminUserRoutes");
 const adminDoctorRoutes = require("./routes/adminDoctor");
 const notifications = require("./routes/notification");
 const adminAnalyticsRoutes = require("./routes/adminAnalytics");
-const reviewRouter = require("./routes/review");
+const reviewRouter = require("./routes/routeReview");
 
 app.use("/user", userRouter);
 app.use("/patient", patientRouter);
