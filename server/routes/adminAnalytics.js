@@ -11,14 +11,13 @@ const {
 } = require("../controllers/adminAnalytics");
 
 const { verifyToken, isAdmin } = require("../middlewares/auth");
+const authorize = require("../middlewares/authorize");
 
-router.get("/overview", verifyToken, isAdmin, getOverview);
-router.get("/appointments", verifyToken, isAdmin, getAppointmentStats);
-router.get("/doctors", verifyToken, isAdmin, getDoctorsStats);
-router.get("/patients", verifyToken, isAdmin, getPatientStats);
-
-router.get("/doctor-performance", verifyToken, isAdmin, getDoctorPerformance);
-
-router.get("/specialties", verifyToken, isAdmin, getSpecialtyStats);
+router.get("/overview", verifyToken, authorize("analytics:read"), getOverview);
+router.get("/appointments", verifyToken, authorize("analytics:read"), getAppointmentStats);
+router.get("/doctors", verifyToken, authorize("analytics:read"), getDoctorsStats);
+router.get("/patients", verifyToken, authorize("analytics:read"), getPatientStats);
+router.get("/doctor-performance", verifyToken, authorize("analytics:read"), getDoctorPerformance);
+router.get("/specialties", verifyToken, authorize("analytics:read"), getSpecialtyStats);
 
 module.exports = router;

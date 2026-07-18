@@ -22,7 +22,9 @@ const permissions = {
 
     "create:speciality",
     "update:speciality",
-    "delete:speciality"
+    "delete:speciality",
+
+     "analytics:read"
     ],
 
     doctor: [
