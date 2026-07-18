@@ -14,7 +14,7 @@ exports.createDoctor = async (req, res) => {
         });
 
         var doctor = await Doctor.create({
-            userId: newUser._id,
+            _id: newUser._id,
             bio: req.body.bio,
             experienceYears: req.body.experienceYears,
             specialtyId: req.body.specialtyId,
@@ -51,6 +51,7 @@ exports.deleteDoctor = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({ success: false, message: "Doctor not found" });
         }
+         await User.findByIdAndDelete(req.params.id);
         res.status(200).json({ success: true, message: "Doctor deleted" });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
