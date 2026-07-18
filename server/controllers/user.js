@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const {addToBlacklist} = require("../middlewares/auth");
-
+const sendEmail = require("../utils/sendEmail");
 
 
 //login
@@ -98,7 +98,7 @@ try{
 }};
 //
 
-//forget password
+//----------------- forget password -----------------
 const forgetPassword = async(req,res)=>{
 try{
     var user = await userModel.findOne({email:req.body.email});
@@ -107,19 +107,43 @@ try{
     }
     var resetToken = crypto.randomBytes(32).toString("hex");
     var hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
-
+ 
     user.resetPasswordToken = hashedToken;
-    user.resetPasswordExpire = Date.now() + 10*60*1000;
+    user.resetPasswordExpire = Date.now() + 10*60*1000; // 10 دقايق
     await user.save();
-    return res.status(200).json({
-        message:"reset token generated. in production this must be sent via email, not returned here",
-        resetToken
-    });
+ 
+    // الرابط اللي هيتبعت لليوزر، بيودي على صفحة "reset password" في الفرونت إند
+    // مع التوكن الأصلي (الغير مشفر) عشان اليوزر يقدر يستخدمه
+    var resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+ 
+    var html = `
+        <p>Hi ${user.name},</p>
+        <p>You requested to reset your password. Click the link below to continue (valid for 10 minutes):</p>
+        <p><a href="${resetUrl}">${resetUrl}</a></p>
+        <p>If you didn't request this, you can safely ignore this email.</p>
+    `;
+ 
+    try{
+        await sendEmail({
+            to:user.email,
+            subject:"Password Reset Request",
+            html:html
+        });
+    }catch(emailErr){
+        // لو فشل إرسال الإيميل، لازم نمسح التوكن اللي حفظناه عشان مايفضلش صالح من غير ما اليوزر يعرفه
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+        await user.save();
+        console.log("send email error:", emailErr.message);
+        return res.status(500).send("failed to send reset email, please try again later");
+    }
+ 
+    return res.status(200).send("password reset email sent successfully, please check your inbox");
 }catch(err){
     return res.status(500).send(err.message);
 }};
-
-//reset password
+ 
+//----------------- reset password -----------------
 const resetPassword = async(req,res)=>{
 try{
     var hashedToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
@@ -141,6 +165,51 @@ try{
 }catch(err){
     return res.status(500).send(err.message);
 }};
+
+
+// //forget password
+// const forgetPassword = async(req,res)=>{
+// try{
+//     var user = await userModel.findOne({email:req.body.email});
+//     if(!user){
+//         return res.status(404).send("user not found");
+//     }
+//     var resetToken = crypto.randomBytes(32).toString("hex");
+//     var hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+//     user.resetPasswordToken = hashedToken;
+//     user.resetPasswordExpire = Date.now() + 10*60*1000;
+//     await user.save();
+//     return res.status(200).json({
+//         message:"reset token generated. in production this must be sent via email, not returned here",
+//         resetToken
+//     });
+// }catch(err){
+//     return res.status(500).send(err.message);
+// }};
+
+// //reset password
+// const resetPassword = async(req,res)=>{
+// try{
+//     var hashedToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
+//     var user = await userModel.findOne({
+//         resetPasswordToken:hashedToken,
+//         resetPasswordExpire:{$gt:Date.now()}
+//     });
+//     if(!user){
+//         return res.status(400).send("token is invalid or expired");
+//     }
+//     if(!req.body.newPassword){
+//         return res.status(400).send("newPassword is required");
+//     }
+//     user.password = req.body.newPassword;
+//     user.resetPasswordToken = undefined;
+//     user.resetPasswordExpire = undefined;
+//     await user.save();
+//     return res.status(200).send("password reset successfully");
+// }catch(err){
+//     return res.status(500).send(err.message);
+// }};
 
 
 module.exports = {
