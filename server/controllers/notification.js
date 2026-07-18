@@ -1,8 +1,9 @@
 const notificationModel = require("../models/notification");
+const notificationService = require("../services/notificationService");
 
 const createNotification = async (data) => {
   try {
-    var notification = await notificationModel.create({
+    return await notificationService.createNotification({
       recipientId: data.recipientId,
       recipientType: data.recipientType,
       title: data.title,
@@ -10,8 +11,6 @@ const createNotification = async (data) => {
       type: data.type,
       relatedAppointmentId: data.relatedAppointmentId
     });
-
-    return notification;
   } catch (err) {
     throw err;
   }
@@ -87,6 +86,7 @@ const deleteNotification = async (req, res) => {
 };
 
 module.exports = {
+  createNotification,
   getMyNotifications,
   markAsRead,
   markAllAsRead,

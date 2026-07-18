@@ -13,6 +13,7 @@ const Patient = require('../models/patient');
 const Appointment = require('../models/appointment');
 const Prescription = require('../models/prescription');
 const MedicalRecord = require('../models/medicalRecord');
+const Todo = require('../models/todo');
 
 const clearCollections = async () => {
   await Promise.all([
@@ -162,7 +163,7 @@ const seed = async () => {
       }
     ]);
 
-    await Prescription.create({
+    const prescription = await Prescription.create({
       patientId: patientProfile._id,
       doctorId: doctorProfile._id,
       appointmentId: appointments[0]._id,
@@ -178,6 +179,33 @@ const seed = async () => {
       ],
       generalNotes: 'Monitor blood pressure regularly.',
       issuedDate: new Date()
+    });
+
+    const now = new Date();
+    const currentHour = now.getHours().toString().padStart(2, '0');
+    const currentMinute = now.getMinutes().toString().padStart(2, '0');
+    const currentTime = `${currentHour}:${currentMinute}`;
+
+    await Todo.create({
+      patientId: patientProfile._id,
+      appointmentId: appointments[0]._id,
+      prescriptionId: prescription._id,
+      items: [
+        {
+          name: 'Aspirin',
+          dosage: '100mg',
+          frequency: 'Once Daily',
+          notes: 'Take after breakfast',
+          schedule: [
+            {
+              time: currentTime,
+              completed: false,
+              completedAt: null,
+              reminderSent: false
+            }
+          ]
+        }
+      ]
     });
 
     await MedicalRecord.create({

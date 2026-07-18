@@ -3,7 +3,11 @@ const todoModel = require("../models/todo");
 // Get all todos for the logged-in patient
 const getMyTodos = async (req, res) => {
     try {
-        const todos = await todoModel.find({ patientId: req.user.id }).populate("appointmentId").populate("prescriptionId");
+        const todos = await todoModel
+            .find({ patientId: req.user.id })
+            .populate("appointmentId", "_id")
+            .populate("prescriptionId", "_id");
+
         return res.status(200).json(todos);
     } catch (err) {
         return res.status(500).json({ message: err.message });
