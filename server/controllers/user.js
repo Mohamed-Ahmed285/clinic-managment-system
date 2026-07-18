@@ -118,19 +118,6 @@ try{
     return res.status(500).send(err.message);
 }};
 
-// update me for updating basic info(name,phone,profile image)
-const updateMe = async(req,res)=>{
-try{
-    var updated = await userModel.findByIdAndUpdate(
-        req.user.id,
-        {name:req.body.name, phone:req.body.phone, profileImage:req.body.profileImage},
-        {new:true, runValidators:true}
-    ).select("-password");
-    return res.status(200).json(updated);
-}catch(err){
-    return res.status(500).send(err.message);
-}};
-//
 //update password (user is already in)
 const updatePassword = async(req,res)=>{
 try{
@@ -271,7 +258,6 @@ module.exports = {
     login,
     logout,
     getMe,
-    updateMe,
     forgetPassword,
     resetPassword,
     updatePassword,
