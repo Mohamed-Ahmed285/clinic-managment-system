@@ -9,19 +9,17 @@ const {
     deleteReview
 } = require("../controllers/review");
 
-const {
-    verifyToken,
-    isPatient
-} = require("../middlewares/auth");
+const { verifyToken } = require("../middlewares/auth");
+const authorize = require("../middlewares/authorize");
 
-router.post("/", verifyToken, isPatient, createReview);
+router.post("/", verifyToken, authorize("review:create"), createReview);
 
 router.get("/doctor/:doctorId", getDoctorReviews);
 
-router.get("/my", verifyToken, isPatient, getMyReviews);
+router.get("/my", verifyToken, authorize("review:read"), getMyReviews);
 
-router.put("/:id", verifyToken, isPatient, updateReview);
+router.put("/:id", verifyToken, authorize("review:update"), updateReview);
 
-router.delete("/:id", verifyToken, isPatient, deleteReview);
+router.delete("/:id", verifyToken, authorize("review:delete"), deleteReview);
 
 module.exports = router;

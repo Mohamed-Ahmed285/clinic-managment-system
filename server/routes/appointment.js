@@ -18,5 +18,5 @@ router.get("/my", verifyToken, authorize("get:myappointments") ,getMyAppointment
 router.get("/:id", verifyToken,getAppointmentById);
 router.put("/:id", verifyToken, authorize("update:appointments"), updateAppointment);
 router.patch("/:id/cancel", verifyToken, authorize("cancel:appointment") ,cancelAppointment);
-router.patch("/:id/complete",verifyToken,authorize("update:appointment:"),completeAppointment);
+router.patch("/:id/complete", verifyToken, authorize("update:appointments"), completeAppointment);
 module.exports = router;
