@@ -9,13 +9,9 @@ const patientModel = require("../models/patient");
 
 // Create Review
 const createReview = async (req, res) => {
+    
     try {
-
-        if (!mongoose.Types.ObjectId.isValid(req.body.appointmentId)) {
-            return res.status(400).send("invalid appointment id");
-        }
-
-        var patient = await patientModel.findOne(req.user.id);
+        var patient = await patientModel.findById(  req.user.id );
 
         if (!patient) {
             return res.status(404).send("patient profile not found");
@@ -31,6 +27,7 @@ const createReview = async (req, res) => {
             return res.status(403).send("you cannot review this appointment");
         }
 
+        console.log(appointment.status)
         if (appointment.status !== "confirmed") {
             return res.status(400).send("you can only review completed appointments");
         }
