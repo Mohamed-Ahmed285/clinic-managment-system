@@ -10,7 +10,7 @@ import { PrescriptionsComponent } from './prescriptions/prescriptions.component'
 import { ReviewsComponent } from './reviews/reviews.component';
 import { FavoriteComponent } from './favorite/favorite.component';
 import { NotificationsComponent } from './notifications/notifications.component';
-
+import { SharedModule } from '../../shared/shared.module';
 @NgModule({
   declarations: [
     PatientLayoutComponent,
@@ -22,6 +22,6 @@ import { NotificationsComponent } from './notifications/notifications.component'
     FavoriteComponent,
     NotificationsComponent,
   ],
-  imports: [CommonModule, PatientRoutingModule],
+  imports: [CommonModule, PatientRoutingModule, SharedModule],
 })
 export class PatientModule {}
