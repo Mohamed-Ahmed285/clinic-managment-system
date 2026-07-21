@@ -1,1 +1,123 @@
-<p>login works!</p>
+<div class="font-sans-body min-h-screen flex flex-col lg:flex-row">
+  <!-- Brand panel -->
+  <section
+    class="relative hidden flex-col justify-between bg-primary text-white px-8 py-10 sm:px-12 sm:py-12 lg:flex lg:w-1/2 lg:min-h-screen lg:px-16 lg:py-14"
+    aria-label="Meridian patient portal">
+    <div
+      class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.2),transparent_65%)]"
+      aria-hidden="true">
+    </div>
+
+    <header class="relative z-10 flex items-center gap-3">
+      <!-- Replace with real logo asset -->
+      <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-[.75rem] bg-white/10" aria-hidden="true">
+        <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 3.5V12.5M3.5 8H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+      </span>
+      <span class="font-fraunces-display text-2xl tracking-tight text-lg">NoQ</span>
+    </header>
+
+    <div class="relative z-10 my-10 max-w-md lg:my-0 lg:flex-1 lg:flex lg:flex-col lg:justify-center">
+      <p class="mb-4 text-[11px] font-medium uppercase tracking-[0.22em] text-white/70">
+        Patient Portal
+      </p>
+      <h1 class="font-fraunces-display mb-5 text-[2.35rem] leading-[1.15] sm:text-[2.65rem] lg:text-[3rem] ">
+        Care that meets you where you are.
+      </h1>
+      <p class="max-w-sm text-[15px] leading-relaxed text-white/75 sm:text-base">
+        Sign in to review results, message your care team, and manage upcoming visits.
+      </p>
+    </div>
+
+  </section>
+
+  <!-- Sign-in panel -->
+  <section class="flex min-h-screen flex-1 flex-col bg-secondary px-6 py-10 sm:px-10 sm:py-12 lg:min-h-screen lg:px-16 lg:py-14"
+    aria-label="Patient sign in">
+    <div class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center">
+      <div class="mb-8">
+        <p class="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-[#6b7c7c]">
+          Sign In
+        </p>
+        <h2 class="font-fraunces-display mb-2 text-[2rem] leading-tight text-black sm:text-[2.15rem]">
+          Welcome back.
+        </h2>
+        <p class="text-sm text-[#6b7c7c]">
+          Great to see you again! Let's get you booked with your doctor.
+        </p>
+      </div>
+
+      <form class="space-y-5" (submit)="$event.preventDefault(); onSubmit()" novalidate>
+        <div>
+          <label for="email" class="mb-2 block text-sm font-medium text-[#3d4f4f]">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required [value]="email"
+            (input)="onEmailInput($event)"
+            class="block w-full rounded-lg border border-[#d5dede] bg-white px-4 py-3 text-[15px] text-[#1a2b2b] shadow-sm transition duration-200 placeholder:text-[#9aa8a8] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15"
+            placeholder="you@example.com" />
+        </div>
+
+        <div>
+          <label for="password" class="mb-2 block text-sm font-medium text-[#3d4f4f]">Password</label>
+          <div class="relative">
+            <input id="password" name="password" [type]="showPassword ? 'text' : 'password'"
+              autocomplete="current-password" required [value]="password" (input)="onPasswordInput($event)"
+              class="block w-full rounded-lg border border-[#d5dede] bg-white px-4 py-3 pr-12 text-[15px] text-[#1a2b2b] shadow-sm transition duration-200 placeholder:text-[#9aa8a8] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15"
+              placeholder="Enter your password" />
+            <button type="button" (click)="togglePasswordVisibility()"
+              class="absolute inset-y-0 right-0 flex items-center px-3 text-[#6b7c7c] transition hover:text-primary focus:outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-primary/30"
+              [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPassword">
+              <svg *ngIf="!showPassword" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path
+                  d="M2.036 12.322a1 1 0 0 1 0-.644C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z"
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <svg *ngIf="showPassword" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path
+                  d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-4 pt-1">
+          <label class="inline-flex cursor-pointer items-center gap-2.5 text-xs text-[#4a5c5c]">
+            <input type="checkbox" name="rememberMe" [checked]="rememberMe" (change)="onRememberMeChange($event)"
+              class="h-4 w-4 rounded border-[#c5d0d0] text-primary transition focus:ring-2 focus:ring-primary/20 focus:ring-offset-0" />
+            Remember me
+          </label>
+          <a href="#"
+            class="text-xs text-[#4a5c5c] underline-offset-2 transition hover:text-primary hover:underline focus:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary/30">
+            Forgot password?
+          </a>
+        </div>
+
+        <button type="submit"
+          class="mt-2 w-full rounded-lg bg-primary px-4 py-3.5 text-[15px] font-semibold text-white shadow-sm transition duration-200 hover:bg-[#053f3c] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.99]">
+          Sign in
+        </button>
+      </form>
+
+      <p class="mt-6 text-center text-xs text-gray">
+        New here?
+        <a routerLink="/auth/register"
+          class="ml-1 font-medium text-black underline underline-offset-2 transition hover:text-[#053f3c] focus:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary/30">
+          Sign up
+        </a>
+      </p>
+    </div>
+
+    <div class="mx-auto mt-10 w-full max-w-md text-center lg:mt-8">
+      <a href="#"
+        class="inline-flex items-center gap-1 text-sm text-[#6b7c7c] transition hover:text-primary focus:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary/30">
+        <span aria-hidden="true">←</span>
+        Back to NoQ.Home
+      </a>
+    </div>
+  </section>
+</div>

@@ -1,4 +1,5 @@
 const express = require("express");
+const upload = require("../middlewares/upload");
 const router = express.Router();
 const {
     register,
@@ -18,7 +19,7 @@ const authorize = require("../middlewares/authorize");
 router.post("/login", login);
 router.post("/logout", verifyToken, logout);
 router.get("/me", verifyToken, getMe);
-router.put("/me", verifyToken, updateMe);
+router.put("/me", verifyToken, upload.single("profileImage"), updateMe);
 router.post("/forgetPassword", forgetPassword);
 router.put("/resetPassword/:token", resetPassword);
 router.put("/updatePassword", verifyToken, updatePassword);
