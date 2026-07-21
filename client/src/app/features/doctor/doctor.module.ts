@@ -9,6 +9,14 @@ import { AppointmentsComponent } from './appointments/appointments.component';
 import { PrescriptionsComponent } from './prescriptions/prescriptions.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 
+import { FormsModule } from '@angular/forms'; // add if not already imported
+import { ProfileHeaderComponent } from './update-profile/components/profile-header/profile-header.component';
+import { PersonalInfoComponent } from './update-profile/components/personal-info/personal-info.component';
+import { ClinicsComponent } from './update-profile/components/clinics/clinics.component';
+import { ClinicCardComponent } from './update-profile/components/clinic-card/clinic-card.component';
+import { ScheduleEntryComponent } from './update-profile/components/schedule-entry/schedule-entry.component';
+
+
 @NgModule({
   declarations: [
     DoctorLayoutComponent,
@@ -17,7 +25,12 @@ import { NotificationsComponent } from './notifications/notifications.component'
     AppointmentsComponent,
     PrescriptionsComponent,
     NotificationsComponent,
+    ProfileHeaderComponent,
+    PersonalInfoComponent,
+    ClinicsComponent,
+    ClinicCardComponent,
+    ScheduleEntryComponent
   ],
-  imports: [CommonModule, DoctorRoutingModule],
+  imports: [CommonModule, DoctorRoutingModule,FormsModule]
 })
 export class DoctorModule {}

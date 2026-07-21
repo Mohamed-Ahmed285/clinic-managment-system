@@ -1,0 +1,61 @@
+<section class="card">
+  <span class="eyebrow">Section 1</span>
+  <h2>Personal information</h2>
+
+  <div class="content">
+    <div class="avatar-block">
+      <div class="avatar">{{ initials }}</div>
+      <label class="upload-btn">
+        Upload
+        <input type="file" accept="image/*" hidden (change)="onPhotoUpload($event)" />
+      </label>
+    </div>
+
+    <div class="fields">
+      <div class="field">
+        <label>Full name</label>
+        <input type="text" [(ngModel)]="info.fullName" name="fullName" />
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="info.email" name="email" />
+      </div>
+
+      <div class="field">
+        <label>Phone number</label>
+        <input type="tel" [(ngModel)]="info.phone" name="phone" />
+      </div>
+
+      <div class="field">
+        <label>Years of experience</label>
+        <input type="number" min="0" [(ngModel)]="info.yearsExperience" name="yearsExperience" />
+      </div>
+
+      <div class="field">
+        <label>Specialty</label>
+        <select [(ngModel)]="info.specialty" name="specialty">
+          <option *ngFor="let s of specialties" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Appointment duration (min)</label>
+        <input type="number" min="5" step="5" [(ngModel)]="info.appointmentDuration" name="appointmentDuration" />
+      </div>
+
+      <div class="field full-width">
+        <div class="bio-label-row">
+          <label>Bio</label>
+          <span class="char-count">{{ info.bio.length }}/1000</span>
+        </div>
+        <textarea
+          rows="4"
+          maxlength="1000"
+          [(ngModel)]="info.bio"
+          name="bio"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+</section>

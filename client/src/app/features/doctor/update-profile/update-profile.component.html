@@ -1,1 +1,7 @@
-<p>update-profile works!</p>
+<div class="page">
+  <app-profile-header (save)="onSave()"></app-profile-header>
+
+  <app-personal-info [info]="personalInfo"></app-personal-info>
+
+  <app-clinics [clinics]="clinics"></app-clinics>
+</div>
