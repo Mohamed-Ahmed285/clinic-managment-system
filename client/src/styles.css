@@ -1,7 +1,9 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root{
-  
+
+:root {
+
+  --text-lg: 1.125rem;
+  --text-lg--line-height: calc(1.75 / 1.125);
 }
