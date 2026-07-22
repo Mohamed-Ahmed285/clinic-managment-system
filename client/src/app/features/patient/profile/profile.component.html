@@ -1,3 +1,258 @@
 <app-navbar></app-navbar>
-<router-outlet></router-outlet>
-<app-footer></app-footer>
+<div class="bg-secondary py-8">
+  <div class="container mx-auto lg:px-24 md:px-24 pt-0 py-12 px-10">
+    <div
+      class="flex flex-col md:flex-row md:items-center md:justify-between gap-6"
+    >
+      <div>
+        <p class="uppercase tracking-[5px] text-gray-500 text-sm italic">
+          Account
+        </p>
+
+        <h1 class="text-5xl font-semibold mt-2 italic">Your profile</h1>
+
+        <p class="text-gray-600 mt-3 text-xl italic">
+          Keep your personal, medical, and insurance details up to date.
+        </p>
+      </div>
+
+      <button
+        class="bg-primary text-white px-8 py-3 rounded-2xl hover:opacity-90 transition"
+      >
+        Save changes
+      </button>
+    </div>
+
+
+
+    <div
+      class="bg-white rounded-3xl shadow-sm border border-[#e0e9eb] mt-10 p-6 lg:p-8"
+    >
+
+
+      <h2 class="text-4xl font-semiboldv italic mt-2">Personal information</h2>
+
+
+
+      <div class="grid lg:grid-cols-3 gap-8 mt-8">
+
+
+        <div class="flex flex-col items-center">
+          <div
+            class="w-40 h-40 rounded-full bg-primary flex items-center justify-center text-white text-5xl"
+          >
+            AM
+          </div>
+
+          <input
+            #fileInput
+            type="file"
+            accept="image/*"
+            hidden
+            (change)="onImageSelected($event)"
+          />
+
+          <button
+            class="border mt-5 rounded-xl px-5 py-2"
+            (click)="fileInput.click()"
+          >
+            Upload
+          </button>
+        </div>
+
+
+
+        <div class="lg:col-span-2">
+          <div class="grid md:grid-cols-2 gap-5">
+
+
+            <div>
+              <label class="uppercase text-sm text-gray-500"> Full Name </label>
+
+              <input
+                type="text"
+                class="w-full mt-2 rounded-xl border bg-[#f7fafa] p-3 border-[#e0e9eb]"
+              />
+            </div>
+
+
+            <div>
+              <label class="uppercase text-sm text-gray-500"> Email </label>
+
+              <input
+                type="email"
+                class="w-full mt-2 rounded-xl border bg-[#F4FBFA] p-3 border-[#e0e9eb]"
+              />
+            </div>
+
+
+
+            <div>
+              <label class="uppercase text-sm text-gray-500">
+                Phone Number
+              </label>
+
+              <input
+                class="w-full mt-2 rounded-xl border bg-[#F4FBFA] p-3 border-[#e0e9eb]"
+              />
+            </div>
+
+
+            <div>
+              <label class="uppercase text-sm text-gray-500">
+                Date Of Birth
+              </label>
+
+              <input
+                type="date"
+                class="w-full mt-2 rounded-xl border bg-[#F4FBFA] p-3 border-[#e0e9eb]"
+              />
+            </div>
+
+
+
+            <div>
+              <label class="uppercase text-sm text-gray-500"> Gender </label>
+
+              <select
+                class="w-full mt-2 rounded-xl border bg-[#F4FBFA] p-3 border-[#e0e9eb]"
+              >
+                <option>Male</option>
+                <option>Female</option>
+              </select>
+            </div>
+
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+
+  <div>
+    <label class="uppercase text-sm text-gray-500">City</label>
+
+    <input
+      type="text"
+      placeholder="Cairo"
+      class="w-full mt-2 rounded-xl border border-[#e0e9eb] bg-[#F4FBFA] p-3 outline-none focus:border-primary"
+    />
+  </div>
+
+
+  <div>
+    <label class="uppercase text-sm text-gray-500">State</label>
+
+    <input
+      type="text"
+      placeholder="Cairo Governorate"
+      class="w-full mt-2 rounded-xl border border-[#e0e9eb] bg-[#F4FBFA] p-3 outline-none focus:border-primary"
+    />
+  </div>
+
+  <div>
+    <label class="uppercase text-sm text-gray-500">Country</label>
+
+    <input
+      type="text"
+      placeholder="Egypt"
+      class="w-full mt-2 rounded-xl border border-[#e0e9eb] bg-[#F4FBFA] p-3 outline-none focus:border-primary"
+    />
+  </div>
+
+</div>
+<div>
+  <label class="uppercase text-sm text-gray-500">
+    Preferred Payment Method
+  </label>
+
+  <select
+    class="w-full mt-2 rounded-xl border border-[#e0e9eb] bg-[#F4FBFA] p-3 outline-none focus:border-primary pe-2"
+  >
+    <option value="">Select payment method</option>
+    <option value="cash">Cash</option>
+    <option value="online">Online</option>
+
+  </select>
+</div>
+
+
+<div class="flex flex-col justify-end">
+  <label class="uppercase text-sm text-gray-500 mb-4">
+    Notifications
+  </label>
+
+  <label class="flex items-center gap-3 cursor-pointer">
+    <input
+      type="checkbox"
+      class="w-5 h-5 accent-primary mb-3 "
+    />
+
+    <span class="text-gray-700 mb-3">
+      Enable notifications
+    </span>
+  </label>
+</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="appointments">
+      <div
+        class="bg-white rounded-3xl shadow-sm border border-[#e0e9eb] mt-10 p-6 lg:p-8"
+      >
+        <div class="flex flex-wrap justify-between items-center gap-5">
+    <div>
+            <h1 class="text-4xl font-semibold mt-2 italic">
+            Your Next Appointements
+          </h1>
+
+          <p class="text-gray-600 mt-3 text-xl italic">
+            <i class="fa-solid fa-triangle-exclamation text-2xl mr-2"></i> Don't
+            forget your appointments
+          </p>
+    </div>
+    <button class="bg-primary py-0 px-3 text-white rounded-full h-[50px] " routerLink="../appointments/">+Book Appointment</button>
+        </div>
+        <div>
+
+            <div class="flex justify-between items-center py-8 flex-wrap gap-3">
+              <div class="flex gap-5 flex-wrap lg:w-1/2">
+                <div
+                  class="bg-secondary rounded-2xl w-20 h-20 flex flex-col justify-center items-center p-5"
+                >
+                  <span class="text-sm tracking-widest"> Sunday </span>
+
+                  <span class="text-3xl font-semibold"> 9:00 </span>
+                </div>
+
+                <div>
+                  <h3 class="text-3xl font-semibold text-black">
+                    Dr.Ahmed Marwan
+                  </h3>
+
+                  <p class="text-gray mt-1">Cardiology · confirmed</p>
+
+                  <p class="text-2xl mt-2 text-black">Appointment</p>
+
+                  <p class="text-gray mt-1 w-fu">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Dolore suscipit vero consequuntur blanditiis dolorum dolorem
+                    officiis, repellendus distinctio voluptas reprehenderit,
+                    pariatur aspernatur. Suscipit blanditiis ratione assumenda
+                    facilis iste neque reiciendis?
+                  </p>
+                </div>
+              </div>
+              <div class="flex gap-2 flex-wrap">
+                <button class="bg-secondary p-2 rounded-full">Confirmed</button>
+                <button class=" rounded-full py-1 px-2 border border-gray">Reschedule</button>
+                 <button class="text-red-500 border border-red-500 py-2 rounded-full px-4 hover:bg-red-500 hover:text-white">Cancel</button>
+              </div>
+            </div>
+
+        </div>
+      </div>
+    </div>
+
+    <app-footer></app-footer>
+  </div>
+</div>
