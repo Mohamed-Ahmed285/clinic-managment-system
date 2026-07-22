@@ -1,5 +1,61 @@
-<p>home works!</p>
-  <button class="bg-secondary text-red-500 px-5 py-2 rounded ">
-    Login
-  </button>
-<router-outlet></router-outlet>
+<app-navbar></app-navbar>
+<div class="container mx-auto lg:px-24 md:px-24 pt-0 py-12">
+  <div class="flex flex-wrap  justify-between">
+<div class=" left  italic flex  justify-center
+lg:text-start text-center w-full lg:w-1/2 flex-col gap-5 lg:items-start items-center  p-2 relative ">
+  <div
+    class="absolute inset-0
+           -z-10
+           bg-teal-200/30
+           blur-[140px]
+           rounded-full">
+  </div>
+<h1 class=" font-semibold text-5xl">
+  Calm, coordinated care,
+  <br>
+<span class="text-primary ">  every step of the way.</span>
+</h1>
+<p class="text-gray">
+Meridian Health connects patients and clinicians in one quiet, focused place. Book visits, review results, and message your care team without the noise.
+</p>
+<button class="bg-primary text-white btn rounded-3xl w-fit text-lg p-2" (click)="openPopup()">Book Appointment</button>
+</div>
+<div class="right  justify-center flex items-center w-full lg:w-1/2">
+<img src="../../assets/Home/doctor-1-74 (2).png" class="w-3/4 h-[500px] drop-shadow-[0_0_120px_rgba(16,185,129,0.35)] "/>
+</div>
+</div>
+</div>
+<div
+  *ngIf="showPopup"
+  class="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+
+  <div class="bg-white rounded-2xl p-6 w-[350px] text-center shadow-xl">
+
+    <h2 class="text-2xl font-semibold text-primary mb-3">
+      Login Required
+    </h2>
+
+    <p class="text-gray-600 mb-6">
+      You need to log in before booking an appointment.
+    </p>
+
+    <div class="flex justify-center gap-3">
+
+      <button
+        (click)="closePopup()"
+        class="px-5 py-2 border rounded-xl">
+        Cancel
+      </button>
+
+      <button
+        routerLink="/auth/login"
+        class="px-5 py-2 bg-primary text-white rounded-xl">
+        Login
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+<app-footer></app-footer>
