@@ -1,0 +1,21 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.font-fraunces-display {
+  font-family: 'Fraunces', Georgia, serif;
+}
+
+.font-serif-display {
+  font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+}
+
+.font-sans-body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.text-lg {
+  font-size: var(--text-lg);
+  line-height: var(--tw-leading, var(--text-lg--line-height));
+}
