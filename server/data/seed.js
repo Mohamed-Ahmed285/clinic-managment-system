@@ -57,6 +57,8 @@ const seed = async () => {
         phone: '+201001234567',
         email: 'contact@brightcare.com',
         image: 'https://example.com/clinic.jpg',
+        startHour: '09:00',
+        endHour: '17:00',
         address: {
           street: '12 El-Nasr Street',
           city: 'Cairo',
@@ -69,6 +71,8 @@ const seed = async () => {
         phone: '+201112345678',
         email: 'info@wellnessclinic.com',
         image: 'https://example.com/dental.jpg',
+        startHour: '10:00',
+        endHour: '18:00',
         address: {
           street: '8 Mohammed Ali Street',
           city: 'Alexandria',
@@ -144,6 +148,7 @@ const seed = async () => {
         date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
         startTime: '10:00',
         endTime: '10:30',
+        durationMinutes: 30,
         status: 'confirmed',
         paymentMethod: 'online',
         paymentStatus: 'paid',
@@ -156,6 +161,7 @@ const seed = async () => {
         date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
         startTime: '15:00',
         endTime: '15:30',
+        durationMinutes: 30,
         status: 'pending',
         paymentMethod: 'cash',
         paymentStatus: 'pending',

@@ -44,7 +44,10 @@ try {
         {
             bio: req.body.bio,
             experienceYears: req.body.experienceYears,
-            specialtyId: req.body.specialtyId
+            specialtyId: req.body.specialtyId,
+            appointmentDurationMinutes: req.body.appointmentDurationMinutes == null
+                ? undefined
+                : Number(req.body.appointmentDurationMinutes)
         },
         { new: true, runValidators: true }
     ).populate(populateDoctor);

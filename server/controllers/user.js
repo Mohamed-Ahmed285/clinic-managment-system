@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const {addToBlacklist} = require("../middlewares/auth");
 const sendEmail = require("../utils/sendEmail");
+const { updateMyProfileService } = require("../services/userServices");
 
 
 //create user (only admin can create any user)
@@ -118,6 +119,54 @@ try{
     return res.status(500).send(err.message);
 }};
 
+
+
+// update me for updating basic info(name,phone,profile image)
+// const updateMe = async (req, res) => {
+//     try {
+//         // Pass the required data to the service layer
+//         const updated = await updateMyProfileService(
+//             req.user.id, 
+//             req.body, 
+//             req.file
+//         );
+
+//         return res.status(200).json(updated);
+//     } catch (err) {
+//         return res.status(500).send(err.message);
+//     }
+// };
+const updateMe = async (req, res) => {
+    try {
+        // Fallback to an empty object if req.body is undefined
+        const body = req.body || {}; 
+        
+        // Dynamically build the update object so we don't overwrite with undefined
+        let updateData = {};
+        if (body.name) updateData.name = body.name;
+        if (body.phone) updateData.phone = body.phone;
+
+        // If Multer processed an image, grab the secure Cloudinary URL
+        if (req.file) {
+            updateData.profileImage = req.file.path; 
+        } 
+        // Fallback: if a string URL was provided instead of a file
+        else if (body.profileImage) {
+            updateData.profileImage = body.profileImage;
+        }
+
+        var updated = await userModel.findByIdAndUpdate(
+            req.user.id,
+            updateData,
+            { new: true, runValidators: true }
+        ).select("-password");
+
+        return res.status(200).json(updated);
+    }catch(err){
+        return res.status(500).send(err.message);
+    }
+};
+
 //update password (user is already in)
 const updatePassword = async(req,res)=>{
 try{
@@ -209,6 +258,8 @@ try{
 }};
 
 
+
+
 // //forget password
 // const forgetPassword = async(req,res)=>{
 // try{
@@ -260,6 +311,7 @@ module.exports = {
     getMe,
     forgetPassword,
     resetPassword,
+    updateMe,
     updatePassword,
     createUser
 }
