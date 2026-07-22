@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -6,12 +8,35 @@ import { Component } from '@angular/core';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
-  email = 'alex@example.com';
-  password = '12345678';
+  // Component properties updated directly by your HTML
+  email = 'patient@example.com';
+  password = 'password123';
   rememberMe = false;
   showPassword = false;
 
-  onSubmit(): void {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  onSubmit() {
+    // 1. Construct the payload directly from the component's state
+    const credentials = {
+      email: this.email,
+      password: this.password
+    };
+
+    // 2. Send the request
+    this.authService.login(credentials).subscribe({
+      next: (response) => {
+        localStorage.setItem('token', response.token);
+        this.router.navigate(['/patient']);
+      },
+      error: (err) => {
+        console.error('Login failed', err);
+      }
+    });
+  }
 
   onEmailInput(event: Event): void {
     this.email = (event.target as HTMLInputElement).value;
