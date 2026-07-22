@@ -37,6 +37,7 @@ const adminAnalyticsRoutes = require("./routes/adminAnalytics");
 const reviewRouter = require("./routes/routeReview");
 const medicalRecordRouter = require("./routes/medicalRecord");
 const prescriptionRouter = require("./routes/prescription");
+const paymentRouter = require("./routes/payment");
 
 app.use("/user", userRouter);
 app.use("/patient", patientRouter);
@@ -52,7 +53,7 @@ app.use("/admin/doctors", adminDoctorRoutes);
 app.use("/notifications", notifications);
 app.use("/admin/analytics", adminAnalyticsRoutes);
 app.use("/review", reviewRouter);
-
+app.use("/payment", paymentRouter);
 // ========================
 // Database Connection & Server Start
 // ========================
