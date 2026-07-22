@@ -8,15 +8,8 @@ import { SharedModule } from './shared/shared.module';
 
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule
-  ],
+  declarations: [AppComponent, HomeComponent],
+  imports: [BrowserModule, AppRoutingModule, HttpClientModule, SharedModule],
   providers: [],
   bootstrap: [AppComponent],
 })
