@@ -17,8 +17,16 @@ const server = http.createServer(app);
 // ========================
 // Middleware
 // ========================
-app.use(express.json());
 app.use(cors());
+
+// Stripe Webhook 
+app.use(
+  "/payment/webhook",
+  express.raw({ type: "application/json" })
+);
+
+
+app.use(express.json());
 
 // ========================
 // Routes
