@@ -1,0 +1,19 @@
+<section class="section">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">Section 2</span>
+      <h2>Clinics</h2>
+    </div>
+    <button type="button" class="btn-primary" (click)="addClinic()">
+      + Add clinic
+    </button>
+  </div>
+
+  <div class="clinic-list">
+    <app-clinic-card
+      *ngFor="let clinic of clinics; let i = index"
+      [clinic]="clinic"
+      (remove)="removeClinic(i)"
+    ></app-clinic-card>
+  </div>
+</section>

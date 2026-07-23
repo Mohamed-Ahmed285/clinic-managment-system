@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
+import { NotFoundComponent } from './not-found/not-found.component';
+
 const routes: Routes = [
   {
     path: '',
@@ -11,7 +13,6 @@ const routes: Routes = [
     loadChildren: () =>
       import('./features/patient/patient.module').then((m) => m.PatientModule),
   },
-  
   {
     path: 'auth',
     loadChildren: () =>
@@ -29,7 +30,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '',
+    component: NotFoundComponent,
   },
 ];
 

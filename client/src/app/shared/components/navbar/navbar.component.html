@@ -1,0 +1,51 @@
+<div class="container mx-auto p-2">
+  <div class="flex justify-around  my-3  w-full items-start  h-[70px]">
+<div class=" h-full flex ">
+  <img src="../../../../assets/Home/logo (3).png" class="w-full  object-fit h-full">
+</div>
+<div class="hidden md:block">
+<ul class="md:flex gap-5 mt-4 text-gray hidden font-semibold text-md  lg:ms-20 md:ms-10">
+  <li>Contact Us<li>
+  <li>Departments</li>
+</ul>
+
+</div>
+<div class="flex justify-content-center">
+  <i
+  class="fa-solid text-3xl block text-gray md:hidden mt-4 cursor-pointer transition-all duration-300"
+  [class.fa-bars]="!isMenuOpen"
+  [class.fa-xmark]="isMenuOpen"
+  (click)="toggleMenu()">
+</i>
+</div>
+<div class="md:flex gap-2 md:flex-row flex-col flex-2 hidden" >
+<button class="button bg-primary py-2 px-5 rounded-3xl text-white"  routerLink='/auth/login'>Login</button>
+<button class="button bg-primary py-2 px-5 rounded-3xl text-white" routerLink='/auth/register'>Register</button>
+</div>
+</div>
+<div
+  class="md:hidden overflow-hidden transition-all duration-300 ease-in-out"
+  [style.max-height]="isMenuOpen ? '250px' : '0px'">
+
+  <div class="mx-4 mt-2 rounded-2xl bg-white shadow-xl border border-secondary text-center">
+
+    <ul class="py-3 text-gray font-semibold">
+
+      <li class="px-5 py-3 hover:bg-secondary cursor-pointer transition-colors duration-200">
+        Contact Us
+      </li>
+
+      <li class="px-5 py-3 hover:bg-secondary cursor-pointer transition-colors duration-200">
+        Departments
+      </li>
+
+    </ul>
+<div class="flex gap-2 md:flex-row flex-col flex-2  items-center justify-center pb-5" >
+<button class="button bg-primary py-2 px-5 rounded-3xl text-white w-1/4">Login</button>
+<button class="button bg-primary py-2 px-5 rounded-3xl text-white w-1/4">Register</button>
+</div>
+  </div>
+
+</div>
+</div>
+
