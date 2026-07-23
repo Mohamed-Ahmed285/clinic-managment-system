@@ -1,1 +1,22 @@
-<p>notifications works!</p>
+<section class="card">
+  <div class="card__header">
+    <div>
+      <p class="card__eyebrow">Notifications</p>
+      <h2 class="card__title">Notifications</h2>
+    </div>
+  </div>
+
+  <ul class="notification-list">
+    <li class="notification-row" *ngFor="let note of notifications">
+      <span class="notification-row__dot" [class.notification-row__dot--unread]="!note.read"></span>
+      <div class="notification-row__body">
+        <div class="notification-row__top">
+          <span class="notification-row__sender">{{ note.senderName }}</span>
+          <span class="notification-row__time">{{ note.timeAgo }}</span>
+        </div>
+        <p class="notification-row__subject">{{ note.subject }}</p>
+        <p class="notification-row__preview">{{ note.preview }}</p>
+      </div>
+    </li>
+  </ul>
+</section>

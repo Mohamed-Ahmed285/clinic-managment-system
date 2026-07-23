@@ -15,22 +15,29 @@ import { PersonalInfoComponent } from './update-profile/components/personal-info
 import { ClinicsComponent } from './update-profile/components/clinics/clinics.component';
 import { ClinicCardComponent } from './update-profile/components/clinic-card/clinic-card.component';
 import { ScheduleEntryComponent } from './update-profile/components/schedule-entry/schedule-entry.component';
-
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { ScheduleComponent } from './schedule/schedule.component';
+import { PanelSnapshotComponent } from './panel-snapshot/panel-snapshot.component';
+import { RatingComponent } from './rating/rating.component';
 
 @NgModule({
   declarations: [
-    DoctorLayoutComponent,
-    ProfileComponent,
-    UpdateProfileComponent,
-    AppointmentsComponent,
-    PrescriptionsComponent,
-    NotificationsComponent,
-    ProfileHeaderComponent,
-    PersonalInfoComponent,
-    ClinicsComponent,
-    ClinicCardComponent,
-    ScheduleEntryComponent
-  ],
+  DoctorLayoutComponent,
+  ProfileComponent,
+  UpdateProfileComponent,
+  AppointmentsComponent,
+  PrescriptionsComponent,
+  NotificationsComponent,
+  ProfileHeaderComponent,
+  PersonalInfoComponent,
+  ClinicsComponent,
+  ClinicCardComponent,
+  ScheduleEntryComponent,
+  DashboardComponent,
+  ScheduleComponent,
+  PanelSnapshotComponent,
+  RatingComponent
+],
   imports: [CommonModule, DoctorRoutingModule,FormsModule]
 })
 export class DoctorModule {}

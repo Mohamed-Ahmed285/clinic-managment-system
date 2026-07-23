@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { NotificationItem } from '../models/dashboard.model';
 
 @Component({
   selector: 'app-notifications',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./notifications.component.css']
 })
 export class NotificationsComponent {
-
+  @Input() notifications: NotificationItem[] = [];
 }

@@ -1,0 +1,10 @@
+<section class="card">
+  <h2 class="card__title">Panel snapshot</h2>
+
+  <div class="stat-grid">
+    <div class="stat-box" *ngFor="let stat of stats">
+      <p class="stat-box__label">{{ stat.label }}</p>
+      <p class="stat-box__value">{{ stat.value }}</p>
+    </div>
+  </div>
+</section>
