@@ -16,29 +16,41 @@ export interface LoginResponse {
     role: string;
   };
 }
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  address?: {
+    city?: string;
+    state?: string;
+    country?: string;
+  };
+  preferredPaymentMethod?: string;
+  profileImage?: string;
+}
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
   private api = environment.apiUrl;
-
   constructor(private http: HttpClient) {}
 
   login(data: LoginRequest) {
-  return this.http.post<LoginResponse>(
-    `${environment.apiUrl}/user/login`,
-    data
-  );
+    return this.http.post<LoginResponse>(
+      `${environment.apiUrl}/user/login`,
+      data
+    );
+  }
 
-//   logout(): void {
-
-//   localStorage.removeItem('token');
-//   localStorage.removeItem('user');
-
-//   this.router.navigate(['/login']);
-
-// }
-}
+  register(data: RegisterRequest): Observable<any> {
+    return this.http.post<any>(
+      `${this.api}/patient/register`,
+      data
+    );
+  }
 
 }

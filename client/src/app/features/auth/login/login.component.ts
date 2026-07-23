@@ -20,13 +20,12 @@ export class LoginComponent {
   ) {}
 
   onSubmit() {
-    // 1. Construct the payload directly from the component's state
     const credentials = {
       email: this.email,
       password: this.password
     };
 
-    // 2. Send the request
+    // Send the request
     this.authService.login(credentials).subscribe({
       next: (response) => {
         localStorage.setItem('token', response.token);

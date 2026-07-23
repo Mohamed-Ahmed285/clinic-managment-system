@@ -7,14 +7,15 @@ const todoModel = require("../models/todo");
 const register = async(req,res)=>{
 var savedUser;
 try{
-    var existingUser = await userModel.findOne({email:req.body.email});
+    const email = req.body.email?.toLowerCase().trim();
+    var existingUser = await userModel.findOne({ email });
     if(existingUser){
-        return res.status(400).send("user already exists");
+        return res.status(400).json({ message: "User already exists" });
     }
 
     var newUser = new userModel({
         name:req.body.name,
-        email:req.body.email,
+        email,
         password:req.body.password,
         phone:req.body.phone,
         profileImage:req.body.profileImage,
@@ -30,12 +31,17 @@ try{
         preferredPaymentMethod:req.body.preferredPaymentMethod
     });
 
-    return res.status(200).json({user:savedUser, profile});
+    const { password, ...userWithoutPassword } = savedUser.toObject();
+
+    return res.status(200).json({ user: userWithoutPassword, profile });
 }catch(err){
     if(savedUser){
         await userModel.findByIdAndDelete(savedUser._id);
     }
-    return res.status(500).send(err.message);
+    if(err.name === "ValidationError"){
+        return res.status(400).json({ message: err.message });
+    }
+    return res.status(500).json({ message: err.message });
 }};
 //
 

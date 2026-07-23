@@ -17,8 +17,16 @@ const server = http.createServer(app);
 // ========================
 // Middleware
 // ========================
-app.use(express.json());
 app.use(cors());
+
+// Stripe Webhook 
+app.use(
+  "/payment/webhook",
+  express.raw({ type: "application/json" })
+);
+
+
+app.use(express.json());
 
 // ========================
 // Routes
@@ -37,6 +45,7 @@ const adminAnalyticsRoutes = require("./routes/adminAnalytics");
 const reviewRouter = require("./routes/routeReview");
 const medicalRecordRouter = require("./routes/medicalRecord");
 const prescriptionRouter = require("./routes/prescription");
+const paymentRouter = require("./routes/payment");
 
 app.use("/user", userRouter);
 app.use("/patient", patientRouter);
@@ -52,7 +61,7 @@ app.use("/admin/doctors", adminDoctorRoutes);
 app.use("/notifications", notifications);
 app.use("/admin/analytics", adminAnalyticsRoutes);
 app.use("/review", reviewRouter);
-
+app.use("/payment", paymentRouter);
 // ========================
 // Database Connection & Server Start
 // ========================
