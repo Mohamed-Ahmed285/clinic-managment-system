@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { SharedModule } from '../../shared/shared.module';
 import { DoctorRoutingModule } from './doctor-routing.module';
 import { DoctorLayoutComponent } from './doctor-layout/doctor-layout.component';
 import { ProfileComponent } from './profile/profile.component';
@@ -38,6 +38,6 @@ import { RatingComponent } from './rating/rating.component';
   PanelSnapshotComponent,
   RatingComponent
 ],
-  imports: [CommonModule, DoctorRoutingModule,FormsModule]
+  imports: [CommonModule, DoctorRoutingModule,FormsModule,SharedModule]
 })
 export class DoctorModule {}

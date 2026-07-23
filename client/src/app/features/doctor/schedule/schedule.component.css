@@ -1,8 +1,8 @@
 .card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(30, 42, 38, 0.05), 0 1px 12px rgba(30, 42, 38, 0.04);
   padding: 28px;
 }
 
@@ -18,19 +18,21 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-ink-faint);
+  color: var(--eyebrow);
   margin-bottom: 6px;
 }
 
 .card__title {
+  font-family: 'Fraunces', serif;
   font-size: 22px;
   font-weight: 600;
+  color: var(--ink);
 }
 
 .card__link {
   font-size: 13px;
   font-weight: 500;
-  color: var(--color-accent);
+  color: var(--teal);
   text-decoration: none;
   white-space: nowrap;
   margin-top: 4px;
@@ -52,7 +54,7 @@
   align-items: center;
   gap: 16px;
   padding: 16px 0;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--border);
 }
 
 .visit-row:first-child {
@@ -62,7 +64,7 @@
 .visit-row__time {
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-ink);
+  color: var(--ink);
 }
 
 .visit-row__info {
@@ -75,12 +77,12 @@
 .visit-row__name {
   font-size: 15px;
   font-weight: 600;
-  color: var(--color-ink);
+  color: var(--ink);
 }
 
 .visit-row__type {
   font-size: 13px;
-  color: var(--color-ink-soft);
+  color: var(--muted);
 }
 
 .status {
@@ -90,21 +92,21 @@
 }
 
 .status--checked-in {
-  color: var(--color-accent);
+  color: var(--teal);
 }
 
 .status--waiting {
-  color: var(--color-alert);
+  color: var(--label);
 }
 
 .status--in-room {
-  color: var(--color-ink-faint);
+  color: var(--eyebrow);
 }
 
 .status--upcoming {
-  color: var(--color-ink-soft);
+  color: var(--muted);
 }
 
 .status--completed {
-  color: var(--color-ink-faint);
+  color: var(--eyebrow);
 }

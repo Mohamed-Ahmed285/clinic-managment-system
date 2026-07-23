@@ -10,3 +10,4 @@ import { RouterModule } from '@angular/router';
   exports: [NavbarComponent, FooterComponent],
 })
 export class SharedModule {}
+
