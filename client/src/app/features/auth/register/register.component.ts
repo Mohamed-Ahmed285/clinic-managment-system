@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../../../core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -6,6 +8,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent {
+
+constructor(
+  private authService: AuthService,
+  private router: Router
+) {}
   name = '';
   email = '';
   phone = '';
@@ -23,6 +30,7 @@ export class RegisterComponent {
   errorMessage = '';
 
   onSubmit(): void {
+
     this.errorMessage = '';
 
     if (!this.name.trim()) {
@@ -37,6 +45,11 @@ export class RegisterComponent {
 
     if (!this.email.trim()) {
       this.errorMessage = 'Email is required.';
+      return;
+    }
+
+    if (!this.isValidEmail(this.email.trim())) {
+      this.errorMessage = 'Enter a valid email address.';
       return;
     }
 
@@ -56,13 +69,33 @@ export class RegisterComponent {
     }
 
     const payload = this.buildRegistrationPayload();
-    console.log('Registration payload:', payload);
-  }
+
+  this.authService.register(payload).subscribe({
+    next: (res: any) => {
+
+      this.router.navigate(['/auth/login']);
+
+    },
+
+    error: (err: any) => {
+      console.error(err);
+
+      if (err.error?.message) {
+        this.errorMessage = err.error.message;
+      } else if (typeof err.error === 'string') {
+        this.errorMessage = err.error;
+      } else {
+        this.errorMessage = 'Registration failed. Please try again.';
+      }
+    },
+  });
+
+}
 
   buildRegistrationPayload() {
     return {
       name: this.name.trim(),
-      email: this.email.trim(),
+      email: this.email.trim().toLowerCase(),
       password: this.password,
       phone: this.phone.trim() || undefined,
       dateOfBirth: this.dateOfBirth || undefined,
@@ -122,5 +155,9 @@ export class RegisterComponent {
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  private isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 }
