@@ -10,10 +10,12 @@
   </div>
 
   <div class="clinic-list">
-    <app-clinic-card
-      *ngFor="let clinic of clinics; let i = index"
-      [clinic]="clinic"
-      (remove)="removeClinic(i)"
-    ></app-clinic-card>
+  <app-clinic-card
+    *ngFor="let clinic of clinics; let i = index"
+    [clinic]="clinic"
+    [availableClinics]="availableClinics"
+    (remove)="removeClinic(i)"
+    (save)="saveClinic($event)">
+  </app-clinic-card>
   </div>
 </section>
