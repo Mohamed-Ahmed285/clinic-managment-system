@@ -16,6 +16,50 @@ try {
     return res.status(500).send(err.message);
 }};
 
+const getDoctorsPaginated = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+
+    const skip = (page - 1) * limit;
+
+    let query = {};
+
+    if (search) {
+      query = {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { specialization: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
+      };
+    }
+
+    const [doctors, totalDoctors] = await Promise.all([
+      doctorModel
+        .find(query)
+        .populate(populateDoctor)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+
+      doctorModel.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+      doctors,
+      currentPage: page,
+      totalPages: Math.ceil(totalDoctors / limit),
+      totalDoctors,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+};
+
 const getDoctorById = async (req, res) => {
 try {
     const doctor = await doctorModel.findById(req.params.id).populate(populateDoctor);
@@ -229,5 +273,6 @@ module.exports = {
     addClinicToMyProfile,
     updateClinicAssignment,
     removeClinicFromMyProfile,
-    uploadDoctorPhoto
+    uploadDoctorPhoto,
+    getDoctorsPaginated
 };

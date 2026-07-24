@@ -8,13 +8,15 @@ const {
     addClinicToMyProfile,
     updateClinicAssignment,
     removeClinicFromMyProfile,
-    uploadDoctorPhoto
+    uploadDoctorPhoto,
+    getDoctorsPaginated
 } = require("../controllers/doctor");
 const { verifyToken } = require("../middlewares/auth");
 const authorize = require("../middlewares/authorize");
 const upload = require("../middlewares/upload");
 
 router.get("/", getDoctors);
+router.get("/search",verifyToken, authorize("search:doctors"), getDoctorsPaginated);
 router.get("/me", verifyToken, authorize("get:doctorprofile"), getMyDoctorProfile);
 router.get("/:id", getDoctorById);
 router.put("/me", verifyToken, authorize("update:doctorprofile"), updateMyDoctorProfile);

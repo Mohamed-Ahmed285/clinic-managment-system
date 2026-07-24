@@ -10,6 +10,10 @@ const permissions = {
     "doctor:update",
     "doctor:delete",
 
+
+    "search:doctors",
+    "search:clinics",
+
     "get:appointments",
     "update:appointments",
     "cancel:appointment",
@@ -57,6 +61,10 @@ const permissions = {
     "update:clinicToDoctor",
     "delete:clinicFromDoctor",
     "add:clinicToDoctor",
+
+
+    "search:doctors",
+    "search:clinics",
     ],
 
     patient: [
@@ -80,7 +88,9 @@ const permissions = {
         "review:create",
         "review:read",
         "review:update",
-        "review:delete"
+        "review:delete",
+        "search:doctors",
+        "search:clinics",
     ]
 };
 
