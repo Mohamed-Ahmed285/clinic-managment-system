@@ -1,19 +1,51 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { DoctorService } from 'src/app/core/services/doctor.service';
 import { Clinic } from '../../models/profile.model';
+import {
+  ClinicService,
+  Clinic as ApiClinic
+} from 'src/app/core/services/clinic.service';
 
 @Component({
   selector: 'app-clinics',
   templateUrl: './clinics.component.html',
   styleUrls: ['./clinics.component.css']
 })
-export class ClinicsComponent {
+export class ClinicsComponent implements OnInit {
+
   @Input() clinics!: Clinic[];
+
+  availableClinics: ApiClinic[] = [];
+
+  constructor(
+    private doctorService: DoctorService,
+    private clinicService: ClinicService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadClinics();
+  }
+
+  loadClinics(): void {
+    this.clinicService.getAllClinics().subscribe({
+      next: (data: ApiClinic[]) => {
+        this.availableClinics = data;
+        console.log('Available clinics:', data);
+      },
+      error: (err: any) => {
+        console.error('Failed to load clinics', err);
+      }
+    });
+  }
 
   addClinic(): void {
     this.clinics.push({
-      name: 'New clinic',
+      id: '',
+      selectedClinicId: '',
+      name: '',
       address: '',
       status: 'Active',
+      isActiveAtClinic: true,
       consultationFee: 0,
       schedule: []
     });
@@ -22,4 +54,52 @@ export class ClinicsComponent {
   removeClinic(index: number): void {
     this.clinics.splice(index, 1);
   }
+
+  saveClinic(clinic: Clinic): void {
+
+    const body = {
+      clinicId: clinic.selectedClinicId || clinic.id,
+      consultationFee: clinic.consultationFee,
+      isActiveAtClinic: clinic.isActiveAtClinic,
+      availability: clinic.schedule.map(entry => ({
+        day: entry.days,
+        startTime: entry.start,
+        endTime: entry.end
+      }))
+    };
+
+    // Existing clinic assignment
+    if (clinic.id) {
+
+      this.doctorService.updateClinic(clinic.id, body).subscribe({
+        next: () => {
+          alert('Clinic updated successfully');
+        },
+        error: (err: any) => {
+          console.error('Update clinic error:', err);
+          console.error(err.error);
+          alert('Failed to update clinic');
+        }
+      });
+
+    }
+
+    // New clinic assignment
+    else {
+
+      this.doctorService.addClinic(body).subscribe({
+        next: () => {
+          alert('Clinic added successfully');
+        },
+        error: (err: any) => {
+          console.error('Add clinic error:', err);
+          console.error(err.error);
+          alert('Failed to add clinic');
+        }
+      });
+
+    }
+
+  }
+
 }

@@ -17,9 +17,10 @@ export class ScheduleEntryComponent {
   }
 
   toggleDay(day: string): void {
-    const idx = this.entry.days.indexOf(day);
-    if (idx > -1) {
-      this.entry.days.splice(idx, 1);
+    const index = this.entry.days.indexOf(day);
+
+    if (index >= 0) {
+      this.entry.days.splice(index, 1);
     } else {
       this.entry.days.push(day);
     }

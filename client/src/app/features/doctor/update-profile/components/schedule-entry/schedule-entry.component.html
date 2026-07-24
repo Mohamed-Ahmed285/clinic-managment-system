@@ -2,14 +2,14 @@
   <div class="entry-main">
     <div class="day-row">
       <button
-        type="button"
-        *ngFor="let day of days"
-        class="day-pill"
-        [class.selected]="isSelected(day)"
-        (click)="toggleDay(day)"
-      >
-        {{ day }}
-      </button>
+          type="button"
+          *ngFor="let day of days"
+          class="day-pill"
+          [class.selected]="isSelected(day.value)"
+          (click)="toggleDay(day.value)"
+        >
+          {{ day.label }}
+    </button>
     </div>
 
     <div class="time-row">

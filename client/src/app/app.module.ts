@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { SharedModule } from './shared/shared.module';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './core/services/interceptors/auth.interceptor';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 
 
@@ -22,7 +24,13 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
     HttpClientModule,
     SharedModule
   ],
-  providers: [],
+  providers: [
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true
+  }
+    ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
