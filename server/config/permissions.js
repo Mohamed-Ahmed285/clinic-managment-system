@@ -55,7 +55,8 @@ const permissions = {
     "get:doctorprofile",
     "update:doctorprofile",
     "update:clinicToDoctor",
-    "delete:clinicFromDoctor"
+    "delete:clinicFromDoctor",
+    "add:clinicToDoctor",
     ],
 
     patient: [

@@ -4,7 +4,16 @@
 
   <div class="content">
     <div class="avatar-block">
-      <div class="avatar">{{ initials }}</div>
+      <div class="avatar">
+          <img
+            *ngIf="info.profileImage"
+            [src]="info.profileImage"
+            alt="Profile photo"
+          />
+          <span *ngIf="!info.profileImage">
+            {{ initials }}
+          </span>
+        </div>
       <label class="upload-btn">
         Upload
         <input type="file" accept="image/*" hidden (change)="onPhotoUpload($event)" />
@@ -34,8 +43,17 @@
 
       <div class="field">
         <label>Specialty</label>
-        <select [(ngModel)]="info.specialty" name="specialty">
-          <option *ngFor="let s of specialties" [value]="s">{{ s }}</option>
+
+        <select [(ngModel)]="info.specialtyId" name="specialtyId">
+
+          <option
+            *ngFor="let s of specialties"
+            [value]="s._id">
+
+            {{ s.name }}
+
+          </option>
+
         </select>
       </div>
 

@@ -1,6 +1,7 @@
 const doctorModel = require("../models/doctor");
 const userModel = require("../models/user");
 
+
 const populateDoctor = [
     { path: "_id", select: "name email phone profileImage role" },
     { path: "specialtyId" },
@@ -27,42 +28,111 @@ try {
 }};
 
 const getMyDoctorProfile = async (req, res) => {
-try {
-    const doctor = await doctorModel.findOne( req.user.id ).populate(populateDoctor);
-    if (!doctor) {
-        return res.status(404).send("doctor profile not found");
+    try {
+
+        const doctor = await doctorModel
+            .findById(req.user.id)
+            .populate(populateDoctor);
+
+        if (!doctor) {
+            return res.status(404).send("Doctor profile not found");
+        }
+
+        return res.status(200).json(doctor);
+
+    } catch (err) {
+        return res.status(500).send(err.message);
     }
-    return res.status(200).json(doctor);
-} catch (err) {
-    return res.status(500).send(err.message);
-}};
+};
 
 const updateMyDoctorProfile = async (req, res) => {
-try {
-    const doctor = await doctorModel.findOneAndUpdate(
-         req.user.id,
-        {
-            bio: req.body.bio,
-            experienceYears: req.body.experienceYears,
-            specialtyId: req.body.specialtyId,
-            appointmentDurationMinutes: req.body.appointmentDurationMinutes == null
-                ? undefined
-                : Number(req.body.appointmentDurationMinutes)
-        },
-        { new: true, runValidators: true }
-    ).populate(populateDoctor);
+    try {
 
-    if (!doctor) {
-        return res.status(404).send("doctor profile not found");
+        // Check if doctor exists
+        const existingDoctor = await doctorModel.findById(req.user.id);
+
+        if (!existingDoctor) {
+            return res.status(404).send("Doctor profile not found");
+        }
+
+        // Check email uniqueness
+        if (req.body.email) {
+
+            const existingUser = await userModel.findOne({
+                email: req.body.email,
+                _id: { $ne: req.user.id }
+            });
+
+            if (existingUser) {
+                return res.status(400).send("Email already exists");
+            }
+        }
+
+        // ===========================
+        // Update User document
+        // ===========================
+
+        const userUpdates = {};
+
+        if (req.body.name !== undefined)
+            userUpdates.name = req.body.name;
+
+        if (req.body.email !== undefined)
+            userUpdates.email = req.body.email;
+
+        if (req.body.phone !== undefined)
+            userUpdates.phone = req.body.phone;
+
+        if (req.body.profileImage !== undefined)
+            userUpdates.profileImage = req.body.profileImage;
+
+        await userModel.findByIdAndUpdate(
+            req.user.id,
+            userUpdates,
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        // ===========================
+        // Update Doctor document
+        // ===========================
+
+        const doctorUpdates = {};
+
+        if (req.body.bio !== undefined)
+            doctorUpdates.bio = req.body.bio;
+
+        if (req.body.experienceYears !== undefined)
+            doctorUpdates.experienceYears = Number(req.body.experienceYears);
+
+        if (req.body.specialtyId !== undefined)
+            doctorUpdates.specialtyId = req.body.specialtyId;
+
+        if (req.body.appointmentDurationMinutes !== undefined)
+            doctorUpdates.appointmentDurationMinutes =
+                Number(req.body.appointmentDurationMinutes);
+
+        const doctor = await doctorModel.findByIdAndUpdate(
+            req.user.id,
+            doctorUpdates,
+            {
+                new: true,
+                runValidators: true
+            }
+        ).populate(populateDoctor);
+
+        return res.status(200).json(doctor);
+
+    } catch (err) {
+        return res.status(500).send(err.message);
     }
-    return res.status(200).json(doctor);
-} catch (err) {
-    return res.status(500).send(err.message);
-}};
+};
 
 const addClinicToMyProfile = async (req, res) => {
 try {
-    const doctor = await doctorModel.findOne( req.user.id );
+    const doctor = await doctorModel.findById(req.user.id);
     if (!doctor) {
         return res.status(404).send("doctor profile not found");
     }
@@ -85,7 +155,7 @@ try {
 
 const updateClinicAssignment = async (req, res) => {
 try {
-    const doctor = await doctorModel.findOne(req.user.id );
+    const doctor = await doctorModel.findById(req.user.id);
     if (!doctor) {
         return res.status(404).send("doctor profile not found");
     }
@@ -108,7 +178,7 @@ try {
 
 const removeClinicFromMyProfile = async (req, res) => {
 try {
-    const doctor = await doctorModel.findOne( req.user.id );
+    const doctor = await doctorModel.findById(req.user.id);
     if (!doctor) {
         return res.status(404).send("doctor profile not found");
     }
@@ -121,6 +191,36 @@ try {
     return res.status(500).send(err.message);
 }};
 
+const uploadDoctorPhoto = async (req, res) => {
+    try {
+
+        if (!req.file) {
+            return res.status(400).send("No image uploaded");
+        }
+
+
+        const user = await userModel.findByIdAndUpdate(
+            req.user.id,
+            {
+                profileImage: req.file.path
+            },
+            {
+                new: true
+            }
+        );
+
+
+        return res.status(200).json({
+            message: "Profile image uploaded successfully",
+            profileImage: user.profileImage
+        });
+
+
+    } catch (err) {
+        return res.status(500).send(err.message);
+    }
+};
+
 module.exports = {
     getDoctors,
     getDoctorById,
@@ -128,5 +228,6 @@ module.exports = {
     updateMyDoctorProfile,
     addClinicToMyProfile,
     updateClinicAssignment,
-    removeClinicFromMyProfile
+    removeClinicFromMyProfile,
+    uploadDoctorPhoto
 };
