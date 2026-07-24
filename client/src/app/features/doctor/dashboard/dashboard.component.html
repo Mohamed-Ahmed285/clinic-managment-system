@@ -1,0 +1,21 @@
+<main class="dashboard">
+  <header class="greeting">
+    <p class="greeting__eyebrow">{{ todayLabel }}</p>
+    <h1 class="greeting__title">Good morning, {{ doctorName }}.</h1>
+    <p class="greeting__meta">
+      {{ appointments.length }} visits scheduled · {{ notifications.length }} messages
+    </p>
+  </header>
+
+  <div class="dashboard__grid">
+    <div class="dashboard__col dashboard__col--left">
+      <app-schedule [appointments]="appointments"></app-schedule>
+      <app-notifications [notifications]="notifications"></app-notifications>
+    </div>
+
+    <div class="dashboard__col dashboard__col--right">
+      <app-panel-snapshot [stats]="panelStats"></app-panel-snapshot>
+      <app-rating [rating]="ratingSummary"></app-rating>
+    </div>
+  </div>
+</main>
