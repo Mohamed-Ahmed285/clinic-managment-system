@@ -1,56 +1,342 @@
 <app-navbar></app-navbar>
-<div class="container mx-auto lg:px-24 md:px-24 pt-0 py-12">
-  <div class="flex flex-wrap  justify-between">
-<div class=" left  italic flex  justify-center
-lg:text-start text-center w-full lg:w-1/2 flex-col gap-5 lg:items-start items-center  p-2 relative ">
+
+<section class="relative overflow-hidden">
+  <!-- ambient tint, quieter and lower than before -->
   <div
-    class="absolute inset-0
-           -z-10
-           bg-teal-200/30
-           blur-[140px]
-           rounded-full">
+    class="pointer-events-none absolute -top-32 right-0 w-[560px] h-[560px] bg-primary/[0.06] blur-[160px] rounded-full">
   </div>
-<h1 class=" font-semibold text-5xl">
-  Calm, coordinated care,
-  <br>
-<span class="text-primary ">  every step of the way.</span>
-</h1>
-<p class="text-gray">
-Meridian Health connects patients and clinicians in one quiet, focused place. Book visits, review results, and message your care team without the noise.
-</p>
-<button class="bg-primary text-white btn rounded-3xl w-fit text-lg p-2" (click)="openPopup()">Book Appointment</button>
-</div>
-<div class="right  justify-center flex items-center w-full lg:w-1/2">
-<img src="../../assets/Home/doctor-1-74 (2).png" class="w-3/4 h-[500px] drop-shadow-[0_0_120px_rgba(16,185,129,0.35)] "/>
-</div>
-</div>
-</div>
-<div
-  *ngIf="showPopup"
-  class="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
 
-  <div class="bg-white rounded-2xl p-6 w-[350px] text-center shadow-xl">
+  <div class="container mx-auto px-6 lg:px-24 pt-16 pb-20 lg:pt-24 lg:pb-28">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-14 items-center">
 
-    <h2 class="text-2xl font-semibold text-primary mb-3">
-      Login Required
+      <!-- Copy column -->
+      <div class="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left gap-7">
+
+        <h1 class="font-display font-medium text-5xl md:text-6xl leading-[1.08] text-black">
+          Calm, coordinated care,
+          <span class="block text-primary italic">every step of the way.</span>
+        </h1>
+
+        <p class="text-gray text-lg leading-relaxed max-w-md">
+          NoQ lets you reserve your spot at the clinic before you leave home.
+          Pick a time, walk in when it's yours, and skip the waiting room entirely.
+        </p>
+
+        <button (click)="openPopup()"
+          class="group inline-flex items-center gap-2 bg-primary hover:bg-primary-dark transition-colors duration-200 text-white text-base font-medium rounded-full px-7 py-3.5">
+          Book Appointment
+          <span class="transition-transform duration-200 group-hover:translate-x-0.5">&rarr;</span>
+        </button>
+
+        <!-- Signature element: quiet credibility strip, not badges -->
+        <div class="flex flex-wrap justify-center lg:justify-start items-center gap-x-4 gap-y-2 pt-2 text-sm text-gray">
+          <span>Board-certified physicians</span>
+          <span class="w-1 h-1 rounded-full bg-gray-light hidden sm:inline-block"></span>
+          <span>Same-week visits</span>
+          <span class="w-1 h-1 rounded-full bg-gray-light hidden sm:inline-block"></span>
+          <span>Secure messaging</span>
+        </div>
+      </div>
+
+      <!-- Visual column: typographic, no photography. Hidden below lg — the diagram's detail doesn't hold up at small sizes -->
+      <div class="hidden lg:flex lg:col-span-6 justify-center">
+        <div class="relative w-full max-w-md">
+
+          <!-- abstract linework backdrop: quiet arcs evoking time, not a literal clock icon -->
+          <svg class="absolute -top-10 -right-6 w-[340px] h-[340px] text-primary/[0.10] pointer-events-none"
+            viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="170" cy="170" r="168" stroke="currentColor" stroke-width="1.5" />
+            <circle cx="170" cy="170" r="128" stroke="currentColor" stroke-width="1.5" />
+            <path d="M170 170 L170 60" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            <path d="M170 170 L246 170" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+
+          <!-- static calendar/slot diagram: illustrates choosing a time, no live framing -->
+          <div
+            class="relative rounded-[2rem] bg-secondary border border-line overflow-hidden px-8 py-10 md:py-12 flex flex-col gap-8">
+
+            <div class="flex items-center justify-between">
+              <p class="font-display text-xl text-black">This week</p>
+              <span class="text-gray-light text-xs font-medium uppercase tracking-wide">General Dentistry</span>
+            </div>
+
+            <!-- day row -->
+            <div class="grid grid-cols-7 gap-2 text-center">
+              <div class="flex flex-col items-center gap-2">
+                <span class="text-xs text-gray-light">S</span>
+                <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm text-gray">21</span>
+              </div>
+              <div class="flex flex-col items-center gap-2">
+                <span class="text-xs text-gray-light">M</span>
+                <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm text-gray">22</span>
+              </div>
+              <div class="flex flex-col items-center gap-2">
+                <span class="text-xs text-gray-light">T</span>
+                <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm text-gray">23</span>
+              </div>
+              <div class="flex flex-col items-center gap-2">
+                <span class="text-xs text-gray-light">W</span>
+                <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm text-gray">24</span>
+              </div>
+              <div class="flex flex-col items-center gap-2">
+                <span class="text-xs text-primary font-medium">T</span>
+                <span
+                  class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium">25</span>
+              </div>
+              <div class="flex flex-col items-center gap-2">
+                <span class="text-xs text-gray-light">F</span>
+                <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm text-gray">26</span>
+              </div>
+              <div class="flex flex-col items-center gap-2">
+                <span class="text-xs text-gray-light">S</span>
+                <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm text-gray">27</span>
+              </div>
+            </div>
+
+            <div class="border-t border-line"></div>
+
+            <!-- time slots for the selected day -->
+            <div class="flex flex-col gap-3">
+              <p class="text-xs uppercase tracking-wide text-gray-light">Available &middot; Selected day</p>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-4 py-2 rounded-full border border-line text-sm text-gray">2:00 PM</span>
+                <span class="px-4 py-2 rounded-full border border-line text-sm text-gray">3:15 PM</span>
+                <span class="px-4 py-2 rounded-full bg-primary text-white text-sm font-medium">4:30 PM</span>
+                <span class="px-4 py-2 rounded-full border border-line text-sm text-gray">5:45 PM</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- floating detail card: purely factual, no live framing -->
+          <div class="absolute -bottom-12 -left-6 bg-white border border-line rounded-2xl px-5 py-4 hidden sm:block">
+            <p class="text-xs uppercase tracking-wide text-gray-light mb-1">Booking takes</p>
+            <p class="text-primary font-semibold">Under a minute</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="border-t border-line"></div>
+</section>
+
+<section class="bg-secondary/40">
+  <div class="container mx-auto px-6 lg:px-24 py-20 lg:py-24">
+
+    <div class="max-w-2xl mx-auto text-center flex flex-col items-center gap-5 mb-16 lg:mb-20">
+      <span class="text-sm tracking-widest uppercase text-primary font-medium">How it works</span>
+      <h2 class="font-display font-medium text-4xl md:text-5xl leading-[1.15] text-black">
+        Three steps.
+        <span class="italic text-primary">Zero standing around.</span>
+      </h2>
+    </div>
+
+    <!-- connected sequence, not a card grid: the line is the mechanism, order carries meaning -->
+    <div class="relative max-w-4xl mx-auto">
+      <div class="hidden md:block absolute top-[22px] left-[8.5%] right-[8.5%] h-px bg-line"></div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+
+        <div class="flex flex-col items-center md:items-start text-center md:text-left gap-4">
+          <span
+            class="relative z-10 w-11 h-11 rounded-full bg-primary text-white font-display flex items-center justify-center text-lg">1</span>
+          <h3 class="font-display text-xl text-black">Find your clinic</h3>
+          <p class="text-gray leading-relaxed">
+            Search by specialty or clinic name and see real availability, not a phone line.
+          </p>
+        </div>
+
+        <div class="flex flex-col items-center md:items-start text-center md:text-left gap-4">
+          <span
+            class="relative z-10 w-11 h-11 rounded-full bg-primary text-white font-display flex items-center justify-center text-lg">2</span>
+          <h3 class="font-display text-xl text-black">Reserve a slot</h3>
+          <p class="text-gray leading-relaxed">
+            Pick a time that works and confirm in seconds. Your place is held from that moment.
+          </p>
+        </div>
+
+        <div class="flex flex-col items-center md:items-start text-center md:text-left gap-4">
+          <span
+            class="relative z-10 w-11 h-11 rounded-full bg-primary text-white font-display flex items-center justify-center text-lg">3</span>
+          <h3 class="font-display text-xl text-black">Walk straight in</h3>
+          <p class="text-gray leading-relaxed">
+            Arrive at your reserved time. No number to take, no room to sit in.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="border-t border-line"></div>
+</section>
+
+<section class="bg-white">
+  <div class="container mx-auto px-6 lg:px-24 py-20 lg:py-28">
+
+    <div class="max-w-2xl mx-auto text-center flex flex-col items-center gap-5 mb-16">
+      <span class="text-sm tracking-widest uppercase text-primary font-medium">About NoQ</span>
+      <h2 class="font-display font-medium text-4xl md:text-5xl leading-[1.15] text-black">
+        The queue was never
+        <span class="italic text-primary">the point of the visit.</span>
+      </h2>
+      <p class="text-gray text-lg leading-relaxed">
+        NoQ was built on one idea: your time with a doctor matters, the wait before it doesn't.
+        We reserve your place at the clinic digitally, so you spend less time in a chair
+        and more time anywhere else.
+      </p>
+    </div>
+
+    <!-- Signature element: before / after, the real sequence NoQ replaces -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-line rounded-3xl overflow-hidden max-w-4xl mx-auto">
+
+      <div class="bg-secondary/40 p-8 md:p-10 flex flex-col gap-4">
+        <span class="text-xs uppercase tracking-wide text-gray-light">Without NoQ</span>
+        <p class="font-display text-2xl text-black leading-snug">
+          Arrive early. Take a number.<br />Wait, and wait again.
+        </p>
+        <p class="text-gray leading-relaxed">
+          No visibility into how long it'll take, or whether it was worth arriving early at all.
+        </p>
+      </div>
+
+      <div class="bg-secondary/40 p-8 md:p-10 flex flex-col gap-4">
+        <span class="text-xs uppercase tracking-wide text-primary">With NoQ</span>
+        <p class="font-display text-2xl text-primary leading-snug">
+          Reserve a slot. Arrive on time.<br />Walk straight in.
+        </p>
+        <p class="text-gray leading-relaxed">
+          Your position is held before you leave the house, and confirmed the moment you book.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="border-t border-line"></div>
+</section>
+
+<section class="bg-secondary/40">
+  <div class="container mx-auto px-6 lg:px-24 py-20 lg:py-28">
+
+    <div class="max-w-2xl mx-auto text-center flex flex-col items-center gap-5 mb-16">
+      <span class="text-sm tracking-widest uppercase text-primary font-medium">Beyond booking</span>
+      <h2 class="font-display font-medium text-4xl md:text-5xl leading-[1.15] text-black">
+        Care that
+        <span class="italic text-primary">follows you home.</span>
+      </h2>
+      <p class="text-gray text-lg leading-relaxed">
+        NoQ doesn't end at the clinic door. It keeps track of what happens after,
+        so nothing gets missed between visits.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+
+      <!-- Prescription reminders -->
+      <div class="bg-white border border-line rounded-3xl p-8 md:p-10 flex flex-col gap-6">
+        <div>
+          <h3 class="font-display text-2xl text-black mb-2">Prescription reminders</h3>
+          <p class="text-gray leading-relaxed">
+            Every prescription your doctor sends is scheduled automatically,
+            with a nudge at the exact time each dose is due.
+          </p>
+        </div>
+
+        <!-- concrete mock preview instead of an icon -->
+        <div class="bg-secondary/60 border border-line rounded-2xl p-4 flex items-center justify-between mt-auto">
+          <div>
+            <p class="text-black font-medium text-sm">Amoxicillin 500mg</p>
+            <p class="text-gray text-xs mt-0.5">1 tablet, after meals</p>
+          </div>
+          <span class="text-primary font-semibold text-sm whitespace-nowrap">8:00 PM</span>
+        </div>
+      </div>
+
+      <!-- Medical history -->
+      <div class="bg-white border border-line rounded-3xl p-8 md:p-10 flex flex-col gap-6">
+        <div>
+          <h3 class="font-display text-2xl text-black mb-2">Medical history record</h3>
+          <p class="text-gray leading-relaxed">
+            Every visit, diagnosis, and prescription lives in one record,
+            ready to show any doctor you see next.
+          </p>
+        </div>
+
+        <!-- concrete timeline preview instead of an icon -->
+        <div class="flex flex-col gap-3 mt-auto">
+          <div class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+            <p class="text-sm text-black flex-1">General checkup</p>
+            <span class="text-xs text-gray-light">Jun 14</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-gray-light shrink-0"></span>
+            <p class="text-sm text-black flex-1">Dermatology follow-up</p>
+            <span class="text-xs text-gray-light">Apr 02</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-gray-light shrink-0"></span>
+            <p class="text-sm text-black flex-1">Blood work</p>
+            <span class="text-xs text-gray-light">Jan 20</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="border-t border-line"></div>
+</section>
+
+<section class="bg-primary">
+  <div class="container mx-auto px-6 lg:px-24 py-16 lg:py-20">
+    <div class="flex flex-col items-center text-center gap-6 max-w-xl mx-auto">
+
+      <h2 class="font-display font-medium text-3xl md:text-4xl text-white leading-[1.15]">
+        Your next visit doesn't need a waiting room.
+      </h2>
+
+      <p class="text-white/70 text-lg leading-relaxed">
+        Reserve your slot in under a minute, and walk in exactly when it's yours.
+      </p>
+
+      <button (click)="openPopup()"
+        class="group inline-flex items-center gap-2 bg-white hover:bg-secondary transition-colors duration-200 text-primary text-base font-medium rounded-full px-7 py-3.5">
+        Book Appointment
+        <span class="transition-transform duration-200 group-hover:translate-x-0.5">&rarr;</span>
+      </button>
+
+    </div>
+  </div>
+</section>
+
+<div *ngIf="showPopup" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 px-4">
+
+  <div class="bg-white rounded-2xl p-7 w-full max-w-[360px] text-center shadow-2xl">
+
+    <h2 class="font-display text-2xl text-primary mb-2">
+      Login required
     </h2>
 
-    <p class="text-gray-600 mb-6">
+    <p class="text-gray mb-7 leading-relaxed">
       You need to log in before booking an appointment.
     </p>
 
     <div class="flex justify-center gap-3">
 
-      <button
-        (click)="closePopup()"
-        class="px-5 py-2 border rounded-xl">
+      <button (click)="closePopup()"
+        class="px-5 py-2.5 border border-line rounded-xl text-black hover:bg-secondary transition-colors">
         Cancel
       </button>
 
-      <button
-        routerLink="/auth/login"
-        class="px-5 py-2 bg-primary text-white rounded-xl">
-        Login
+      <button routerLink="/auth/login"
+        class="px-5 py-2.5 bg-primary hover:bg-primary-dark transition-colors text-white rounded-xl">
+        Log in
       </button>
 
     </div>
@@ -58,4 +344,5 @@ Meridian Health connects patients and clinicians in one quiet, focused place. Bo
   </div>
 
 </div>
+
 <app-footer></app-footer>
