@@ -7,8 +7,16 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  background: var(--bg);
+  min-height: 100%;
+}
+* {
+  box-sizing: border-box;
+}
+
 :root{
-  --bg: #eef6f3;
+  --bg:#F4FCFC;
   --card: #ffffff;
   --border: #e1e8e3;
   --ink: #1e2a26;
