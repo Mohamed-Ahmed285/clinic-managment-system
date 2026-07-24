@@ -1,14 +1,55 @@
 <div class="container mx-auto p-2">
   <div class="flex justify-around  my-3  w-full items-start  h-[70px]">
-<div class=" h-full flex ">
+<!-- <div class=" h-full flex ">
   <img src="../../../../assets/Home/logo (3).png" class="w-full  object-fit h-full">
+</div> -->
+<div class="h-full flex items-center gap-3">
+  <img
+    src="../../../../assets/Home/logo (3).png"
+    class="w-full object-fit h-full"
+  >
+
+  <span
+    *ngIf="role"
+    class="bg-primary text-white px-3 py-1 rounded-full text-sm capitalize"
+  >
+    {{ role }}
+  </span>
 </div>
 <div class="hidden md:block">
-<ul class="md:flex gap-5 mt-4 text-gray hidden font-semibold text-md  lg:ms-20 md:ms-10">
+<!-- <ul class="md:flex gap-5 mt-4 text-gray hidden font-semibold text-md  lg:ms-20 md:ms-10">
   <li>Contact Us<li>
   <li>Departments</li>
-</ul>
+</ul> -->
+   <ul class="md:flex gap-5 mt-4 text-gray font-semibold text-md lg:ms-20 md:ms-10">
 
+  <ng-container *ngIf="role === 'patient'">
+    <li routerLink="/patient/home" class="cursor-pointer">Home</li>
+    <li routerLink="/patient/doctors" class="cursor-pointer">Doctors</li>
+    <li routerLink="/patient/appointments" class="cursor-pointer">Appointments</li>
+    <li routerLink="/patient/profile" class="cursor-pointer">Profile</li>
+  </ng-container>
+
+  <ng-container *ngIf="role === 'doctor'">
+    <li routerLink="/doctor/dashboard" class="cursor-pointer">Dashboard</li>
+    <li routerLink="/doctor/patients" class="cursor-pointer">Patients</li>
+    <li routerLink="/doctor/schedule" class="cursor-pointer">Schedule</li>
+    <li routerLink="/doctor/profile" class="cursor-pointer">Profile</li>
+  </ng-container>
+
+  <ng-container *ngIf="role === 'admin'">
+    <li routerLink="/admin/dashboard" class="cursor-pointer">Dashboard</li>
+    <li routerLink="/admin/doctors" class="cursor-pointer">Doctors</li>
+    <li routerLink="/admin/clinics" class="cursor-pointer">Clinics</li>
+    <li routerLink="/admin/users" class="cursor-pointer">Users</li>
+  </ng-container>
+
+  <ng-container *ngIf="!role">
+    <li>Contact Us</li>
+    <li>Departments</li>
+  </ng-container>
+
+</ul>
 </div>
 <div class="flex justify-content-center">
   <i
@@ -29,7 +70,7 @@
 
   <div class="mx-4 mt-2 rounded-2xl bg-white shadow-xl border border-secondary text-center">
 
-    <ul class="py-3 text-gray font-semibold">
+    <!-- <ul class="py-3 text-gray font-semibold">
 
       <li class="px-5 py-3 hover:bg-secondary cursor-pointer transition-colors duration-200">
         Contact Us
@@ -39,7 +80,36 @@
         Departments
       </li>
 
-    </ul>
+    </ul> -->
+    <ul class="md:flex gap-5 mt-4 text-gray font-semibold text-md lg:ms-20 md:ms-10">
+
+  <ng-container *ngIf="role === 'patient'">
+    <li routerLink="/patient/home" class="cursor-pointer">Home</li>
+    <li routerLink="/patient/doctors" class="cursor-pointer">Doctors</li>
+    <li routerLink="/patient/appointments" class="cursor-pointer">Appointments</li>
+    <li routerLink="/patient/profile" class="cursor-pointer">Profile</li>
+  </ng-container>
+
+  <ng-container *ngIf="role === 'doctor'">
+    <li routerLink="/doctor/dashboard" class="cursor-pointer">Dashboard</li>
+    <li routerLink="/doctor/patients" class="cursor-pointer">Patients</li>
+    <li routerLink="/doctor/schedule" class="cursor-pointer">Schedule</li>
+    <li routerLink="/doctor/profile" class="cursor-pointer">Profile</li>
+  </ng-container>
+
+  <ng-container *ngIf="role === 'admin'">
+    <li routerLink="/admin/dashboard" class="cursor-pointer">Dashboard</li>
+    <li routerLink="/admin/doctors" class="cursor-pointer">Doctors</li>
+    <li routerLink="/admin/clinics" class="cursor-pointer">Clinics</li>
+    <li routerLink="/admin/users" class="cursor-pointer">Users</li>
+  </ng-container>
+
+  <ng-container *ngIf="!role">
+    <li>Contact Us</li>
+    <li>Departments</li>
+  </ng-container>
+
+</ul>
 <div class="flex gap-2 md:flex-row flex-col flex-2  items-center justify-center pb-5" >
 <button class="button bg-primary py-2 px-5 rounded-3xl text-white w-1/4">Login</button>
 <button class="button bg-primary py-2 px-5 rounded-3xl text-white w-1/4">Register</button>

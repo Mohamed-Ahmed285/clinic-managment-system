@@ -8,6 +8,10 @@ import { ProfileService } from '../../../core/services/profile.service';
 })
 export class ProfileComponent implements OnInit {
   profileData: any;
+  selectedImage: string | ArrayBuffer | null = null;
+
+  // Popup
+  isPopupOpen = false;
 
   constructor(private profileService: ProfileService) {}
 
@@ -23,8 +27,6 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  selectedImage: string | ArrayBuffer | null = null;
-
   onImageSelected(event: any) {
     const file = event.target.files[0];
 
@@ -37,5 +39,13 @@ export class ProfileComponent implements OnInit {
     };
 
     reader.readAsDataURL(file);
+  }
+
+  openPopup() {
+    this.isPopupOpen = true;
+  }
+
+  closePopup() {
+    this.isPopupOpen = false;
   }
 }
