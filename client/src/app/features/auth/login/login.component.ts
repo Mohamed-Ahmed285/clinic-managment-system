@@ -28,8 +28,22 @@ export class LoginComponent {
     // Send the request
     this.authService.login(credentials).subscribe({
       next: (response) => {
-        localStorage.setItem('token', response.token);
-        this.router.navigate(['/patient']);
+        switch (response.user.role) {
+          case 'patient':
+            this.router.navigate(['/patient']);
+            break;
+
+          case 'doctor':
+            this.router.navigate(['/doctor']);
+            break;
+
+          case 'admin':
+            this.router.navigate(['/admin']);
+            break;
+
+          default:
+            this.router.navigate(['/login']);
+        }
       },
       error: (err) => {
         console.error('Login failed', err);
