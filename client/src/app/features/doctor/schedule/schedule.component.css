@@ -1,0 +1,112 @@
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(30, 42, 38, 0.05), 0 1px 12px rgba(30, 42, 38, 0.04);
+  padding: 28px;
+}
+
+.card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.card__eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--eyebrow);
+  margin-bottom: 6px;
+}
+
+.card__title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.card__link {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--teal);
+  text-decoration: none;
+  white-space: nowrap;
+  margin-top: 4px;
+}
+
+.card__link:hover {
+  text-decoration: underline;
+}
+
+.visit-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.visit-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
+}
+
+.visit-row:first-child {
+  border-top: none;
+}
+
+.visit-row__time {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.visit-row__info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.visit-row__name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.visit-row__type {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.status {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.status--checked-in {
+  color: var(--teal);
+}
+
+.status--waiting {
+  color: var(--label);
+}
+
+.status--in-room {
+  color: var(--eyebrow);
+}
+
+.status--upcoming {
+  color: var(--muted);
+}
+
+.status--completed {
+  color: var(--eyebrow);
+}
