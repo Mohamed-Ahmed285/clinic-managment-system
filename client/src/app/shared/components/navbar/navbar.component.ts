@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -7,15 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavbarComponent implements OnInit {
   isMenuOpen = false;
-
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
-  }
   role = '';
   isLoggedIn = false;
 
+  constructor(private authService: AuthService) {}
+
   ngOnInit(): void {
-    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    const user = this.authService.getUser();
 
     if (user) {
       this.isLoggedIn = true;
@@ -23,5 +22,11 @@ export class NavbarComponent implements OnInit {
     }
   }
 
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
 
+  logout() {
+    this.authService.logout();
+  }
 }

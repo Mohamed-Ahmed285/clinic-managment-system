@@ -41,12 +41,29 @@
 
 
         <div class="flex flex-col items-center">
-          <div
+          <!-- <div
             class="w-40 h-40 rounded-full bg-primary flex items-center justify-center text-white text-5xl"
           >
-            AM
-          </div>
+   <img [src]="profileData.user.profileImage" alt="Profile Image" />
+          </div> -->
+<div
+  *ngIf="profileData?.user?.profileImage; else avatar"
+  class="w-[200px] h-[200px] rounded-full overflow-hidden"
+>
+  <img
+    [src]="profileData.user.profileImage"
+    class="w-full h-full object-cover"
+    alt="Profile"
+  />
+</div>
 
+<ng-template #avatar>
+  <div
+    class="w-[200px] h-[200px] rounded-full bg-primary text-white flex items-center justify-center font-bold text-5xl"
+  >
+    {{ getInitials(profileData?.user?.name) }}
+  </div>
+</ng-template>
           <input
             #fileInput
             type="file"

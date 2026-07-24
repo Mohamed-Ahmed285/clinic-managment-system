@@ -20,6 +20,10 @@ export class ProfileComponent implements OnInit {
       next: (res: any) => {
         console.log(res);
         this.profileData = res;
+        if (this.profileData?.profile?.dateOfBirth) {
+          this.profileData.profile.dateOfBirth =
+            this.profileData.profile.dateOfBirth.split('T')[0];
+        }
       },
       error: (err) => {
         console.log(err);
@@ -48,4 +52,16 @@ export class ProfileComponent implements OnInit {
   closePopup() {
     this.isPopupOpen = false;
   }
+  getInitials(name: string = ''): string {
+    const parts = name.trim().split(/\s+/);
+
+    if (parts.length === 0) return '';
+
+    if (parts.length === 1) {
+      return parts[0].substring(0, 2).toUpperCase();
+    }
+
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+
 }

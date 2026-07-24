@@ -59,9 +59,34 @@
   (click)="toggleMenu()">
 </i>
 </div>
-<div class="md:flex gap-2 md:flex-row flex-col flex-2 hidden" >
+<!-- <div class="md:flex gap-2 md:flex-row flex-col flex-2 hidden" >
 <button class="button bg-primary py-2 px-5 rounded-3xl text-white"  routerLink='/auth/login'>Login</button>
 <button class="button bg-primary py-2 px-5 rounded-3xl text-white" routerLink='/auth/register'>Register</button>
+</div> -->
+<div class="md:flex gap-2 md:flex-row flex-col flex-2 hidden">
+
+  <ng-container *ngIf="!isLoggedIn">
+    <button
+      class="button bg-primary py-2 px-5 rounded-3xl text-white"
+      routerLink="/auth/login">
+      Login
+    </button>
+
+    <button
+      class="button bg-primary py-2 px-5 rounded-3xl text-white"
+      routerLink="/auth/register">
+      Register
+    </button>
+  </ng-container>
+
+  <ng-container *ngIf="isLoggedIn">
+    <button
+      class="button bg-red-500 py-2 px-5 rounded-3xl text-white"
+      (click)="logout()">
+      Logout
+    </button>
+  </ng-container>
+
 </div>
 </div>
 <div
