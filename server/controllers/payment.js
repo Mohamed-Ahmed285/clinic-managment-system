@@ -60,8 +60,8 @@ const fee = clinic.consultationFee;
       quantity: 1,
     },
   ],
-  success_url: "http://localhost:4200/profile?payment=success",
-cancel_url: "http://localhost:4200/profile?payment=cancel",
+ success_url: process.env.SUCCESS_URL,
+cancel_url: process.env.CANCEL_URL,
 });
 return res.status(200).json({
     url: session.url
@@ -114,16 +114,41 @@ if (user) {
 
         subject: "Appointment Confirmation",
 
-       html: `
-    <h2>Payment Successful ✅</h2>
+      html: `
+<div style="font-family: Arial, sans-serif; max-width:600px; margin:auto; border:1px solid #ddd; border-radius:10px; overflow:hidden;">
+    
+    <div style="background:#0d6efd; color:white; padding:20px; text-align:center;">
+        <h1>NO-Q</h1>
+        <h2>Appointment Confirmation</h2>
+    </div>
 
-    <p>Hello ${user.name},</p>
+    <div style="padding:25px; color:#333;">
+        <p>Hello <strong>${user.name}</strong>,</p>
 
-    <p>Your appointment with <b>Dr. ${doctorUser.name}</b> has been confirmed.</p>
+        <p>We are pleased to inform you that your payment has been received successfully.</p>
 
-    <p>Payment Status: <b>Paid</b></p>
+        <p>
+            <strong>Doctor:</strong> Dr. ${doctorUser.name}<br>
+            <strong>Payment Status:</strong>
+            <span style="color:green;">Paid ✅</span>
+        </p>
 
-    <p>Thank you for using NO-Q.</p>
+        <p>
+            Your appointment has been successfully confirmed.
+        </p>
+
+        <p>
+            Thank you for choosing <strong>NO-Q</strong>.
+        </p>
+
+        <hr>
+
+        <p style="font-size:13px;color:#777;">
+            This is an automated email. Please do not reply to this message.
+        </p>
+    </div>
+
+</div>
 `
     });
 }
