@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 
 export interface LoginRequest {
@@ -32,25 +33,48 @@ export interface RegisterRequest {
   profileImage?: string;
 }
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
   private api = environment.apiUrl;
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {}
 
   login(data: LoginRequest) {
     return this.http.post<LoginResponse>(
-      `${environment.apiUrl}/user/login`,
-      data
+      `${this.api}/user/login`,
+      data,
+    ).pipe(
+      tap((response) => {
+        // State is now managed by the service
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+      })
     );
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.router.navigate(['/auth/login']);
   }
 
   register(data: RegisterRequest): Observable<any> {
-    return this.http.post<any>(
-      `${this.api}/patient/register`,
-      data
-    );
+    return this.http.post<any>(`${this.api}/patient/register`, data);
   }
 
+  getUser() {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
 }
