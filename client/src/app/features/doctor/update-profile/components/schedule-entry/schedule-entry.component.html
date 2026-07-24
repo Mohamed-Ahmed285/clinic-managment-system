@@ -1,0 +1,28 @@
+<div class="entry">
+  <div class="entry-main">
+    <div class="day-row">
+      <button
+          type="button"
+          *ngFor="let day of days"
+          class="day-pill"
+          [class.selected]="isSelected(day.value)"
+          (click)="toggleDay(day.value)"
+        >
+          {{ day.label }}
+    </button>
+    </div>
+
+    <div class="time-row">
+      <div class="time-field">
+        <label>Start</label>
+        <input type="time" [(ngModel)]="entry.start" name="start" />
+      </div>
+      <div class="time-field">
+        <label>End</label>
+        <input type="time" [(ngModel)]="entry.end" name="end" />
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="btn-outline" (click)="onRemove()">Remove</button>
+</div>

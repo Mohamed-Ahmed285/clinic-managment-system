@@ -38,16 +38,66 @@ const validateClinicHours = (body, existingClinic = null) => {
 };
 
 const getClinics = async (req, res) => {
-try {
-    const validationError = validateClinicHours(req.body);
-    if (validationError) {
-        return res.status(400).send(validationError);
+    try {
+
+        const clinics = await clinicModel.find();
+
+        return res.status(200).json(clinics);
+
+    } catch (err) {
+
+        console.error("getClinics error:", err);
+
+        return res.status(500).send(err.message);
+
     }
-    const clinics = await clinicModel.find();
-    return res.status(200).json(clinics);
-} catch (err) {
-    return res.status(500).send(err.message);
-}};
+};
+
+const getClinicsPaginated = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+
+    const skip = (page - 1) * limit;
+
+    let query = {};
+
+    // Adjusted search fields for typical Clinic attributes
+    if (search) {
+      query = {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { address: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
+      };
+    }
+
+    const [clinics, totalClinics] = await Promise.all([
+      clinicModel
+        .find(query)
+        // .populate(populateClinic) // Ensure you have this defined if you are populating refs
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+
+      clinicModel.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+      clinics,
+      currentPage: page,
+      totalPages: Math.ceil(totalClinics / limit),
+      totalClinics,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+};
+
 
 const getClinicById = async (req, res) => {
 try {
@@ -107,5 +157,6 @@ module.exports = {
     getClinicById,
     createClinic,
     updateClinic,
-    deleteClinic
+    deleteClinic,
+    getClinicsPaginated
 };

@@ -1,17 +1,23 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
+
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
+  },
+   {
+    path: 'unauthorized',
+    component: UnauthorizedComponent,
   },
   {
     path: 'patient',
     loadChildren: () =>
       import('./features/patient/patient.module').then((m) => m.PatientModule),
   },
-  
   {
     path: 'auth',
     loadChildren: () =>
@@ -29,7 +35,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '',
+    component: NotFoundComponent,
   },
 ];
 

@@ -17,6 +17,7 @@ const sendEmail = async(options)=>{
         from: `"${process.env.EMAIL_FROM_NAME || "ClinIQ"}" <${process.env.EMAIL_USER}>`,
         to: options.to,
         subject: options.subject,
+         text: options.text,
         html: options.html
     };
 

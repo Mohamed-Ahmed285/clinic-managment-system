@@ -20,17 +20,30 @@ export class LoginComponent {
   ) {}
 
   onSubmit() {
-    // 1. Construct the payload directly from the component's state
     const credentials = {
       email: this.email,
       password: this.password
     };
 
-    // 2. Send the request
+    // Send the request
     this.authService.login(credentials).subscribe({
       next: (response) => {
-        localStorage.setItem('token', response.token);
-        this.router.navigate(['/patient']);
+        switch (response.user.role) {
+          case 'patient':
+            this.router.navigate(['/patient']);
+            break;
+
+          case 'doctor':
+            this.router.navigate(['/doctor']);
+            break;
+
+          case 'admin':
+            this.router.navigate(['/admin']);
+            break;
+
+          default:
+            this.router.navigate(['/login']);
+        }
       },
       error: (err) => {
         console.error('Login failed', err);

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {AuthGuard} from './../../auth.guard'
+import { AuthGuard } from '../../core/guards/auth.guard';
+import { RoleGuard } from '../../core/guards/role.guard';
 import { PatientLayoutComponent } from './patient-layout/patient-layout.component';
 import { ProfileComponent } from './profile/profile.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
@@ -14,7 +15,8 @@ const routes: Routes = [
   {
     path: '',
     component: PatientLayoutComponent,
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['patient'] },
     children: [
       {
         path: '',

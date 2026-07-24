@@ -1,0 +1,15 @@
+<div class="header">
+  <div class="text">
+    <span class="eyebrow">Account</span>
+    <h1>Your profile</h1>
+    <p class="subtitle">Manage your details, clinics, and working hours.</p>
+  </div>
+
+  <button type="button" class="btn-primary" (click)="onSaveClick()">
+    Save changes
+  </button>
+</div>
+
+<div class="success-banner" *ngIf="showSuccess">
+  Profile updated.
+</div>

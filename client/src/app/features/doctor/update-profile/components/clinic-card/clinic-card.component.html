@@ -1,0 +1,117 @@
+<div class="clinic-card">
+
+  <div class="clinic-head">
+
+    <div class="clinic-title">
+
+      <!-- Existing clinic -->
+      <ng-container *ngIf="clinic.id; else selectClinic">
+        <h3>{{ clinic.name }}</h3>
+        <p class="address">{{ clinic.address }}</p>
+      </ng-container>
+
+      <!-- New clinic -->
+      <ng-template #selectClinic>
+
+        <div class="field">
+
+          <label>Select clinic</label>
+
+          <select
+            [(ngModel)]="clinic.selectedClinicId"
+            (ngModelChange)="onClinicSelected()">
+
+            <option value="">Select a clinic</option>
+
+            <option
+              *ngFor="let c of availableClinics"
+              [value]="c._id">
+
+              {{ c.name }}
+
+            </option>
+
+          </select>
+
+        </div>
+
+        <p class="address" *ngIf="clinic.address">
+          {{ clinic.address }}
+        </p>
+
+      </ng-template>
+
+    </div>
+
+    <div class="clinic-actions">
+
+      <button
+        type="button"
+        class="status-badge"
+        [class.inactive]="clinic.status === 'Inactive'"
+        (click)="toggleStatus()">
+
+        <span class="dot"></span>{{ clinic.status }}
+
+      </button>
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="onSaveClinic()">
+
+        Save
+
+      </button>
+
+      <button
+        type="button"
+        class="btn-outline"
+        (click)="onRemoveClinic()">
+
+        Remove
+
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="field fee-field">
+
+    <label>Consultation fee ($)</label>
+
+    <input
+      type="number"
+      min="0"
+      [(ngModel)]="clinic.consultationFee">
+
+  </div>
+
+  <div class="schedule-head">
+
+    <span class="label">Working schedule</span>
+
+    <button
+      type="button"
+      class="btn-outline"
+      (click)="addEntry()">
+
+      + Add entry
+
+    </button>
+
+  </div>
+
+  <div class="schedule-list">
+
+    <app-schedule-entry
+      *ngFor="let entry of clinic.schedule; let i = index"
+      [entry]="entry"
+      (remove)="removeEntry(i)">
+
+    </app-schedule-entry>
+
+  </div>
+
+</div>
