@@ -1,5 +1,6 @@
 const doctorModel = require("../models/doctor");
 const userModel = require("../models/user");
+const specialtyModel = require('../models/specialty');
 
 
 const populateDoctor = [
@@ -27,15 +28,32 @@ const getDoctorsPaginated = async (req, res) => {
     let query = {};
 
     if (search) {
-      query = {
+      // (by name or email)
+      const matchingUsers = await userModel.find({
+        role: "doctor", // Ensure we only grab doctor users
         $or: [
           { name: { $regex: search, $options: "i" } },
-          { specialization: { $regex: search, $options: "i" } },
           { email: { $regex: search, $options: "i" } },
-        ],
+        ]
+      }).select('_id');
+      
+      const userIds = matchingUsers.map(user => user._id);
+
+      const matchingSpecialties = await specialtyModel.find({
+        name: { $regex: search, $options: "i" } 
+      }).select('_id');
+      
+      const specialtyIds = matchingSpecialties.map(spec => spec._id);
+
+      query = {
+        $or: [
+          { _id: { $in: userIds } },
+          { specialtyId: { $in: specialtyIds } }
+        ]
       };
     }
 
+    // 3. Fetch Doctors and Count
     const [doctors, totalDoctors] = await Promise.all([
       doctorModel
         .find(query)
