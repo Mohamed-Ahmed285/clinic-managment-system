@@ -10,8 +10,8 @@ import { DoctorService, DashboardResponse } from 'src/app/core/services/doctor.s
 export class DashboardComponent implements OnInit {
 
   todayLabel = 'Today';
-
-  dashboard!: DashboardResponse;
+  
+dashboard: DashboardResponse | null = null;  
 
   appointments: Appointment[] = [];
 
@@ -118,6 +118,7 @@ constructor(
     next: (res) => {
 
       this.notifications = res.map(item => ({
+        id: item._id,
         senderName: item.recipientType,
         subject: item.title,
         preview: item.message,

@@ -19,9 +19,21 @@ export interface RatingSummary {
 }
 
 export interface NotificationItem {
+  id: string;
   senderName: string;
   subject: string;
   preview: string;
   timeAgo: string;
   read: boolean;
+
+  expanded?: boolean;
+
+  appointmentDetails?: {
+    patientName: string;
+    clinicName: string;
+    date: string;
+    time: string;
+    fee: number;
+    status: string;
+  };
 }

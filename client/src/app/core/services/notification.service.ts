@@ -51,4 +51,11 @@ export class NotificationService {
     );
   }
 
+ getAppointmentDetails(id: string): Observable<any> {
+  return this.http.get<any>(
+    `${this.api}/notifications/${id}/details`
+  );
+}
+
+
 }

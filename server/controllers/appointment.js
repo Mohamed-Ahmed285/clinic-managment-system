@@ -464,7 +464,7 @@ const updateAppointment = async (req, res) => {
                 endTime: built.payload.endTime,
                 durationMinutes: built.payload.durationMinutes
             },
-            { new: true, runValidators: true }
+            { returnDocument: "after", runValidators: true }
         ).populate(populateAppointment);
 
         return res.status(200).json(appointment);
