@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Medication } from '../../models/appointment.model';
 @Component({
@@ -6,19 +6,26 @@ import { Medication } from '../../models/appointment.model';
   templateUrl: './prescription-form.component.html',
   styleUrls: ['./prescription-form.component.css']
 })
-export class PrescriptionFormComponent implements OnInit {
+export class PrescriptionFormComponent implements OnInit, OnDestroy {
   @Input() issuedAt: string = '';
   @Output() save = new EventEmitter<{ medications: Medication[]; generalNotes: string }>();
 
   frequencyOptions: string[] = [
-    'Once daily',
-    'Twice daily',
-    'Three times daily',
-    'Every 8 hours',
-    'As needed'
+    'Once Daily',
+    'Twice Daily',
+    'Three Times Daily',
+    'Every 6 Hours',
+    'Every 8 Hours',
+    'Every 12 Hours'
   ];
 
   form!: FormGroup;
+
+  // Live clock shown while the doctor is writing the prescription. Once an
+  // issuedAt is passed in from the parent (an existing prescription), that
+  // takes priority and the clock stops ticking.
+  liveIssuedAt: string = '';
+  private clockHandle: ReturnType<typeof setInterval> | null = null;
 
   constructor(private fb: FormBuilder) {}
 
@@ -27,6 +34,32 @@ export class PrescriptionFormComponent implements OnInit {
       medications: this.fb.array([this.createMedicationGroup()]),
       generalNotes: ['']
     });
+
+    if (!this.issuedAt) {
+      this.startClock();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.stopClock();
+  }
+
+  private startClock(): void {
+    this.liveIssuedAt = new Date().toLocaleString();
+    this.clockHandle = setInterval(() => {
+      this.liveIssuedAt = new Date().toLocaleString();
+    }, 1000);
+  }
+
+  private stopClock(): void {
+    if (this.clockHandle) {
+      clearInterval(this.clockHandle);
+      this.clockHandle = null;
+    }
+  }
+
+  get displayIssuedAt(): string {
+    return this.issuedAt || this.liveIssuedAt;
   }
 
   get medications(): FormArray {
@@ -71,6 +104,8 @@ export class PrescriptionFormComponent implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
+    // Stop the live clock once submitted; the parent will set the real issuedAt.
+    this.stopClock();
     this.save.emit(this.form.value);
   }
 }

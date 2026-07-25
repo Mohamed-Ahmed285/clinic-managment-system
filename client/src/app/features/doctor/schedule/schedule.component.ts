@@ -21,6 +21,6 @@ export class ScheduleComponent {
 
  selectAppointment(appointment: Appointment) {
   this.selectedAppointmentId = appointment.id;
-  this.router.navigate(['/doctor/appointment']);
+  this.router.navigate(['/doctor/appointment', appointment.id]);
 }
 }

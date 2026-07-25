@@ -2,19 +2,10 @@
   <h2 class="card-title">New prescription</h2>
 
   <div formArrayName="medications">
-    <div
-      class="medication-block"
-      *ngFor="let medication of medications.controls; let i = index"
-      [formGroupName]="i"
-    >
+    <div class="medication-block" *ngFor="let medication of medications.controls; let i = index" [formGroupName]="i">
       <div class="medication-header">
         <span class="eyebrow">Medication {{ i + 1 }}</span>
-        <button
-          type="button"
-          class="link-remove"
-          *ngIf="medications.length > 1"
-          (click)="removeMedication(i)"
-        >
+        <button type="button" class="link-remove" *ngIf="medications.length > 1" (click)="removeMedication(i)">
           Remove
         </button>
       </div>
@@ -47,11 +38,7 @@
       <div class="field">
         <label class="field-label">Times</label>
         <div class="times-row" formArrayName="times">
-          <input
-            *ngFor="let time of timesArray(i).controls; let t = index"
-            type="time"
-            [formControlName]="t"
-          />
+          <input *ngFor="let time of timesArray(i).controls; let t = index" type="time" [formControlName]="t" />
           <button type="button" class="btn-secondary" (click)="addTime(i)">+ Add time</button>
         </div>
       </div>
@@ -69,15 +56,11 @@
 
   <div class="field general-notes">
     <label class="field-label">General notes</label>
-    <textarea
-      formControlName="generalNotes"
-      rows="3"
-      placeholder="Overall notes about this prescription..."
-    ></textarea>
+    <textarea formControlName="generalNotes" rows="3" placeholder="Overall notes about this prescription..."></textarea>
   </div>
 
   <div class="form-footer">
-    <span class="issued-label" *ngIf="issuedAt">Issued <strong>{{ issuedAt }}</strong></span>
+    <span class="issued-label" *ngIf="displayIssuedAt">Issued <strong>{{ displayIssuedAt }}</strong></span>
     <button type="button" class="btn-primary" (click)="onSubmit()">Save prescription</button>
   </div>
 </section>

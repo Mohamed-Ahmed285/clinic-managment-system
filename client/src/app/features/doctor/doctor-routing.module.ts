@@ -42,7 +42,7 @@ const routes: Routes = [
 },
 
 {
-  path: 'appointment',
+  path: 'appointment/:id',
   component: AppointmentComponent,
 },
 
