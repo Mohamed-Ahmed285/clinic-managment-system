@@ -28,32 +28,38 @@ const getDoctorsPaginated = async (req, res) => {
     let query = {};
 
     if (search) {
-      // (by name or email)
-      const matchingUsers = await userModel.find({
-        role: "doctor", // Ensure we only grab doctor users
-        $or: [
-          { name: { $regex: search, $options: "i" } },
-          { email: { $regex: search, $options: "i" } },
-        ]
-      }).select('_id');
-      
-      const userIds = matchingUsers.map(user => user._id);
+      const [matchingUsers, matchingSpecialties, matchingClinics] =
+        await Promise.all([
+          userModel.find({
+            role: "doctor",
+            $or: [
+              { name: { $regex: search, $options: "i" } },
+              { email: { $regex: search, $options: "i" } },
+            ],
+          }).select("_id"),
 
-      const matchingSpecialties = await specialtyModel.find({
-        name: { $regex: search, $options: "i" } 
-      }).select('_id');
-      
+          specialtyModel.find({
+            name: { $regex: search, $options: "i" },
+          }).select("_id"),
+
+          clinicModel.find({
+            "address.state": { $regex: search, $options: "i" },
+          }).select("_id"),
+        ]);
+
+      const userIds = matchingUsers.map(user => user._id);
       const specialtyIds = matchingSpecialties.map(spec => spec._id);
+      const clinicIds = matchingClinics.map(clinic => clinic._id);
 
       query = {
         $or: [
           { _id: { $in: userIds } },
-          { specialtyId: { $in: specialtyIds } }
-        ]
+          { specialtyId: { $in: specialtyIds } },
+          { "clinics.clinicId": { $in: clinicIds } },
+        ],
       };
     }
 
-    // 3. Fetch Doctors and Count
     const [doctors, totalDoctors] = await Promise.all([
       doctorModel
         .find(query)
@@ -77,7 +83,6 @@ const getDoctorsPaginated = async (req, res) => {
     });
   }
 };
-
 const getDoctorById = async (req, res) => {
 try {
     const doctor = await doctorModel.findById(req.params.id).populate(populateDoctor);
