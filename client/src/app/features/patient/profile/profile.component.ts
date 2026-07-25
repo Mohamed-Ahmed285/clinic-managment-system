@@ -30,7 +30,7 @@ export class ProfileComponent implements OnInit {
           this.profileData.profile.dateOfBirth =
             this.profileData.profile.dateOfBirth.split('T')[0];
         }
-              this.loadMedicalRecords();
+        this.loadMedicalRecords();
       },
       error: (err) => {
         console.log(err);
@@ -125,13 +125,15 @@ export class ProfileComponent implements OnInit {
     this.isErrorPopupOpen = false;
     this.errorMessage = null;
   }
-
+  selectedRecord: any = null;
   // التحكم في بوب أب المواعيد/السجلات العادي
-  openPopup() {
+  openPopup(record: any) {
+    this.selectedRecord = record;
     this.isPopupOpen = true;
   }
 
   closePopup() {
+    this.selectedRecord = null;
     this.isPopupOpen = false;
   }
 
@@ -195,7 +197,7 @@ export class ProfileComponent implements OnInit {
 
     this.profileService.getMedicalRecords(patientId).subscribe({
       next: (res: any) => {
-        console.log(res)
+        console.log(res);
         this.medicalRecords = res;
       },
       error: (err) => {

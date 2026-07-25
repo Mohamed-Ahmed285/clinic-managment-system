@@ -218,8 +218,9 @@
   </div>
 
   <button
-    class="button text-gray-600 py-0 px-5 border border-gray-300 font-semibold h-[50px] rounded-full my-3 hover:bg-gray-50 transition"
-    (click)="openPopup()"
+    class="button text-gray-600 py-0 px-5 border text-black border-gray-300 font-semibold h-[50px] rounded-full my-3 hover:bg-gray-50 transition
+    hover:bg-primary hover:text-white font-bold"
+    (click)="openPopup(record)"
   >
     View
   </button>
@@ -243,13 +244,40 @@
       ✕
     </button>
 
-    <h2 class="text-2xl font-semibold mb-4">Summary of the appointment</h2>
+ <h2 class="text-2xl font-semibold mb-4 text-primary">
+  Summary of the appointment
+</h2>
 
-    <input
-      type="text"
-      placeholder="Enter Name"
-      class="w-full border rounded-lg p-2 mb-4 outline-none focus:border-primary"
-    />
+<div *ngIf="selectedRecord" class="space-y-3">
+
+  <div>
+    <p class="text-gray-500 text-sm my-2 text-primary font-bold">Doctor</p>
+    <p class="font-semibold">
+      Dr. {{ selectedRecord.doctorId?._id?.name }}
+    </p>
+  </div>
+
+  <div>
+    <p class="text-gray-500 text-sm font-bold text-primary">Visit Date</p>
+    <p class="font-semibold">{{ selectedRecord.visitDate | date:'mediumDate' }}</p>
+  </div>
+
+  <div>
+    <p class="text-gray-500 text-sm font-bold text-primary">Diagnosis</p>
+    <p class="font-semibold">{{ selectedRecord.diagnosis }}</p>
+  </div>
+
+  <div>
+    <p class="text-gray-500 text-sm font-bold text-primary">Symptoms</p>
+    <p class="font-semibold">{{ selectedRecord.symptoms }}</p>
+  </div>
+
+  <div>
+    <p class="text-gray-500 text-sm font-bold text-primary">Notes</p>
+    <p class="font-semibold">{{ selectedRecord.notes }}</p>
+  </div>
+
+</div>
 
   </div>
 </div>
