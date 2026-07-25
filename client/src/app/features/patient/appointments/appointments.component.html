@@ -57,7 +57,7 @@
             class="w-full rounded-xl border border p-2 bg-secondary" [(ngModel)]="selectedSpecialty"
   (change)="loadDoctors()">
 
-            <option>All specialties</option>
+            <option value="">All specialties</option>
             <option
     *ngFor="let specialty of specialties"
     [value]="specialty.name"
@@ -169,7 +169,7 @@
 <div *ngFor="let clinic of doctor.clinics,let i=index" class="flex flex-col lg:flex-row lg:items-center">
 
   <p class="w-36 uppercase tracking-wide text-gray-600 font-semibold">
-  Clinic   {{ clinic.clinicId.name }} 
+  Clinic   {{ clinic.clinicId.name }}
   </p>
 
   <div class="flex flex-wrap gap-2">

@@ -1,7 +1,7 @@
 const doctorModel = require("../models/doctor");
 const userModel = require("../models/user");
 const specialtyModel = require('../models/specialty');
-
+const clinicModel=require("../models/clinic")
 
 const populateDoctor = [
     { path: "_id", select: "name email phone profileImage role" },
@@ -17,48 +17,133 @@ try {
     return res.status(500).send(err.message);
 }};
 
+// const getDoctorsPaginated = async (req, res) => {
+//   try {
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = parseInt(req.query.limit) || 10;
+//     const search = req.query.search || "";
+
+//     const skip = (page - 1) * limit;
+
+//     let query = {};
+
+//     if (search) {
+//       const [matchingUsers, matchingSpecialties, matchingClinics] =
+//         await Promise.all([
+//           userModel.find({
+//             role: "doctor",
+//             $or: [
+//               { name: { $regex: search, $options: "i" } },
+//               { email: { $regex: search, $options: "i" } },
+//             ],
+//           }).select("_id"),
+
+//           specialtyModel.find({
+//             name: { $regex: search, $options: "i" },
+//           }).select("_id"),
+
+//           clinicModel.find({
+//             "address.state": { $regex: search, $options: "i" },
+//           }).select("_id"),
+//         ]);
+
+//       const userIds = matchingUsers.map(user => user._id);
+//       const specialtyIds = matchingSpecialties.map(spec => spec._id);
+//       const clinicIds = matchingClinics.map(clinic => clinic._id);
+
+//       query = {
+//         $or: [
+//           { _id: { $in: userIds } },
+//           { specialtyId: { $in: specialtyIds } },
+//           { "clinics.clinicId": { $in: clinicIds } },
+//         ],
+//       };
+//     }
+
+//     const [doctors, totalDoctors] = await Promise.all([
+//       doctorModel
+//         .find(query)
+//         .populate(populateDoctor)
+//         .sort({ createdAt: -1 })
+//         .skip(skip)
+//         .limit(limit),
+
+//       doctorModel.countDocuments(query),
+//     ]);
+
+//     res.status(200).json({
+//       doctors,
+//       currentPage: page,
+//       totalPages: Math.ceil(totalDoctors / limit),
+//       totalDoctors,
+//     });
+//   } catch (err) {
+//     res.status(500).json({
+//       message: err.message,
+//     });
+//   }
+// };
 const getDoctorsPaginated = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const search = req.query.search || "";
+
+    const search = req.query.search?.trim() || "";
+    const specialty = req.query.specialty?.trim() || "";
+    const state = req.query.state?.trim() || "";
 
     const skip = (page - 1) * limit;
 
-    let query = {};
+    const andConditions = [];
 
+    // Search by doctor name/email
     if (search) {
-      const [matchingUsers, matchingSpecialties, matchingClinics] =
-        await Promise.all([
-          userModel.find({
-            role: "doctor",
-            $or: [
-              { name: { $regex: search, $options: "i" } },
-              { email: { $regex: search, $options: "i" } },
-            ],
-          }).select("_id"),
+      const matchingUsers = await userModel
+        .find({
+          role: "doctor",
+          $or: [
+            { name: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } }
+          ]
+        })
+        .select("_id");
 
-          specialtyModel.find({
-            name: { $regex: search, $options: "i" },
-          }).select("_id"),
-
-          clinicModel.find({
-            "address.state": { $regex: search, $options: "i" },
-          }).select("_id"),
-        ]);
-
-      const userIds = matchingUsers.map(user => user._id);
-      const specialtyIds = matchingSpecialties.map(spec => spec._id);
-      const clinicIds = matchingClinics.map(clinic => clinic._id);
-
-      query = {
-        $or: [
-          { _id: { $in: userIds } },
-          { specialtyId: { $in: specialtyIds } },
-          { "clinics.clinicId": { $in: clinicIds } },
-        ],
-      };
+      andConditions.push({
+        _id: { $in: matchingUsers.map((user) => user._id) }
+      });
     }
+
+    // Filter by specialty
+    if (specialty) {
+      const matchingSpecialties = await specialtyModel
+        .find({
+          name: { $regex: specialty, $options: "i" }
+        })
+        .select("_id");
+
+      andConditions.push({
+        specialtyId: {
+          $in: matchingSpecialties.map((spec) => spec._id)
+        }
+      });
+    }
+
+    // Filter by state
+    if (state) {
+      const matchingClinics = await clinicModel
+        .find({
+          "address.state": { $regex: state, $options: "i" }
+        })
+        .select("_id");
+
+      andConditions.push({
+        "clinics.clinicId": {
+          $in: matchingClinics.map((clinic) => clinic._id)
+        }
+      });
+    }
+
+    const query = andConditions.length ? { $and: andConditions } : {};
 
     const [doctors, totalDoctors] = await Promise.all([
       doctorModel
@@ -68,18 +153,18 @@ const getDoctorsPaginated = async (req, res) => {
         .skip(skip)
         .limit(limit),
 
-      doctorModel.countDocuments(query),
+      doctorModel.countDocuments(query)
     ]);
 
     res.status(200).json({
       doctors,
       currentPage: page,
       totalPages: Math.ceil(totalDoctors / limit),
-      totalDoctors,
+      totalDoctors
     });
   } catch (err) {
     res.status(500).json({
-      message: err.message,
+      message: err.message
     });
   }
 };

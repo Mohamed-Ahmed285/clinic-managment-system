@@ -89,15 +89,34 @@ export class AppointmentsComponent implements OnInit {
       },
     });
   }
-  loadDoctors() {
-    const searchValue = this.search || this.selectedSpecialty;
+  // loadDoctors() {
+  //   const searchValue = this.search || this.selectedSpecialty;
 
+  //   this.appointmentService
+  //     .getDoctors(this.page, this.limit, searchValue)
+  //     .subscribe({
+  //       next: (res: any) => {
+  //          console.log('Doctors Response:', res);
+  //         this.doctors = res;
+  //         this.totalPages = res.totalPages;
+  //       },
+  //       error: (err) => console.log(err),
+  //     });
+  // }
+  loadDoctors() {
     this.appointmentService
-      .getDoctors(this.page, this.limit, searchValue)
+      .getDoctors(
+        this.page,
+        this.limit,
+        this.search,
+        this.selectedSpecialty,
+        this.selectedState,
+      )
       .subscribe({
         next: (res: any) => {
-           console.log('Doctors Response:', res);
-          this.doctors = res;
+          console.log(res);
+
+          this.doctors = res.doctors;
           this.totalPages = res.totalPages;
         },
         error: (err) => console.log(err),
