@@ -9,7 +9,7 @@ import { ProfileService } from '../../../core/services/profile.service';
 export class ProfileComponent implements OnInit {
   profileData: any;
   selectedImage: string | ArrayBuffer | null = null;
-
+  selectedFile!: File;
   // Popup
   isPopupOpen = false;
 
@@ -36,6 +36,8 @@ export class ProfileComponent implements OnInit {
 
     if (!file) return;
 
+    this.selectedFile = file;
+
     const reader = new FileReader();
 
     reader.onload = () => {
@@ -44,7 +46,6 @@ export class ProfileComponent implements OnInit {
 
     reader.readAsDataURL(file);
   }
-
   openPopup() {
     this.isPopupOpen = true;
   }
@@ -63,5 +64,44 @@ export class ProfileComponent implements OnInit {
 
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
+  saveChanges() {
+    const formData = new FormData();
 
+    formData.append('name', this.profileData.user.name);
+    formData.append('phone', this.profileData.user.phone);
+
+    if (this.selectedFile) {
+      formData.append('profileImage', this.selectedFile);
+    }
+
+    const body = {
+      dateOfBirth: this.profileData.profile.dateOfBirth,
+      gender: this.profileData.profile.gender,
+      address: this.profileData.profile.address,
+      preferredPaymentMethod: this.profileData.profile.preferredPaymentMethod,
+      notificationsEnabled: this.profileData.profile.notificationsEnabled,
+    };
+
+    this.profileService.updateUser(formData).subscribe({
+      next: (userRes: any) => {
+        this.profileService.updateProfile(body).subscribe({
+          next: (patientRes: any) => {
+            console.log('Updated Successfully', patientRes);
+
+            this.profileData = patientRes;
+
+            localStorage.setItem('user', JSON.stringify(patientRes.user));
+
+            alert('Profile updated successfully');
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        });
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
 }

@@ -19,6 +19,7 @@
      <div>
        <button
         class="bg-primary text-white px-8 py-3 rounded-2xl hover:opacity-90 transition me-2 my-2"
+          (click)="saveChanges()"
       >
         Save changes
       </button>
@@ -46,7 +47,7 @@
           >
    <img [src]="profileData.user.profileImage" alt="Profile Image" />
           </div> -->
-<div
+<!-- <div
   *ngIf="profileData?.user?.profileImage; else avatar"
   class="w-[200px] h-[200px] rounded-full overflow-hidden"
 >
@@ -55,8 +56,16 @@
     class="w-full h-full object-cover"
     alt="Profile"
   />
+</div> -->
+<div
+  *ngIf="selectedImage || profileData?.user?.profileImage; else avatar"
+  class="w-[200px] h-[200px] rounded-full overflow-hidden"
+>
+  <img
+    [src]="selectedImage || profileData.user.profileImage"
+    class="w-full h-full object-cover"
+  />
 </div>
-
 <ng-template #avatar>
   <div
     class="w-[200px] h-[200px] rounded-full bg-primary text-white flex items-center justify-center font-bold text-5xl"
