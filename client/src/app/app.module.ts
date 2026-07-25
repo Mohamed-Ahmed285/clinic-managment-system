@@ -10,7 +10,7 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './core/services/interceptors/auth.interceptor';
 
-
+import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
@@ -21,8 +21,10 @@ import { AuthInterceptor } from './core/services/interceptors/auth.interceptor';
   imports: [
     BrowserModule,
     AppRoutingModule,
+
     HttpClientModule,
     SharedModule
+
   ],
   providers: [
   {

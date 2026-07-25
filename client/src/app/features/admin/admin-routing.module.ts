@@ -8,7 +8,8 @@ import { UpdateProfileComponent } from './update-profile/update-profile.componen
 import { AppointmentsComponent } from './appointments/appointments.component';
 import { ClinicsComponent } from './clinics/clinics.component';
 import { UsersComponent } from './users/users.component';
-
+import { SpecialtiesComponent } from './specialties/specialties.component';
+import { AnalyticsComponent } from './analytics/analytics.component';
 const routes: Routes = [
   {
     path: '',
@@ -40,6 +41,14 @@ const routes: Routes = [
       {
         path: 'users',
         component: UsersComponent,
+      },
+       {
+        path: 'specialties',
+        component: SpecialtiesComponent,
+      },
+      {
+        path: 'analytics',
+        component: AnalyticsComponent,
       }
     ],
   },

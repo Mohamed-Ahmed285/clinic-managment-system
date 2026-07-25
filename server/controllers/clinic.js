@@ -37,6 +37,17 @@ const validateClinicHours = (body, existingClinic = null) => {
     return null;
 };
 
+// const getClinics = async (req, res) => {
+// try {
+//     const validationError = validateClinicHours(req.body);
+//     if (validationError) {
+//         return res.status(400).send(validationError);
+//     }
+//     const clinics = await clinicModel.find();
+//     return res.status(200).json(clinics);
+// } catch (err) {
+//     return res.status(500).send(err.message);
+// }};
 const getClinics = async (req, res) => {
     try {
 
@@ -97,6 +108,7 @@ const getClinicsPaginated = async (req, res) => {
     });
   }
 };
+
 
 
 const getClinicById = async (req, res) => {

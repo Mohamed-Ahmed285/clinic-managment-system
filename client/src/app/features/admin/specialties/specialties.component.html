@@ -1,16 +1,57 @@
+<!-- <div class="page">
+  <div class="page-header">
+    <h2>Specialties</h2>
+    <button (click)="openAddForm()">+ Add Specialty</button>
+  </div>
+
+  <p *ngIf="loading">Loading...</p>
+  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+
+  <div *ngIf="showForm" class="form-panel">
+    <h3>{{ editMode ? 'Edit' : 'Add' }} Specialty</h3>
+    <form (ngSubmit)="saveSpecialty()">
+      <label>
+        Name
+        <input type="text" [(ngModel)]="currentSpecialty.name" name="name" required />
+      </label>
+      <label>
+        Description
+        <textarea [(ngModel)]="currentSpecialty.description" name="description"></textarea>
+      </label>
+      <button type="submit">{{ editMode ? 'Update' : 'Create' }}</button>
+      <button type="button" (click)="cancelForm()">Cancel</button>
+    </form>
+  </div>
+
+  <table *ngIf="!loading && specialties.length > 0">
+    <thead>
+      <tr><th>Name</th><th>Description</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let specialty of specialties">
+        <td>{{ specialty.name }}</td>
+        <td>{{ specialty.description }}</td>
+        <td>
+          <button (click)="openEditForm(specialty)">Edit</button>
+          <button (click)="deleteSpecialty(specialty._id!)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div> -->
 <div class="min-h-screen bg-secondary p-8">
 
   <!-- Header -->
   <div class="mb-8 flex items-center justify-between border-b border-primary/20 pb-5">
     <h2 class="font-['Fraunces'] text-4xl font-semibold text-primary">
-      Clinics
+      Specialties
     </h2>
 
     <button
       (click)="openAddForm()"
       class="rounded-full bg-primary px-6 py-3 font-['Inter'] text-base font-medium text-white transition hover:opacity-90"
     >
-      + Add Clinic
+      + Add Specialty
     </button>
   </div>
 
@@ -29,18 +70,17 @@
     *ngIf="showForm"
     class="mb-8 rounded-2xl border border-gray/30 bg-white p-6 shadow-sm"
   >
-
     <h3 class="mb-5 font-['Fraunces'] text-2xl text-primary">
-      {{ editMode ? 'Edit' : 'Add' }} Clinic
+      {{ editMode ? 'Edit' : 'Add' }} Specialty
     </h3>
 
-    <form (ngSubmit)="saveClinic()" class="space-y-5">
+    <form (ngSubmit)="saveSpecialty()" class="space-y-5">
 
       <label class="block font-['Inter'] text-base text-black">
         Name
         <input
           type="text"
-          [(ngModel)]="currentClinic.name"
+          [(ngModel)]="currentSpecialty.name"
           name="name"
           required
           class="mt-2 w-full rounded-xl border border-gray/40 px-4 py-3 text-base outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -48,34 +88,13 @@
       </label>
 
       <label class="block font-['Inter'] text-base text-black">
-        City
-        <input
-          type="text"
-          [(ngModel)]="currentClinic.address.city"
-          name="city"
-          required
+        Description
+        <textarea
+          [(ngModel)]="currentSpecialty.description"
+          name="description"
+          rows="4"
           class="mt-2 w-full rounded-xl border border-gray/40 px-4 py-3 text-base outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-        />
-      </label>
-
-      <label class="block font-['Inter'] text-base text-black">
-        Street
-        <input
-          type="text"
-          [(ngModel)]="currentClinic.address.street"
-          name="street"
-          class="mt-2 w-full rounded-xl border border-gray/40 px-4 py-3 text-base outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-        />
-      </label>
-
-      <label class="block font-['Inter'] text-base text-black">
-        Phone
-        <input
-          type="text"
-          [(ngModel)]="currentClinic.phone"
-          name="phone"
-          class="mt-2 w-full rounded-xl border border-gray/40 px-4 py-3 text-base outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-        />
+        ></textarea>
       </label>
 
       <div class="flex gap-4">
@@ -98,69 +117,56 @@
       </div>
 
     </form>
-
   </div>
 
   <!-- Table -->
   <div
-    *ngIf="!loading && clinics.length > 0"
+    *ngIf="!loading && specialties.length > 0"
     class="overflow-x-auto rounded-2xl border border-gray/30 bg-white p-6 shadow-sm"
   >
-
     <table class="w-full">
 
       <thead>
-
         <tr class="border-b border-primary/20 font-['Inter'] text-sm uppercase tracking-wider text-gray">
-
           <th class="pb-4 text-left">Name</th>
-          <th class="pb-4 text-left">City</th>
-          <th class="pb-4 text-left">Phone</th>
+          <th class="pb-4 text-left">Description</th>
           <th class="pb-4 text-left w-52">Actions</th>
-
         </tr>
-
       </thead>
 
       <tbody>
 
         <tr
-          *ngFor="let clinic of clinics"
-          class="border-b border-gray/20 transition hover:bg-secondary"
+          *ngFor="let specialty of specialties"
+          class="border-b border-gray/20 hover:bg-secondary transition"
         >
 
           <td class="py-5 font-['Fraunces'] text-2xl text-black">
-            {{ clinic.name }}
+            {{ specialty.name }}
           </td>
 
           <td class="py-5 font-['Inter'] text-base text-gray">
-            {{ clinic.address.city }}
-          </td>
-
-          <td class="py-5 font-['Inter'] text-base text-gray">
-            {{ clinic.phone }}
+            {{ specialty.description }}
           </td>
 
           <td class="py-5">
-
             <div class="flex gap-3">
 
               <button
-                (click)="openEditForm(clinic)"
+                (click)="openEditForm(specialty)"
                 class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary"
               >
                 Edit
               </button>
 
               <button
-                (click)="deleteClinic(clinic._id!)"
+                (click)="deleteSpecialty(specialty._id!)"
                 class="rounded-full border border-red-300 px-5 py-2 font-['Inter'] text-red-600 transition hover:bg-red-50"
               >
                 Delete
               </button>
 
             </div>
-
           </td>
 
         </tr>
@@ -168,23 +174,20 @@
       </tbody>
 
     </table>
-
   </div>
 
   <!-- Empty State -->
   <div
-    *ngIf="!loading && clinics.length === 0"
+    *ngIf="!loading && specialties.length === 0"
     class="rounded-2xl border-2 border-dashed border-primary/30 bg-white p-12 text-center"
   >
-
     <h3 class="mb-2 font-['Fraunces'] text-2xl text-primary">
-      No Clinics
+      No Specialties
     </h3>
 
     <p class="font-['Inter'] text-base text-gray">
-      Add your first clinic to get started.
+      Add your first specialty to get started.
     </p>
-
   </div>
 
 </div>

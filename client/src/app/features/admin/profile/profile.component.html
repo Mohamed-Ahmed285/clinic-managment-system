@@ -1,1 +1,91 @@
-<p>profile works!</p>
+<div class="min-h-screen bg-secondary p-4 sm:p-8">
+
+  <!-- Header -->
+  <div class="mb-8 flex items-center justify-between border-b border-primary/20 pb-5">
+    <h2 class="font-['Fraunces'] text-3xl font-semibold text-primary sm:text-4xl">
+      My Profile
+    </h2>
+  </div>
+
+  <p *ngIf="loading" class="mb-4 font-['Inter'] text-base text-gray">Loading...</p>
+  <p *ngIf="errorMessage" class="mb-4 font-['Inter'] text-base text-red-600">{{ errorMessage }}</p>
+
+  <!-- ================= VIEW MODE ================= -->
+  <div *ngIf="!loading && !editMode" class="rounded-2xl border border-gray/30 bg-white p-6 shadow-sm">
+    <div class="mb-6 flex items-center justify-between">
+      <h3 class="font-['Fraunces'] text-2xl text-primary">Account Details</h3>
+      <button
+        (click)="openEditForm()"
+        class="rounded-full bg-primary px-5 py-2 font-['Inter'] text-white transition hover:opacity-90"
+      >
+        Edit Profile
+      </button>
+    </div>
+
+    <div class="space-y-4 font-['Inter']">
+      <div>
+        <p class="text-sm text-gray">Name</p>
+        <p class="text-lg text-black">{{ profile.name }}</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray">Email</p>
+        <p class="text-lg text-black">{{ profile.email }}</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray">Phone</p>
+        <p class="text-lg text-black">{{ profile.phone || '—' }}</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray">Role</p>
+        <span class="rounded-full bg-purple-50 px-3 py-1 text-sm text-purple-700">{{ profile.role }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= EDIT MODE ================= -->
+  <div *ngIf="!loading && editMode" class="rounded-2xl border border-gray/30 bg-white p-6 shadow-sm">
+    <h3 class="mb-5 font-['Fraunces'] text-2xl text-primary">Edit Profile</h3>
+
+    <form #profileForm="ngForm" (ngSubmit)="saveProfile(profileForm)">
+
+      <label class="mb-1 block font-['Inter'] text-sm text-gray">Name</label>
+      <input
+        [(ngModel)]="currentProfile.name" name="name" type="text"
+        required minlength="3" maxlength="50"
+        #nameField="ngModel"
+        class="w-full rounded-xl border p-3 font-['Inter']"
+        [ngClass]="{'border-red-400': nameField.invalid && nameField.touched, 'border-primary/20': !(nameField.invalid && nameField.touched)}"
+      />
+      <p *ngIf="nameField.invalid && nameField.touched" class="mb-2 mt-1 font-['Inter'] text-sm text-red-600">
+        <span *ngIf="nameField.errors?.['required']">Name is required.</span>
+        <span *ngIf="nameField.errors?.['minlength']">Name must be at least 3 characters.</span>
+        <span *ngIf="nameField.errors?.['maxlength']">Name cannot exceed 50 characters.</span>
+      </p>
+      <div class="mb-2" *ngIf="!(nameField.invalid && nameField.touched)"></div>
+
+      <!-- Email shown as read-only text, not an editable input -->
+      <label class="mb-1 block font-['Inter'] text-sm text-gray">Email</label>
+      <p class="mb-4 rounded-xl bg-secondary p-3 font-['Inter'] text-black">{{ profile.email }}</p>
+
+      <label class="mb-1 block font-['Inter'] text-sm text-gray">Phone</label>
+      <input
+        [(ngModel)]="currentProfile.phone" name="phone" type="text"
+        class="mb-4 w-full rounded-xl border border-primary/20 p-3 font-['Inter']"
+      />
+
+      <div class="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <button type="button" (click)="cancelEdit()" class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary hover:bg-secondary">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          [disabled]="profileForm.invalid"
+          class="rounded-full bg-primary px-5 py-2 font-['Inter'] text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>

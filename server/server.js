@@ -39,7 +39,6 @@ const appointmentRouter = require("./routes/appointment");
 const todoRouter = require("./routes/todo.js");
 const specialtyRoutes = require("./routes/specialty");
 const adminUserRoutes = require("./routes/adminUserRoutes");
-const adminDoctorRoutes = require("./routes/adminDoctor");
 const notifications = require("./routes/notification");
 const adminAnalyticsRoutes = require("./routes/adminAnalytics");
 const reviewRouter = require("./routes/routeReview");
@@ -57,7 +56,7 @@ app.use("/medicalRecord", medicalRecordRouter);
 app.use("/prescription", prescriptionRouter);
 app.use("/specialty", specialtyRoutes);
 app.use("/admin/users", adminUserRoutes);
-app.use("/admin/doctors", adminDoctorRoutes);
+
 app.use("/notifications", notifications);
 app.use("/admin/analytics", adminAnalyticsRoutes);
 app.use("/review", reviewRouter);
