@@ -1,0 +1,57 @@
+.history-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: 110px 130px 1fr;
+  align-items: center;
+  column-gap: 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.history-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.history-date {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.history-desc {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.badge--condition {
+  background: #d9ecfb;
+  color: #1c5c8f;
+}
+
+.badge--allergy {
+  background: #fde3e0;
+  color: #a8392c;
+}
+
+.badge--prescription {
+  background: var(--color-badge-bg);
+  color: var(--color-badge-text);
+}
+
+.empty {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+@media (max-width: 640px) {
+  .history-row {
+    grid-template-columns: 1fr;
+    row-gap: 6px;
+  }
+}

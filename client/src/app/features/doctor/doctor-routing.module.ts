@@ -6,9 +6,9 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { DoctorLayoutComponent } from './doctor-layout/doctor-layout.component';
 import { ProfileComponent } from './profile/profile.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
-import { AppointmentsComponent } from './appointments/appointments.component';
 import { PrescriptionsComponent } from './prescriptions/prescriptions.component';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { AppointmentComponent } from './appointment/appointment.component';
 const routes: Routes = [
   {
     path: '',
@@ -37,9 +37,19 @@ const routes: Routes = [
       },
 
       {
-        path: 'appointments',
-        component: AppointmentsComponent,
-      },
+     path: 'appointments',
+      component: AppointmentComponent,
+},
+
+{
+  path: 'appointment',
+  component: AppointmentComponent,
+},
+
+{
+  path: 'prescriptions',
+  component: PrescriptionsComponent,
+},
 
       {
         path: 'prescriptions',

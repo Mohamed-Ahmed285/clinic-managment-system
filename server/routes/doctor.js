@@ -8,7 +8,8 @@ const {
     addClinicToMyProfile,
     updateClinicAssignment,
     removeClinicFromMyProfile,
-    uploadDoctorPhoto
+    uploadDoctorPhoto,
+    getDoctorDashboard
 } = require("../controllers/doctor");
 const { verifyToken } = require("../middlewares/auth");
 const authorize = require("../middlewares/authorize");
@@ -16,19 +17,13 @@ const upload = require("../middlewares/upload");
 
 router.get("/", getDoctors);
 router.get("/me", verifyToken, authorize("get:doctorprofile"), getMyDoctorProfile);
+router.get("/dashboard",verifyToken,authorize("get:doctorprofile"),getDoctorDashboard);
 router.get("/:id", getDoctorById);
 router.put("/me", verifyToken, authorize("update:doctorprofile"), updateMyDoctorProfile);
 router.post("/me/clinics", verifyToken, authorize("add:clinicToDoctor"), addClinicToMyProfile);
 router.put("/me/clinics/:clinicId", verifyToken, authorize("update:clinicToDoctor"), updateClinicAssignment);
 router.delete("/me/clinics/:clinicId", verifyToken, authorize("delete:clinicFromDoctor"), removeClinicFromMyProfile);
-router.post(
-    "/me/photo",
-    verifyToken,
-    authorize("update:doctorprofile"),
-    upload.single("profileImage"),
-    uploadDoctorPhoto
-);
-
+router.post("/me/photo",verifyToken, authorize("update:doctorprofile"),upload.single("profileImage"), uploadDoctorPhoto);
 
 
 module.exports = router;

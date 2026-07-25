@@ -1,42 +1,137 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Appointment, NotificationItem, PanelStat, RatingSummary } from '../models/dashboard.model';
-
+import { NotificationService } from 'src/app/core/services/notification.service';
+import { DoctorService, DashboardResponse } from 'src/app/core/services/doctor.service';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
-  doctorName = 'Dr. Nakamura';
-  todayLabel = 'Tuesday · November 18';
+export class DashboardComponent implements OnInit {
 
-  appointments: Appointment[] = [
-    { time: '08:30', patientName: 'Priya Shah', visitType: 'Follow-up · HTN', status: 'Checked in' },
-    { time: '09:00', patientName: 'Marcus Lee', visitType: 'New patient · Chest pain', status: 'Waiting' },
-    { time: '09:30', patientName: 'Elena Alvarez', visitType: 'Post-op · Day 14', status: 'In room' },
-    { time: '10:15', patientName: "James O'Neal", visitType: 'Annual physical', status: 'Upcoming' },
-    { time: '10:40', patientName: 'Alex Morgan', visitType: 'Follow-up · Statin therapy', status: 'Upcoming' },
-    { time: '11:20', patientName: 'Yuki Tanaka', visitType: 'Consult · Arrhythmia', status: 'Upcoming' }
-  ];
+  todayLabel = 'Today';
 
-  panelStats: PanelStat[] = [
-    { label: 'Active patients', value: '482' },
-    { label: 'Duration time', value: '22m' },
-    { label: 'Total appointments', value: '12' },
-    { label: 'Completed appointments', value: '4' }
-  ];
+  dashboard!: DashboardResponse;
+
+  appointments: Appointment[] = [];
+
+  panelStats: PanelStat[] = [];
 
   ratingSummary: RatingSummary = {
-    averageRating: 4.6,
+    averageRating: 0,
     maxRating: 5,
-    ratingCount: 213,
-    eligiblePatients: 482
+    ratingCount: 0,
+    eligiblePatients: 0
   };
 
   notifications: NotificationItem[] = [
-    { senderName: 'Alex Morgan', subject: 'Question about new dosage', preview: "Since starting the higher dose I've noticed some mild…", timeAgo: '1h', read: false },
-    { senderName: 'Elena Alvarez', subject: 'Post-op incision photo', preview: 'Sending the photo you asked for from this morning…', timeAgo: '3h', read: false },
-    { senderName: "James O'Neal", subject: 'Re: annual physical prep', preview: 'Thanks — will fast starting at 8pm the night before…', timeAgo: '1d', read: true },
-    { senderName: 'Yuki Tanaka', subject: 'Palpitations log (week 2)', preview: "Attaching this week's log. Frequency is decreasing…", timeAgo: '2d', read: true }
-  ];
+   ];
+
+constructor(
+  private doctorService: DoctorService,
+  private notificationService: NotificationService
+) {}
+  ngOnInit(): void {
+    this.loadDashboard();
+    this.loadNotifications();
+  }
+
+  loadDashboard(): void {
+
+    this.doctorService.getDashboard().subscribe({
+
+
+      next: (res) => {
+
+        this.dashboard = res;
+
+        this.appointments = res.todayAppointments.map((item: any) => ({
+        id: item._id,
+        time: item.startTime,
+        patientName: item.patientId?.name ?? 'Unknown Patient',
+        visitType: item.clinicId?.name ?? 'Clinic Visit',
+        status: this.mapStatus(item.status)
+}));
+
+        this.panelStats = [
+          {
+            label: 'Active patients',
+            value: res.stats.activePatients.toString()
+          },
+          {
+            label: 'Duration time',
+            value: `${res.stats.appointmentDuration} min`
+          },
+          {
+            label: 'Total appointments',
+            value: res.stats.totalAppointments.toString()
+          },
+          {
+            label: 'Completed appointments',
+            value: res.stats.completedAppointments.toString()
+          }
+        ];
+
+        this.ratingSummary = {
+          averageRating: res.doctor.rating.average,
+          maxRating: 5,
+          ratingCount: res.doctor.rating.count,
+          eligiblePatients: res.stats.activePatients
+        };
+
+      },
+
+      error: (err) => {
+        console.error(err);
+      }
+
+    });
+
+  }
+
+  mapStatus(status: string): Appointment['status'] {
+
+    switch (status) {
+
+      case 'pending':
+        return 'Waiting';
+
+      case 'confirmed':
+        return 'Upcoming';
+
+      case 'completed':
+        return 'Completed';
+
+      case 'cancelled':
+        return 'Completed';
+
+      default:
+        return 'Upcoming';
+    }
+
+  }
+
+  loadNotifications(): void {
+
+  this.notificationService.getMyNotifications().subscribe({
+
+    next: (res) => {
+
+      this.notifications = res.map(item => ({
+        senderName: item.recipientType,
+        subject: item.title,
+        preview: item.message,
+        timeAgo: new Date(item.createdAt).toLocaleString(),
+        read: item.isRead
+      }));
+  console.log("Notifications:", this.notifications);
+    },
+
+    error: (err) => {
+      console.error(err);
+    }
+
+  });
+
+}
 }

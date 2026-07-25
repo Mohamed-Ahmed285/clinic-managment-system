@@ -4,17 +4,32 @@
       <p class="card__eyebrow">Schedule</p>
       <h2 class="card__title">Today's clinic</h2>
     </div>
-    <a class="card__link" href="javascript:void(0)">Full day →</a>
+
+    <a class="card__link" href="javascript:void(0)">
+      Full day →
+    </a>
   </div>
 
   <ul class="visit-list">
-    <li class="visit-row" *ngFor="let visit of appointments">
-      <span class="visit-row__time">{{ visit.time }}</span>
-      <span class="visit-row__info">
-        <span class="visit-row__name">{{ visit.patientName }}</span>
-        <span class="visit-row__type">{{ visit.visitType }}</span>
-      </span>
-      <span [class]="statusClass(visit.status)">{{ visit.status }}</span>
-    </li>
+
+    <li
+  class="visit-row"
+  *ngFor="let visit of appointments"
+  (click)="selectAppointment(visit)"
+  [class.visit-row--active]="selectedAppointmentId === visit.id">
+
+  <span class="visit-row__time">{{ visit.time }}</span>
+
+  <span class="visit-row__info">
+    <span class="visit-row__name">{{ visit.patientName }}</span>
+    <span class="visit-row__type">{{ visit.visitType }}</span>
+  </span>
+
+  <span [class]="statusClass(visit.status)">
+    {{ visit.status }}
+  </span>
+
+</li>
+
   </ul>
 </section>
