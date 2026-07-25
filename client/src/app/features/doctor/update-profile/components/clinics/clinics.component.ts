@@ -52,7 +52,27 @@ export class ClinicsComponent implements OnInit {
   }
 
   removeClinic(index: number): void {
-    this.clinics.splice(index, 1);
+
+    const clinic = this.clinics[index];
+
+    // Clinic hasn't been saved yet
+    if (!clinic.id) {
+      this.clinics.splice(index, 1);
+      return;
+    }
+
+    // Remove from database
+    this.doctorService.deleteClinic(clinic.id).subscribe({
+      next: () => {
+        this.clinics.splice(index, 1);
+        alert('Clinic removed successfully');
+      },
+      error: (err: any) => {
+        console.error('Delete clinic error:', err);
+        console.error(err.error);
+        alert('Failed to remove clinic');
+      }
+    });
   }
 
   saveClinic(clinic: Clinic): void {
