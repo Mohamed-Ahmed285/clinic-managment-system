@@ -19,8 +19,8 @@ export class ScheduleComponent {
     return 'status status--' + status.toLowerCase().replace(/\s+/g, '-');
   }
 
-  selectAppointment(appointment: Appointment) {
-    this.selectedAppointmentId = appointment.id;
-    this.router.navigate(['/doctor/appointments', appointment.id]);
-  }
+ selectAppointment(appointment: Appointment) {
+  this.selectedAppointmentId = appointment.id;
+  this.router.navigate(['/doctor/appointment']);
+}
 }
