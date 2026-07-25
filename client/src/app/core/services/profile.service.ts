@@ -39,4 +39,16 @@ export class ProfileService {
       }),
     });
   }
+  getMedicalRecords(patientId: string) {
+    const token = localStorage.getItem('token');
+
+    return this.http.get(
+      `${environment.apiUrl}/medicalRecord/patient/${patientId}`,
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        }),
+      },
+    );
+  }
 }

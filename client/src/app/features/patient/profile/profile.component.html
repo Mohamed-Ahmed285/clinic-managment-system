@@ -118,6 +118,7 @@
               </div>
 
               <!-- Gender -->
+               <div>
               <div>
                 <label class="uppercase text-sm text-gray-500">Gender</label>
                 <select
@@ -151,17 +152,9 @@
                   />
                 </div>
 
-                <div>
-                  <label class="uppercase text-sm text-gray-500">Country</label>
-                  <input
-                    type="text"
-                    placeholder="Egypt"
-                    class="w-full mt-2 rounded-xl border border-[#e0e9eb] bg-[#F4FBFA] p-3 outline-none focus:border-primary"
-                    [(ngModel)]="profileData.profile.address.country"
-                  />
-                </div>
-              </div>
 
+              </div>
+</div>
               <!-- Preferred Payment Method -->
               <div>
                 <label class="uppercase text-sm text-gray-500">Preferred Payment Method</label>
@@ -201,24 +194,36 @@
 
         <div class="bg-white rounded-3xl p-5 w-fit my-3">
           <p class="text-gray-500 text-md font-serif my-2">Total Records</p>
-          <h2 class="text-4xl italic font-semibold font-serif">12</h2>
+          <h2 class="text-4xl italic font-semibold font-serif text-center">  {{ medicalRecords.length }}</h2>
         </div>
 
-        <div class="flex justify-between bg-white rounded-2xl p-5 flex-wrap">
-          <div class="flex gap-2 items-center">
-            <div class="bg-secondary rounded-2xl p-5 font-bold text-primary">A</div>
-            <div>
-              <p class="text-gray-500 text-sm my-2">June 14 2026</p>
-              <p>Dr. Sakamura</p>
-            </div>
-          </div>
-          <button
-            class="button text-gray-600 py-0 px-5 border border-gray-300 font-semibold h-[50px] rounded-full my-3 hover:bg-gray-50 transition"
-            (click)="openPopup()"
-          >
-            View
-          </button>
-        </div>
+     <div
+  *ngFor="let record of medicalRecords"
+  class="flex justify-between bg-white rounded-2xl p-5 flex-wrap my-3"
+>
+  <div class="flex gap-2 items-center">
+    <div class="bg-secondary rounded-4xl p-5 font-bold text-primary text-2xl">
+      {{ record.doctorId?._id?.name?.charAt(0) }}
+    </div>
+
+    <div>
+      <p class="text-gray-500 text-sm my-2 mb-0 italic font-semibold">
+        {{ record.visitDate | date:'mediumDate' }}
+      </p>
+
+      <p class="text-gray text-2xl font-semibold  italic">
+        Dr. {{ record.doctorId?._id.name }}
+      </p>
+    </div>
+  </div>
+
+  <button
+    class="button text-gray-600 py-0 px-5 border border-gray-300 font-semibold h-[50px] rounded-full my-3 hover:bg-gray-50 transition"
+    (click)="openPopup()"
+  >
+    View
+  </button>
+</div>
       </div>
 
     </div>
@@ -238,7 +243,7 @@
       ✕
     </button>
 
-    <h2 class="text-2xl font-semibold mb-4">Add Appointment</h2>
+    <h2 class="text-2xl font-semibold mb-4">Summary of the appointment</h2>
 
     <input
       type="text"
@@ -246,9 +251,6 @@
       class="w-full border rounded-lg p-2 mb-4 outline-none focus:border-primary"
     />
 
-    <button class="w-full bg-[#04585c] text-white py-2 rounded-lg hover:opacity-90 transition">
-      Save
-    </button>
   </div>
 </div>
 

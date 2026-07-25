@@ -30,6 +30,7 @@ export class ProfileComponent implements OnInit {
           this.profileData.profile.dateOfBirth =
             this.profileData.profile.dateOfBirth.split('T')[0];
         }
+              this.loadMedicalRecords();
       },
       error: (err) => {
         console.log(err);
@@ -180,6 +181,22 @@ export class ProfileComponent implements OnInit {
             console.log(err);
           },
         });
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
+
+  medicalRecords: any[] = [];
+
+  loadMedicalRecords() {
+    const patientId = this.profileData.profile._id;
+
+    this.profileService.getMedicalRecords(patientId).subscribe({
+      next: (res: any) => {
+        console.log(res)
+        this.medicalRecords = res;
       },
       error: (err) => {
         console.log(err);
