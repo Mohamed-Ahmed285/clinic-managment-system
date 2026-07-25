@@ -53,6 +53,52 @@ const getClinics = async (req, res) => {
     }
 };
 
+const getClinicsPaginated = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+
+    const skip = (page - 1) * limit;
+
+    let query = {};
+
+    // Adjusted search fields for typical Clinic attributes
+    if (search) {
+      query = {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { address: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
+      };
+    }
+
+    const [clinics, totalClinics] = await Promise.all([
+      clinicModel
+        .find(query)
+        // .populate(populateClinic) // Ensure you have this defined if you are populating refs
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+
+      clinicModel.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+      clinics,
+      currentPage: page,
+      totalPages: Math.ceil(totalClinics / limit),
+      totalClinics,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+};
+
+
 const getClinicById = async (req, res) => {
 try {
     const clinic = await clinicModel.findById(req.params.id);
@@ -111,5 +157,6 @@ module.exports = {
     getClinicById,
     createClinic,
     updateClinic,
-    deleteClinic
+    deleteClinic,
+    getClinicsPaginated
 };

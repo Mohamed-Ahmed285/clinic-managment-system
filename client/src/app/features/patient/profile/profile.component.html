@@ -1,4 +1,4 @@
-<app-navbar></app-navbar>
+<div *ngIf="profileData">
 <div class="bg-secondary py-8">
   <div class="container mx-auto lg:px-24 md:px-24 pt-0 py-12 px-10">
     <div
@@ -16,11 +16,14 @@
         </p>
       </div>
 
-      <button
-        class="bg-primary text-white px-8 py-3 rounded-2xl hover:opacity-90 transition"
+     <div>
+       <button
+        class="bg-primary text-white px-8 py-3 rounded-2xl hover:opacity-90 transition me-2 my-2"
       >
         Save changes
       </button>
+          <button class="bg-primary py-0 px-3 text-white rounded-2xl h-[50px] " routerLink="../appointments/">+Book Appointment</button>
+     </div>
     </div>
 
 
@@ -38,12 +41,29 @@
 
 
         <div class="flex flex-col items-center">
-          <div
+          <!-- <div
             class="w-40 h-40 rounded-full bg-primary flex items-center justify-center text-white text-5xl"
           >
-            AM
-          </div>
+   <img [src]="profileData.user.profileImage" alt="Profile Image" />
+          </div> -->
+<div
+  *ngIf="profileData?.user?.profileImage; else avatar"
+  class="w-[200px] h-[200px] rounded-full overflow-hidden"
+>
+  <img
+    [src]="profileData.user.profileImage"
+    class="w-full h-full object-cover"
+    alt="Profile"
+  />
+</div>
 
+<ng-template #avatar>
+  <div
+    class="w-[200px] h-[200px] rounded-full bg-primary text-white flex items-center justify-center font-bold text-5xl"
+  >
+    {{ getInitials(profileData?.user?.name) }}
+  </div>
+</ng-template>
           <input
             #fileInput
             type="file"
@@ -72,6 +92,7 @@
               <input
                 type="text"
                 class="w-full mt-2 rounded-xl border bg-[#f7fafa] p-3 border-[#e0e9eb]"
+                [(ngModel)]="profileData.user.name"
               />
             </div>
 
@@ -82,6 +103,7 @@
               <input
                 type="email"
                 class="w-full mt-2 rounded-xl border bg-[#F4FBFA] p-3 border-[#e0e9eb]"
+                [(ngModel)]="profileData.user.email"
               />
             </div>
 
@@ -94,6 +116,7 @@
 
               <input
                 class="w-full mt-2 rounded-xl border bg-[#F4FBFA] p-3 border-[#e0e9eb]"
+                    [(ngModel)]="profileData.user.phone"
               />
             </div>
 
@@ -106,6 +129,7 @@
               <input
                 type="date"
                 class="w-full mt-2 rounded-xl border bg-[#F4FBFA] p-3 border-[#e0e9eb]"
+                    [(ngModel)]="profileData.profile.dateOfBirth"
               />
             </div>
 
@@ -116,9 +140,11 @@
 
               <select
                 class="w-full mt-2 rounded-xl border bg-[#F4FBFA] p-3 border-[#e0e9eb]"
+                 [(ngModel)]="profileData.profile.gender"
+
               >
-                <option>Male</option>
-                <option>Female</option>
+                <option>male</option>
+                <option>female</option>
               </select>
             </div>
 
@@ -133,7 +159,8 @@
       type="text"
       placeholder="Cairo"
       class="w-full mt-2 rounded-xl border border-[#e0e9eb] bg-[#F4FBFA] p-3 outline-none focus:border-primary"
-    />
+    [(ngModel)]="profileData.profile.address.city"
+      />
   </div>
 
 
@@ -144,7 +171,8 @@
       type="text"
       placeholder="Cairo Governorate"
       class="w-full mt-2 rounded-xl border border-[#e0e9eb] bg-[#F4FBFA] p-3 outline-none focus:border-primary"
-    />
+     [(ngModel)]="profileData.profile.address.state"
+      />
   </div>
 
   <div>
@@ -154,7 +182,8 @@
       type="text"
       placeholder="Egypt"
       class="w-full mt-2 rounded-xl border border-[#e0e9eb] bg-[#F4FBFA] p-3 outline-none focus:border-primary"
-    />
+      [(ngModel)]="profileData.profile.address.country"
+      />
   </div>
 
 </div>
@@ -165,7 +194,8 @@
 
   <select
     class="w-full mt-2 rounded-xl border border-[#e0e9eb] bg-[#F4FBFA] p-3 outline-none focus:border-primary pe-2"
-  >
+   [(ngModel)]="profileData.profile.preferredPaymentMethod"
+    >
     <option value="">Select payment method</option>
     <option value="cash">Cash</option>
     <option value="online">Online</option>
@@ -183,6 +213,7 @@
     <input
       type="checkbox"
       class="w-5 h-5 accent-primary mb-3 "
+      [(ngModel)]="profileData.profile.notificationsEnabled"
     />
 
     <span class="text-gray-700 mb-3">
@@ -194,65 +225,63 @@
         </div>
       </div>
     </div>
+<div class="records my-5">
+  <p class="text-gray text-md font-serif my-2">Health Story</p>
+<h2 class="text-4xl italic font-semibold font-serif">Medical records</h2>
+<div class="bg-white rounded-3xl p-5 w-fit my-3">
+  <p class="text-gray text-md font-serif my-2  ">Total Records</p>
+<h2 class="text-4xl italic font-semibold font-serif">12</h2>
+</div>
+<div class="flex justify-between bg-white rounded-2xl p-5 flex-wrap">
+<div class="flex gap-2 items-center ">
+  <div class="bg-secondary rounded-2xl p-5 font-bold text-primary">
+A
+</div>
+<div class="">
+<p class="text-gray text-sm my-2">
+June 14 2026
+</p>
+<p>
+  Dr.Sakamura
+</p>
+</div>
+</div>
+<button class="button text-gray py-0 px-5 border border-gray font-semibold h-[50px] rounded-full my-3"  (click)="openPopup()">View</button>
 
-    <div class="appointments">
-      <div
-        class="bg-white rounded-3xl shadow-sm border border-[#e0e9eb] mt-10 p-6 lg:p-8"
-      >
-        <div class="flex flex-wrap justify-between items-center gap-5">
-    <div>
-            <h1 class="text-4xl font-semibold mt-2 italic">
-            Your Next Appointements
-          </h1>
+</div>
 
-          <p class="text-gray-600 mt-3 text-xl italic">
-            <i class="fa-solid fa-triangle-exclamation text-2xl mr-2"></i> Don't
-            forget your appointments
-          </p>
-    </div>
-    <button class="bg-primary py-0 px-3 text-white rounded-full h-[50px] " routerLink="../appointments/">+Book Appointment</button>
-        </div>
-        <div>
+</div>
 
-            <div class="flex justify-between items-center py-8 flex-wrap gap-3">
-              <div class="flex gap-5 flex-wrap lg:w-1/2">
-                <div
-                  class="bg-secondary rounded-2xl w-20 h-20 flex flex-col justify-center items-center p-5"
-                >
-                  <span class="text-sm tracking-widest"> Sunday </span>
+  </div>
+</div>
+<div
+  *ngIf="isPopupOpen"
+  class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+>
+  <div class="bg-white p-6 rounded-xl shadow-lg w-[400px] relative">
 
-                  <span class="text-3xl font-semibold"> 9:00 </span>
-                </div>
+    <button
+      (click)="closePopup()"
+      class="absolute top-3 right-3 text-xl"
+    >
+      ✕
+    </button>
 
-                <div>
-                  <h3 class="text-3xl font-semibold text-black">
-                    Dr.Ahmed Marwan
-                  </h3>
+    <h2 class="text-2xl font-semibold mb-4">
+      Add Appointment
+    </h2>
 
-                  <p class="text-gray mt-1">Cardiology · confirmed</p>
+    <input
+      type="text"
+      placeholder="Enter Name"
+      class="w-full border rounded-lg p-2 mb-4"
+    />
 
-                  <p class="text-2xl mt-2 text-black">Appointment</p>
+    <button
+      class="w-full bg-[#04585c] text-white py-2 rounded-lg"
+    >
+      Save
+    </button>
 
-                  <p class="text-gray mt-1 w-fu">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Dolore suscipit vero consequuntur blanditiis dolorum dolorem
-                    officiis, repellendus distinctio voluptas reprehenderit,
-                    pariatur aspernatur. Suscipit blanditiis ratione assumenda
-                    facilis iste neque reiciendis?
-                  </p>
-                </div>
-              </div>
-              <div class="flex gap-2 flex-wrap">
-                <button class="bg-secondary p-2 rounded-full">Confirmed</button>
-                <button class=" rounded-full py-1 px-2 border border-gray">Reschedule</button>
-                 <button class="text-red-500 border border-red-500 py-2 rounded-full px-4 hover:bg-red-500 hover:text-white">Cancel</button>
-              </div>
-            </div>
-
-        </div>
-      </div>
-    </div>
-
-    <app-footer></app-footer>
   </div>
 </div>

@@ -11,6 +11,7 @@ import { ReviewsComponent } from './reviews/reviews.component';
 import { FavoriteComponent } from './favorite/favorite.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { SharedModule } from '../../shared/shared.module';
+import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     PatientLayoutComponent,
@@ -22,6 +23,6 @@ import { SharedModule } from '../../shared/shared.module';
     FavoriteComponent,
     NotificationsComponent,
   ],
-  imports: [CommonModule, PatientRoutingModule, SharedModule],
+  imports: [CommonModule, PatientRoutingModule, SharedModule,FormsModule],
 })
 export class PatientModule {}

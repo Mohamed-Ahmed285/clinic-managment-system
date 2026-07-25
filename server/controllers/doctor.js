@@ -1,6 +1,7 @@
 const doctorModel = require("../models/doctor");
 const userModel = require("../models/user");
 const appointmentModel = require("../models/appointment");
+const specialtyModel = require('../models/specialty');
 
 
 const populateDoctor = [
@@ -16,6 +17,67 @@ try {
 } catch (err) {
     return res.status(500).send(err.message);
 }};
+
+const getDoctorsPaginated = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+
+    const skip = (page - 1) * limit;
+
+    let query = {};
+
+    if (search) {
+      // (by name or email)
+      const matchingUsers = await userModel.find({
+        role: "doctor", // Ensure we only grab doctor users
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ]
+      }).select('_id');
+      
+      const userIds = matchingUsers.map(user => user._id);
+
+      const matchingSpecialties = await specialtyModel.find({
+        name: { $regex: search, $options: "i" } 
+      }).select('_id');
+      
+      const specialtyIds = matchingSpecialties.map(spec => spec._id);
+
+      query = {
+        $or: [
+          { _id: { $in: userIds } },
+          { specialtyId: { $in: specialtyIds } }
+        ]
+      };
+    }
+
+    // 3. Fetch Doctors and Count
+    const [doctors, totalDoctors] = await Promise.all([
+      doctorModel
+        .find(query)
+        .populate(populateDoctor)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+
+      doctorModel.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+      doctors,
+      currentPage: page,
+      totalPages: Math.ceil(totalDoctors / limit),
+      totalDoctors,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+};
 
 const getDoctorById = async (req, res) => {
 try {
@@ -325,5 +387,6 @@ module.exports = {
     updateClinicAssignment,
     removeClinicFromMyProfile,
     uploadDoctorPhoto,
-    getDoctorDashboard
+    getDoctorDashboard,
+    getDoctorsPaginated
 };
