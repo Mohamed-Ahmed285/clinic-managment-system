@@ -1,7 +1,7 @@
 <section class="bg-secondary min-h-screen py-10">
   <div class="container mx-auto px-6 lg:px-20">
 <div class="flex justify-between flex-wrap items-center">
-      <h1 class="text-primaty italic text-5xl my-5 font-semibold font-serif">Hello Lilian</h1>
+      <h1 class="text-primaty italic text-5xl my-5 font-semibold font-serif">Hello {{ profileData?.user?.name }}</h1>
 <button class=" bg-primary text-white font-semibold h-[50px] rounded-full px-3 my-2
 " routerLink="../../patient/profile">Go to my profile</button>
 </div>
@@ -43,7 +43,9 @@
           <input
             type="text"
             placeholder="Doctor or location"
-            class="w-full rounded-xl border border-gray p-2 bg-secondary">
+            class="w-full rounded-xl border border-gray p-2 bg-secondary"
+             [(ngModel)]="search"
+             (input)="loadDoctors()">
 
         </div>
         <div>
@@ -52,28 +54,35 @@
           </label>
 
           <select
-            class="w-full rounded-xl border border p-2 bg-secondary">
+            class="w-full rounded-xl border border p-2 bg-secondary" [(ngModel)]="selectedSpecialty"
+  (change)="loadDoctors()">
 
             <option>All specialties</option>
-            <option>Cardiology</option>
-            <option>Dermatology</option>
-            <option>Dentist</option>
+            <option
+    *ngFor="let specialty of specialties"
+    [value]="specialty.name"
+  >
+    {{ specialty.name }}
+  </option>
 
           </select>
         </div>
     <div>
           <label class="block uppercase text-gray text-sm mb-3">
-            City
+            State
           </label>
 
-          <select
-            class="w-full rounded-xl border border-gray p-2 bg-secondary">
+     <select
+  class="w-full rounded-xl border border-gray bg-[#F4FBFA] p-3"
+ [(ngModel)]="selectedState"
+(change)="loadDoctors()"
+>
+  <option value="">Select Governorate</option>
 
-            <option>All cities</option>
-            <option>Cairo</option>
-            <option>Dakahlia</option>
-
-          </select>
+  <option *ngFor="let governorate of states" [value]="governorate">
+    {{ governorate }}
+  </option>
+</select>
         </div>
 
 
@@ -86,8 +95,8 @@
   <h2 class="font-serif text-4xl mb-6 italic">
     Doctors Available
   </h2>
-
-  <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+<p>Doctors Count: {{ doctors.length }}</p>
+  <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6"  *ngFor="let doctor of doctors">
 
     <!-- Doctor Info -->
     <div class="flex items-start gap-5">
@@ -101,22 +110,22 @@
       <!-- Name -->
       <div>
         <h3 class="text-2xl font-medium text-primary">
-          Dr. Sana Nakamura
+          Dr. {{ doctor._id.name }}
         </h3>
 
         <p class="text-gray-500">
-          Cardiology · Meridian West · Suite 3B
+         {{ doctor.specialtyId.name }}
         </p>
 
         <div class="flex items-center gap-1 mt-1">
           <i class="fa-solid fa-star text-gray text-sm"></i>
-          <span class="text-gray-700">4.9</span>
+          <span class="text-gray-700">{{doctor.rating.average}}</span>
         </div>
       </div>
 
     </div>
 
-    <div class="mt-8 space-y-4">
+    <!-- <div class="mt-8 space-y-4">
 
 
       <div class="flex flex-col lg:flex-row lg:items-center ">
@@ -156,8 +165,22 @@
       </div>
 
 
-    </div>
+    </div> -->
+<div *ngFor="let clinic of doctor.clinics,let i=index" class="flex flex-col lg:flex-row lg:items-center">
 
+  <p class="w-36 uppercase tracking-wide text-gray-600 font-semibold">
+  Clinic   {{ clinic.clinicId.name }} 
+  </p>
+
+  <div class="flex flex-wrap gap-2">
+    <button
+      class="px-6 py-2 rounded-xl border bg-primary text-white"
+      (click)="openModal()">
+      Book
+    </button>
+  </div>
+
+</div>
 
   </div>
 </section>
