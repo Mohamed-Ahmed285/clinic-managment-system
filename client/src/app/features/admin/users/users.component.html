@@ -1,1 +1,241 @@
-<p>users works!</p>
+<div class="min-h-screen bg-secondary p-4 sm:p-8">
+  <!-- Header -->
+  <div class="mb-8 flex flex-col gap-4 border-b border-primary/20 pb-5 sm:flex-row sm:items-center sm:justify-between">
+    <h2 class="font-['Fraunces'] text-3xl font-semibold text-primary sm:text-4xl">
+      User Management
+    </h2>
+    <button (click)="openAddForm()" class="w-full rounded-full bg-primary px-5 py-2 font-['Inter'] text-white transition hover:opacity-90 sm:w-auto">
+      + Add User
+    </button>
+  </div>
+
+  <!-- Role filter tabs -->
+  <div class="mb-8 flex flex-wrap gap-3">
+    <button (click)="filterByRole('')" [ngClass]="roleFilter === '' ? 'bg-primary text-white' : 'border border-primary text-primary hover:bg-secondary'" class="rounded-full px-5 py-2 font-['Inter'] transition">All</button>
+    <button (click)="filterByRole('patient')" [ngClass]="roleFilter === 'patient' ? 'bg-primary text-white' : 'border border-primary text-primary hover:bg-secondary'" class="rounded-full px-5 py-2 font-['Inter'] transition">Patients</button>
+    <button (click)="filterByRole('doctor')" [ngClass]="roleFilter === 'doctor' ? 'bg-primary text-white' : 'border border-primary text-primary hover:bg-secondary'" class="rounded-full px-5 py-2 font-['Inter'] transition">Doctors</button>
+    <button (click)="filterByRole('admin')" [ngClass]="roleFilter === 'admin' ? 'bg-primary text-white' : 'border border-primary text-primary hover:bg-secondary'" class="rounded-full px-5 py-2 font-['Inter'] transition">Admins</button>
+  </div>
+
+  <p *ngIf="loading" class="mb-6 font-['Inter'] text-base text-gray">Loading...</p>
+  <p *ngIf="errorMessage" class="mb-6 font-['Inter'] text-base text-red-600">{{ errorMessage }}</p>
+
+  <!-- ================= USERS TABLE ================= -->
+  <div class="overflow-x-auto rounded-2xl bg-white p-6 shadow-sm">
+    <h3 class="mb-5 font-['Fraunces'] text-2xl text-primary">All Users</h3>
+    <table class="w-full min-w-[640px]">
+      <thead class="border-b border-primary/20">
+        <tr class="font-['Inter'] text-sm uppercase text-gray">
+          <th class="pb-3 text-left">Name</th>
+          <th class="pb-3 text-left">Email</th>
+          <th class="pb-3 text-left">Phone</th>
+          <th class="pb-3 text-left">Role</th>
+          <th class="pb-3 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users" class="border-b border-gray/20 hover:bg-secondary">
+          <td class="py-4">{{ user.name }}</td>
+          <td class="py-4">{{ user.email }}</td>
+          <td class="py-4">{{ user.phone }}</td>
+          <td class="py-4">
+            <span [ngClass]="{
+                'bg-blue-50 text-blue-700': user.role === 'doctor',
+                'bg-green-50 text-green-700': user.role === 'patient',
+                'bg-purple-50 text-purple-700': user.role === 'admin'
+              }" class="rounded-full px-3 py-1 font-['Inter'] text-sm">
+              {{ user.role }}
+            </span>
+          </td>
+          <td class="py-4">
+            <div class="flex gap-3">
+              <button (click)="openEditForm(user)" class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary">Edit</button>
+              <button (click)="deleteUser(user._id!)" class="rounded-full border border-red-300 px-5 py-2 font-['Inter'] text-red-600 transition hover:bg-red-50">Delete</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================= CREATE / EDIT FORM (overlay) ================= -->
+  <div *ngIf="showForm" class="fixed inset-0 flex items-center justify-center bg-black/40 p-4">
+    <div class="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-sm">
+      <h3 class="mb-5 font-['Fraunces'] text-2xl text-primary">
+        {{ editMode ? 'Edit User' : 'Add New User' }}
+      </h3>
+
+      <p *ngIf="editMode" class="mb-4 font-['Inter'] text-sm text-gray">
+        Role: <span class="font-medium text-primary">{{ currentUser.role }}</span>
+      </p>
+
+      <form #userForm="ngForm" (ngSubmit)="saveUser(userForm)">
+
+        <!-- Name: required, 3-50 chars -->
+        <label class="mb-1 block font-['Inter'] text-sm text-gray">Name</label>
+        <input
+          [(ngModel)]="currentUser.name" name="name" type="text"
+          required minlength="3" maxlength="50"
+          #nameField="ngModel"
+          class="w-full rounded-xl border p-3 font-['Inter']"
+          [ngClass]="{'border-red-400': nameField.invalid && nameField.touched, 'border-primary/20': !(nameField.invalid && nameField.touched)}"
+        />
+        <p *ngIf="nameField.invalid && nameField.touched" class="mb-2 mt-1 font-['Inter'] text-sm text-red-600">
+          <span *ngIf="nameField.errors?.['required']">Name is required.</span>
+          <span *ngIf="nameField.errors?.['minlength']">Name must be at least 3 characters.</span>
+          <span *ngIf="nameField.errors?.['maxlength']">Name cannot exceed 50 characters.</span>
+        </p>
+        <div class="mb-2" *ngIf="!(nameField.invalid && nameField.touched)"></div>
+
+        <!-- Email: only at creation. Required + valid email format -->
+        <div *ngIf="!editMode">
+          <label class="mb-1 block font-['Inter'] text-sm text-gray">Email</label>
+          <input
+            [(ngModel)]="currentUser.email" name="email" type="email"
+            required email
+            #emailField="ngModel"
+            class="w-full rounded-xl border p-3 font-['Inter']"
+            [ngClass]="{'border-red-400': emailField.invalid && emailField.touched, 'border-primary/20': !(emailField.invalid && emailField.touched)}"
+          />
+          <p *ngIf="emailField.invalid && emailField.touched" class="mb-2 mt-1 font-['Inter'] text-sm text-red-600">
+            <span *ngIf="emailField.errors?.['required']">Email is required.</span>
+            <span *ngIf="emailField.errors?.['email']">Enter a valid email address.</span>
+          </p>
+          <div class="mb-2" *ngIf="!(emailField.invalid && emailField.touched)"></div>
+        </div>
+
+        <!-- Password: only at creation. Required + min 8 chars -->
+        <div *ngIf="!editMode">
+          <label class="mb-1 block font-['Inter'] text-sm text-gray">Password</label>
+          <input
+            [(ngModel)]="currentUser.password" name="password" type="password"
+            required minlength="8"
+            #passwordField="ngModel"
+            class="w-full rounded-xl border p-3 font-['Inter']"
+            [ngClass]="{'border-red-400': passwordField.invalid && passwordField.touched, 'border-primary/20': !(passwordField.invalid && passwordField.touched)}"
+          />
+          <p *ngIf="passwordField.invalid && passwordField.touched" class="mb-2 mt-1 font-['Inter'] text-sm text-red-600">
+            <span *ngIf="passwordField.errors?.['required']">Password is required.</span>
+            <span *ngIf="passwordField.errors?.['minlength']">Password must be at least 8 characters.</span>
+          </p>
+          <div class="mb-2" *ngIf="!(passwordField.invalid && passwordField.touched)"></div>
+        </div>
+
+        <label class="mb-1 block font-['Inter'] text-sm text-gray">Phone</label>
+        <input [(ngModel)]="currentUser.phone" name="phone" type="text"
+          class="mb-4 w-full rounded-xl border border-primary/20 p-3 font-['Inter']" />
+
+        <!-- Role: only pickable at creation -->
+        <div *ngIf="!editMode">
+          <label class="mb-1 block font-['Inter'] text-sm text-gray">Role</label>
+          <select [(ngModel)]="currentUser.role" name="role" required
+            class="mb-4 w-full rounded-xl border border-primary/20 p-3 font-['Inter']">
+            <option value="patient">Patient</option>
+            <option value="doctor">Doctor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <!-- Patient-only fields -->
+        <div *ngIf="currentUser.role === 'patient'">
+          <label class="mb-1 block font-['Inter'] text-sm text-gray">Date of Birth</label>
+          <input [(ngModel)]="currentUser.dateOfBirth" name="dateOfBirth" type="date"
+            class="mb-4 w-full rounded-xl border border-primary/20 p-3 font-['Inter']" />
+
+          <label class="mb-1 block font-['Inter'] text-sm text-gray">Gender</label>
+          <select [(ngModel)]="currentUser.gender" name="gender"
+            class="mb-4 w-full rounded-xl border border-primary/20 p-3 font-['Inter']">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+
+          <label class="mb-1 block font-['Inter'] text-sm text-gray">City</label>
+          <input [(ngModel)]="currentUser.address!.city" name="city" type="text"
+            class="mb-4 w-full rounded-xl border border-primary/20 p-3 font-['Inter']" />
+
+          <label class="mb-1 block font-['Inter'] text-sm text-gray">State</label>
+          <input [(ngModel)]="currentUser.address!.state" name="state" type="text"
+            class="mb-4 w-full rounded-xl border border-primary/20 p-3 font-['Inter']" />
+
+          <label class="mb-1 block font-['Inter'] text-sm text-gray">Country</label>
+          <input [(ngModel)]="currentUser.address!.country" name="country" type="text"
+            class="mb-4 w-full rounded-xl border border-primary/20 p-3 font-['Inter']" />
+
+          <label class="mb-1 block font-['Inter'] text-sm text-gray">Preferred Payment</label>
+          <select [(ngModel)]="currentUser.preferredPaymentMethod" name="preferredPaymentMethod"
+            class="mb-4 w-full rounded-xl border border-primary/20 p-3 font-['Inter']">
+            <option value="cash">Cash</option>
+            <option value="online">Online</option>
+          </select>
+
+          <label *ngIf="editMode" class="mb-3 flex items-center gap-2 font-['Inter'] text-sm text-gray">
+            <input type="checkbox" [(ngModel)]="currentUser.notificationsEnabled" name="notificationsEnabled" />
+            Notifications enabled
+          </label>
+        </div>
+
+        <!-- Doctor-only fields -->
+        <div *ngIf="currentUser.role === 'doctor'">
+          <!-- Specialty: required -->
+          <label class="mb-1 block font-['Inter'] text-sm text-gray">Specialty</label>
+          <select
+            [(ngModel)]="currentUser.specialtyId" name="specialtyId" required
+            #specialtyField="ngModel"
+            class="w-full rounded-xl border p-3 font-['Inter']"
+            [ngClass]="{'border-red-400': specialtyField.invalid && specialtyField.touched, 'border-primary/20': !(specialtyField.invalid && specialtyField.touched)}"
+          >
+            <option [ngValue]="undefined" disabled>Select a specialty</option>
+            <option *ngFor="let s of specialties" [value]="s._id">{{ s.name }}</option>
+          </select>
+          <p *ngIf="specialtyField.invalid && specialtyField.touched" class="mb-2 mt-1 font-['Inter'] text-sm text-red-600">
+            Specialty is required for doctor accounts.
+          </p>
+          <div class="mb-2" *ngIf="!(specialtyField.invalid && specialtyField.touched)"></div>
+
+          <label class="mb-1 block font-['Inter'] text-sm text-gray">Bio</label>
+          <textarea [(ngModel)]="currentUser.bio" name="bio" rows="3" maxlength="1000"
+            class="mb-4 w-full rounded-xl border border-primary/20 p-3 font-['Inter']"></textarea>
+
+          <!-- Experience: min 0 -->
+          <label class="mb-1 block font-['Inter'] text-sm text-gray">Experience (years)</label>
+          <input
+            [(ngModel)]="currentUser.experienceYears" name="experienceYears" type="number" min="0"
+            #experienceField="ngModel"
+            class="w-full rounded-xl border p-3 font-['Inter']"
+            [ngClass]="{'border-red-400': experienceField.invalid && experienceField.touched, 'border-primary/20': !(experienceField.invalid && experienceField.touched)}"
+          />
+          <p *ngIf="experienceField.invalid && experienceField.touched" class="mb-2 mt-1 font-['Inter'] text-sm text-red-600">
+            Experience cannot be negative.
+          </p>
+          <div class="mb-2" *ngIf="!(experienceField.invalid && experienceField.touched)"></div>
+
+          <!-- Appointment duration: min 5, edit only -->
+          <div *ngIf="editMode">
+            <label class="mb-1 block font-['Inter'] text-sm text-gray">Appointment Duration (minutes)</label>
+            <input
+              [(ngModel)]="currentUser.appointmentDurationMinutes" name="appointmentDurationMinutes" type="number" min="5"
+              #durationField="ngModel"
+              class="w-full rounded-xl border p-3 font-['Inter']"
+              [ngClass]="{'border-red-400': durationField.invalid && durationField.touched, 'border-primary/20': !(durationField.invalid && durationField.touched)}"
+            />
+            <p *ngIf="durationField.invalid && durationField.touched" class="mb-2 mt-1 font-['Inter'] text-sm text-red-600">
+              Appointment duration must be at least 5 minutes.
+            </p>
+            <div class="mb-2" *ngIf="!(durationField.invalid && durationField.touched)"></div>
+          </div>
+        </div>
+
+        <div class="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <button type="button" (click)="cancelForm()" class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary hover:bg-secondary">Cancel</button>
+          <button
+            type="submit"
+            [disabled]="userForm.invalid"
+            class="rounded-full bg-primary px-5 py-2 font-['Inter'] text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

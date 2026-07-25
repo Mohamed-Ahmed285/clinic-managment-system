@@ -1,0 +1,255 @@
+<div class="min-h-screen bg-secondary p-8">
+  <!-- Header -->
+  <div class="mb-8 border-b border-primary/20 pb-5">
+    <h2 class="font-['Fraunces'] text-4xl font-semibold text-primary">
+      Analytics Dashboard
+    </h2>
+  </div>
+
+  <!-- Navigation -->
+  <div class="mb-8 flex flex-wrap gap-3">
+    <button
+      (click)="showSection('overview')"
+      [ngClass]="
+        selectedSection === 'overview'
+          ? 'bg-primary text-white'
+          : 'border border-primary text-primary hover:bg-secondary'
+      "
+      class="rounded-full px-5 py-2 font-['Inter'] transition"
+    >
+      Overview
+    </button>
+
+    <button
+      (click)="showSection('appointments')"
+      [ngClass]="
+        selectedSection === 'appointments'
+          ? 'bg-primary text-white'
+          : 'border border-primary text-primary hover:bg-secondary'
+      "
+      class="rounded-full px-5 py-2 font-['Inter'] transition"
+    >
+      Appointments
+    </button>
+
+    <button
+      (click)="showSection('doctors')"
+      [ngClass]="
+        selectedSection === 'doctors'
+          ? 'bg-primary text-white'
+          : 'border border-primary text-primary hover:bg-secondary'
+      "
+      class="rounded-full px-5 py-2 font-['Inter'] transition"
+    >
+      Doctors
+    </button>
+
+    <button
+      (click)="showSection('performance')"
+      [ngClass]="
+        selectedSection === 'performance'
+          ? 'bg-primary text-white'
+          : 'border border-primary text-primary hover:bg-secondary'
+      "
+      class="rounded-full px-5 py-2 font-['Inter'] transition"
+    >
+      Performance
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <p *ngIf="loading" class="font-['Inter'] text-base text-gray mb-6">
+    Loading...
+  </p>
+
+  <!-- ================= OVERVIEW ================= -->
+
+  <div *ngIf="selectedSection === 'overview'">
+    <div *ngIf="overview" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+      <div class="rounded-2xl bg-white p-6 shadow-sm text-center">
+        <i class="fa-solid fa-users text-3xl text-primary mb-3"></i>
+        <h3 class="font-['Fraunces'] text-3xl text-black">
+          {{ overview.totalUsers }}
+        </h3>
+        <p class="font-['Inter'] text-gray mt-2">Total Users</p>
+      </div>
+
+      <div class="rounded-2xl bg-white p-6 shadow-sm text-center">
+        <i class="fa-solid fa-user-doctor text-3xl text-primary mb-3"></i>
+        <h3 class="font-['Fraunces'] text-3xl">
+          {{ overview.totalDoctors }}
+        </h3>
+        <p class="font-['Inter'] text-gray mt-2">Doctors</p>
+      </div>
+
+      <div class="rounded-2xl bg-white p-6 shadow-sm text-center">
+        <i class="fa-solid fa-heart-pulse text-3xl text-primary mb-3"></i>
+        <h3 class="font-['Fraunces'] text-3xl">
+          {{ overview.totalPatients }}
+        </h3>
+        <p class="font-['Inter'] text-gray mt-2">Patients</p>
+      </div>
+
+      <div class="rounded-2xl bg-white p-6 shadow-sm text-center">
+        <i class="fa-solid fa-hospital text-3xl text-primary mb-3"></i>
+        <h3 class="font-['Fraunces'] text-3xl">
+          {{ overview.totalClinics }}
+        </h3>
+        <p class="font-['Inter'] text-gray mt-2">Clinics</p>
+      </div>
+
+      <div class="rounded-2xl bg-white p-6 shadow-sm text-center">
+        <i class="fa-solid fa-calendar-check text-3xl text-primary mb-3"></i>
+        <h3 class="font-['Fraunces'] text-3xl">
+          {{ overview.totalAppointments }}
+        </h3>
+        <p class="font-['Inter'] text-gray mt-2">Appointments</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= APPOINTMENTS ================= -->
+
+  <div *ngIf="selectedSection === 'appointments'">
+    <h3 class="mb-6 mt-2 font-['Fraunces'] text-3xl text-primary">
+      Appointment Status
+    </h3>
+
+    <div
+      *ngIf="appointmentStats"
+      class="grid gap-6 sm:grid-cols-2 lg:grid-cols-5"
+    >
+      <div class="rounded-2xl bg-yellow-50 p-6 text-center">
+        <h3 class="font-['Fraunces'] text-3xl">
+          {{ appointmentStats.pending }}
+        </h3>
+        <p class="font-['Inter'] mt-2 text-yellow-700">Pending</p>
+      </div>
+
+      <div class="rounded-2xl bg-blue-50 p-6 text-center">
+        <h3 class="font-['Fraunces'] text-3xl">
+          {{ appointmentStats.confirmed }}
+        </h3>
+        <p class="font-['Inter'] mt-2 text-blue-700">Confirmed</p>
+      </div>
+
+      <div class="rounded-2xl bg-green-50 p-6 text-center">
+        <h3 class="font-['Fraunces'] text-3xl">
+          {{ appointmentStats.completed }}
+        </h3>
+        <p class="font-['Inter'] mt-2 text-green-700">Completed</p>
+      </div>
+
+      <div class="rounded-2xl bg-red-50 p-6 text-center">
+        <h3 class="font-['Fraunces'] text-3xl">
+          {{ appointmentStats.cancelled }}
+        </h3>
+        <p class="font-['Inter'] mt-2 text-red-700">Cancelled</p>
+      </div>
+
+      <div class="rounded-2xl bg-purple-50 p-6 text-center">
+        <h3 class="font-['Fraunces'] text-3xl">
+          {{ appointmentStats.rescheduled }}
+        </h3>
+        <p class="font-['Inter'] mt-2 text-purple-700">Rescheduled</p>
+      </div>
+    </div>
+
+    <div class="mt-10 rounded-2xl bg-white p-6 shadow-sm">
+      <h3 class="mb-5 font-['Fraunces'] text-2xl text-primary">
+        Appointments by Specialty
+      </h3>
+
+      <table class="w-full">
+        <thead class="border-b border-primary/20">
+          <tr class="font-['Inter'] uppercase text-sm text-gray">
+            <th class="pb-3 text-left">Specialty</th>
+            <th class="pb-3 text-left">Appointments</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let item of specialtyStats"
+            class="border-b border-gray/20 hover:bg-secondary"
+          >
+            <td class="py-4">{{ item.specialty }}</td>
+            <td class="py-4">{{ item.appointments }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================= DOCTORS ================= -->
+
+  <div *ngIf="selectedSection === 'doctors'">
+    <div class="rounded-2xl bg-white p-6 shadow-sm">
+      <h3 class="mb-5 font-['Fraunces'] text-2xl text-primary">
+        Doctors by Specialty
+      </h3>
+
+      <table class="w-full">
+        <thead class="border-b border-primary/20">
+          <tr class="font-['Inter'] uppercase text-sm text-gray">
+            <th class="pb-3 text-left">Specialty</th>
+            <th class="pb-3 text-left">Doctors</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let item of doctorStats.doctorsBySpecialty"
+            class="border-b border-gray/20 hover:bg-secondary"
+          >
+            <td class="py-4">{{ item.specialty }}</td>
+            <td class="py-4">{{ item.count }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================= PERFORMANCE ================= -->
+
+  <div *ngIf="selectedSection === 'performance'">
+    <div class="rounded-2xl bg-white p-6 shadow-sm">
+      <h3 class="mb-5 font-['Fraunces'] text-2xl text-primary">
+        Doctor Performance
+      </h3>
+
+      <table class="w-full">
+        <thead class="border-b border-primary/20">
+          <tr class="font-['Inter'] uppercase text-sm text-gray">
+            <th class="pb-3 text-left">Doctor</th>
+            <th class="pb-3 text-left">Specialty</th>
+            <th class="pb-3 text-left">Rating</th>
+            <th class="pb-3 text-left">Total</th>
+            <th class="pb-3 text-left">Completed</th>
+            <th class="pb-3 text-left">Cancelled</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let doc of doctorPerformance"
+            class="border-b border-gray/20 hover:bg-secondary"
+          >
+            <td class="py-4">{{ doc.doctor }}</td>
+            <td class="py-4">{{ doc.specialty }}</td>
+
+            <td class="py-4">
+              ⭐ {{ doc.averageRating }}
+
+              <span class="text-gray"> ({{ doc.ratingCount }}) </span>
+            </td>
+
+            <td class="py-4">{{ doc.totalAppointments }}</td>
+            <td class="py-4 text-green-700">{{ doc.completedAppointments }}</td>
+            <td class="py-4 text-red-600">{{ doc.cancelledAppointments }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

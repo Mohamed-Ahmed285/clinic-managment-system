@@ -16,8 +16,13 @@ exports.getAllSpecialties = async (req, res) => {
         const specialties = await Specialty.find();
         res.status(200).json({ success: true, data: specialties });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
+    console.error(error);
+
+    res.status(500).json({
+        success: false,
+        message: error.message
+    });
+}
 };
 
 // GET ONE

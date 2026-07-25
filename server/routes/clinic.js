@@ -18,4 +18,5 @@ router.post("/", verifyToken, authorize("create:clinic"), createClinic);
 router.put("/:id", verifyToken, authorize("update:clinic"), updateClinic);
 router.delete("/:id", verifyToken, authorize("delete:clinic"), deleteClinic);
 
+
 module.exports = router;
