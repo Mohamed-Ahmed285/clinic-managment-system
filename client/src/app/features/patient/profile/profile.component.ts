@@ -1,3 +1,4 @@
+
 import { Component, OnInit } from '@angular/core';
 import { ProfileService } from '../../../core/services/profile.service';
 
@@ -10,8 +11,13 @@ export class ProfileComponent implements OnInit {
   profileData: any;
   selectedImage: string | ArrayBuffer | null = null;
   selectedFile!: File;
-  // Popup
+
+  // Generic Popup (For Appointments / Medical Records View)
   isPopupOpen = false;
+
+  // Image Error Popup Modal
+  isErrorPopupOpen = false;
+  errorMessage: string | null = null;
 
   constructor(private profileService: ProfileService) {}
 
@@ -31,21 +37,95 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  onImageSelected(event: any) {
+  async onImageSelected(event: any) {
     const file = event.target.files[0];
 
     if (!file) return;
 
+    // 1. فحص ظاهري للـ MIME type
+    const allowedExtensions = [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/jpg',
+    ];
+    if (!allowedExtensions.includes(file.type)) {
+      this.showImageError(event, 'This image is not suitable as extension');
+      return;
+    }
+
+    // 2. فحص البصمة الداخلية للملف (Magic Numbers)
+    const isValidRealImage = await this.validateRealImageSignature(file);
+
+    if (!isValidRealImage) {
+      this.showImageError(event, 'This image is not suitable as extension');
+      return;
+    }
+
+    // نجاح الفحص
+    this.errorMessage = null;
     this.selectedFile = file;
 
     const reader = new FileReader();
-
     reader.onload = () => {
       this.selectedImage = reader.result;
     };
-
     reader.readAsDataURL(file);
   }
+
+  private validateRealImageSignature(file: File): Promise<boolean> {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+
+      const blob = file.slice(0, 12);
+      reader.readAsArrayBuffer(blob);
+
+      reader.onloadend = () => {
+        if (!reader.result) {
+          resolve(false);
+          return;
+        }
+
+        const uint = new Uint8Array(reader.result as ArrayBuffer);
+        let bytes: string[] = [];
+        uint.forEach((byte) => {
+          bytes.push(byte.toString(16).padStart(2, '0'));
+        });
+        const header = bytes.join('').toUpperCase();
+
+        const isPNG = header.startsWith('89504E47'); // PNG signature
+        const isJPEG = header.startsWith('FFD8FF'); // JPEG/JPG signature
+        const isWEBP =
+          header.startsWith('52494646') && header.includes('57454250'); // RIFF....WEBP
+
+        resolve(isPNG || isJPEG || isWEBP);
+      };
+
+      reader.onerror = () => resolve(false);
+    });
+  }
+
+  // إظهار إيرور الصورة وتصفير الـ Input
+  private showImageError(event: any, message: string) {
+    this.errorMessage = message;
+    this.openErrorPopup();
+
+    event.target.value = ''; // تصفير الـ input
+    this.selectedFile = null as any;
+    this.selectedImage = null;
+  }
+
+  // التحكم في بوب أب إيرور الصورة
+  openErrorPopup() {
+    this.isErrorPopupOpen = true;
+  }
+
+  closeErrorPopup() {
+    this.isErrorPopupOpen = false;
+    this.errorMessage = null;
+  }
+
+  // التحكم في بوب أب المواعيد/السجلات العادي
   openPopup() {
     this.isPopupOpen = true;
   }
@@ -53,6 +133,7 @@ export class ProfileComponent implements OnInit {
   closePopup() {
     this.isPopupOpen = false;
   }
+
   getInitials(name: string = ''): string {
     const parts = name.trim().split(/\s+/);
 
@@ -64,6 +145,7 @@ export class ProfileComponent implements OnInit {
 
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
+
   saveChanges() {
     const formData = new FormData();
 
