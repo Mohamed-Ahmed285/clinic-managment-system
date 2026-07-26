@@ -7,6 +7,7 @@ import { AppointmentService } from 'src/app/core/services/appointments.service';
   styleUrls: ['./appointments.component.css'],
 })
 export class AppointmentsComponent implements OnInit {
+  availableTimes: string[] = [];
   search = '';
   selectedSpecialty = '';
   selectedState = '';
@@ -72,10 +73,34 @@ export class AppointmentsComponent implements OnInit {
       },
     });
   }
+  generateAvailableTimes(startHour: string, endHour: string) {
+    this.availableTimes = [];
 
+    let [startH, startM] = startHour.split(':').map(Number);
+    const [endH, endM] = endHour.split(':').map(Number);
+
+    let current = startH * 60 + startM;
+    const end = endH * 60 + endM;
+
+    while (current < end) {
+      const h = Math.floor(current / 60);
+      const m = current % 60;
+
+      this.availableTimes.push(
+        `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`,
+      );
+
+      current += 30;
+    }
+  }
   openModal(doctor: any, clinic: any) {
+    console.log(clinic);
     this.selectedDoctor = doctor;
     this.selectedClinic = clinic;
+    this.generateAvailableTimes(
+      clinic.clinicId.startHour,
+      clinic.clinicId.endHour,
+    );
     this.isModalOpen = true;
   }
 
@@ -151,10 +176,10 @@ export class AppointmentsComponent implements OnInit {
 
       paymentMethod: 'cash',
     };
-console.log({
-  date: this.appointmentDate,
-  startTime: this.appointmentTime,
-});
+    console.log({
+      date: this.appointmentDate,
+      startTime: this.appointmentTime,
+    });
     this.appointmentService.bookAppointment(body).subscribe({
       next: (res) => {
         console.log(res);
