@@ -1,5 +1,5 @@
 <div class="page" *ngIf="loading">
-  <p>Loading appointment&hellip;</p>
+  <app-loader message="Loading appointment…"></app-loader>
 </div>
 
 <div class="page" *ngIf="!loading && errorMessage && !appointment">
@@ -27,5 +27,6 @@
 
   <app-medical-history [history]="appointment.history"></app-medical-history>
 
-  <app-prescription-form [issuedAt]="appointment.issuedAt" (save)="onSavePrescription($event)"></app-prescription-form>
+  <app-prescription-form [issuedAt]="appointment.issuedAt" [saving]="saving"
+    (save)="onSavePrescription($event)"></app-prescription-form>
 </div>

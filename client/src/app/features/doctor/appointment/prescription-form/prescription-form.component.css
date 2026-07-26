@@ -5,6 +5,27 @@
   margin-bottom: 20px;
 }
 
+.prescription-fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.prescription-fieldset:disabled .btn-primary {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.validation-error {
+  background: #fbeceb;
+  color: var(--color-required);
+  border: 1px solid var(--color-required);
+  border-radius: var(--radius-field);
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
 .medication-header {
   display: flex;
   align-items: center;

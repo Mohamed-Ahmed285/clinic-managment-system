@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SharedModule } from '../../../shared/shared.module';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Appointment, Medication } from '../models/appointment.model';
@@ -13,7 +14,7 @@ import {
 @Component({
   selector: 'app-appointment',
   templateUrl: './appointment.component.html',
-  styleUrls: ['./appointment.component.css']
+  styleUrls: ['./appointment.component.css'],
 })
 export class AppointmentComponent implements OnInit {
   appointment!: Appointment;

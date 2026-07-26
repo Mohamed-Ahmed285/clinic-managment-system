@@ -8,12 +8,17 @@ import { Medication } from '../../models/appointment.model';
 })
 export class PrescriptionFormComponent implements OnInit, OnDestroy {
   @Input() issuedAt: string = '';
+  @Input() saving: boolean = false;
   @Output() save = new EventEmitter<{
     diagnosis: string;
     symptoms: string;
     medications: Medication[];
     generalNotes: string;
   }>();
+
+  // Set once the doctor tries to submit an invalid form, so the template can
+  // show validation errors instead of silently doing nothing.
+  attemptedSubmit = false;
 
   frequencyOptions: string[] = [
     'Once Daily',
@@ -107,6 +112,12 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    this.attemptedSubmit = true;
+
+    if (this.saving) {
+      return;
+    }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

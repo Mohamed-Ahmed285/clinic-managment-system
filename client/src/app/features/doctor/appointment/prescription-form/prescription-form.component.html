@@ -1,77 +1,88 @@
 <section class="card" *ngIf="form" [formGroup]="form">
   <h2 class="card-title">New prescription</h2>
 
-  <div class="field-grid">
-    <div class="field">
-      <label class="field-label">Diagnosis <span class="required-mark">*</span></label>
-      <input type="text" formControlName="diagnosis" placeholder="Mild hypertension" />
-    </div>
-    <div class="field">
-      <label class="field-label">Symptoms</label>
-      <input type="text" formControlName="symptoms" placeholder="Headache, dizziness" />
-    </div>
-  </div>
+  <fieldset [disabled]="saving" class="prescription-fieldset">
 
-  <div formArrayName="medications">
-    <div class="medication-block" *ngFor="let medication of medications.controls; let i = index" [formGroupName]="i">
-      <div class="medication-header">
-        <span class="eyebrow">Medication {{ i + 1 }}</span>
-        <button type="button" class="link-remove" *ngIf="medications.length > 1" (click)="removeMedication(i)">
-          Remove
-        </button>
-      </div>
+    <p class="validation-error" *ngIf="attemptedSubmit && form.invalid">
+      Please fill in all required fields (diagnosis, and each medication's name, dosage, and frequency) before saving.
+    </p>
 
-      <div class="field-grid">
-        <div class="field">
-          <label class="field-label">Name <span class="required-mark">*</span></label>
-          <input type="text" formControlName="name" placeholder="Amoxicillin" />
-        </div>
-        <div class="field">
-          <label class="field-label">Dosage <span class="required-mark">*</span></label>
-          <input type="text" formControlName="dosage" placeholder="500mg" />
-        </div>
-      </div>
-
-      <div class="field-grid">
-        <div class="field">
-          <label class="field-label">Frequency <span class="required-mark">*</span></label>
-          <select formControlName="frequency">
-            <option value="" disabled>Select frequency</option>
-            <option *ngFor="let option of frequencyOptions" [value]="option">{{ option }}</option>
-          </select>
-        </div>
-        <div class="field">
-          <label class="field-label">Duration</label>
-          <input type="text" formControlName="duration" placeholder="7 days" />
-        </div>
-      </div>
-
+    <div class="field-grid">
       <div class="field">
-        <label class="field-label">Times</label>
-        <div class="times-row" formArrayName="times">
-          <input *ngFor="let time of timesArray(i).controls; let t = index" type="time" [formControlName]="t" />
-          <button type="button" class="btn-secondary" (click)="addTime(i)">+ Add time</button>
-        </div>
+        <label class="field-label">Diagnosis <span class="required-mark">*</span></label>
+        <input type="text" formControlName="diagnosis" placeholder="Mild hypertension" />
       </div>
-
       <div class="field">
-        <label class="field-label">Notes</label>
-        <input type="text" formControlName="notes" placeholder="Take with food" />
+        <label class="field-label">Symptoms</label>
+        <input type="text" formControlName="symptoms" placeholder="Headache, dizziness" />
       </div>
     </div>
-  </div>
 
-  <button type="button" class="btn-secondary add-medication" (click)="addMedication()">
-    + Add another medication
-  </button>
+    <div formArrayName="medications">
+      <div class="medication-block" *ngFor="let medication of medications.controls; let i = index" [formGroupName]="i">
+        <div class="medication-header">
+          <span class="eyebrow">Medication {{ i + 1 }}</span>
+          <button type="button" class="link-remove" *ngIf="medications.length > 1" (click)="removeMedication(i)">
+            Remove
+          </button>
+        </div>
 
-  <div class="field general-notes">
-    <label class="field-label">General notes</label>
-    <textarea formControlName="generalNotes" rows="3" placeholder="Overall notes about this prescription..."></textarea>
-  </div>
+        <div class="field-grid">
+          <div class="field">
+            <label class="field-label">Name <span class="required-mark">*</span></label>
+            <input type="text" formControlName="name" placeholder="Amoxicillin" />
+          </div>
+          <div class="field">
+            <label class="field-label">Dosage <span class="required-mark">*</span></label>
+            <input type="text" formControlName="dosage" placeholder="500mg" />
+          </div>
+        </div>
 
-  <div class="form-footer">
-    <span class="issued-label" *ngIf="displayIssuedAt">Issued <strong>{{ displayIssuedAt }}</strong></span>
-    <button type="button" class="btn-primary" (click)="onSubmit()">Save prescription</button>
-  </div>
+        <div class="field-grid">
+          <div class="field">
+            <label class="field-label">Frequency <span class="required-mark">*</span></label>
+            <select formControlName="frequency">
+              <option value="" disabled>Select frequency</option>
+              <option *ngFor="let option of frequencyOptions" [value]="option">{{ option }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Duration</label>
+            <input type="text" formControlName="duration" placeholder="7 days" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Times</label>
+          <div class="times-row" formArrayName="times">
+            <input *ngFor="let time of timesArray(i).controls; let t = index" type="time" [formControlName]="t" />
+            <button type="button" class="btn-secondary" (click)="addTime(i)">+ Add time</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Notes</label>
+          <input type="text" formControlName="notes" placeholder="Take with food" />
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="btn-secondary add-medication" (click)="addMedication()">
+      + Add another medication
+    </button>
+
+    <div class="field general-notes">
+      <label class="field-label">General notes</label>
+      <textarea formControlName="generalNotes" rows="3"
+        placeholder="Overall notes about this prescription..."></textarea>
+    </div>
+
+    <div class="form-footer">
+      <span class="issued-label" *ngIf="displayIssuedAt">Issued <strong>{{ displayIssuedAt }}</strong></span>
+      <button type="button" class="btn-primary" (click)="onSubmit()" [disabled]="saving">
+        {{ saving ? 'Saving…' : 'Save prescription' }}
+      </button>
+    </div>
+
+  </fieldset>
 </section>
