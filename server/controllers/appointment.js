@@ -7,7 +7,7 @@ const todoModel = require("../models/todo");
 const todoService = require("../services/todoService");
 const notificationService = require("../services/notificationService");
 const notificationModel = require("../models/notification")
-
+console.log("APPOINTMENT CONTROLLER LOADED");
 const populateAppointment = [
     {
         path: "patientId",
@@ -139,7 +139,9 @@ const ensureSlotInsideAvailability = (startTime, endTime, availability) => {
     const slotEnd = timeToMinutes(endTime);
     const windowStart = timeToMinutes(availability.startTime);
     const windowEnd = timeToMinutes(availability.endTime);
-
+console.log("availability", availability);
+console.log("startTime", startTime);
+console.log("endTime", endTime);
     if (
         slotStart == null ||
         slotEnd == null ||
@@ -218,6 +220,7 @@ const ensureNoOverlap = async (appointmentId, doctorId, clinicId, appointmentDat
 };
 
 const buildAppointmentPayload = (body, doctor, patientId, clinicId, clinic) => {
+    
     const appointmentDate = parseDateInput(body.date);
     if (!appointmentDate) {
         return { error: "valid date is required" };
@@ -244,7 +247,12 @@ const buildAppointmentPayload = (body, doctor, patientId, clinicId, clinic) => {
         return { error: clinicHoursError };
     }
 
-    const clinicAvailability = getClinicAvailabilityForDate(doctor, clinicId, appointmentDate);
+  const clinicAvailability = getClinicAvailabilityForDate(doctor, clinicId, appointmentDate);
+  console.log("assignment =", clinicAvailability.assignment);
+  console.log(
+    "consultationFee =",
+    clinicAvailability.assignment?.consultationFee
+  );
     if (clinicAvailability.error) {
         return { error: clinicAvailability.error };
     }
@@ -253,27 +261,33 @@ const buildAppointmentPayload = (body, doctor, patientId, clinicId, clinic) => {
     if (workingHoursError) {
         return { error: workingHoursError };
     }
-console.log("Clinic:", clinic);
+  console.log("Clinic:", clinic);
+  console.log(clinicAvailability.assignment);
+  console.log(clinicAvailability.assignment.consultationFee);
+  console.log(
+    "consultationFee:",
+    clinicAvailability.assignment.consultationFee
+  );
     return {
-        payload: {
-            patientId,
-            doctorId: body.doctorId,
-            clinicId,
-            date: appointmentDate,
-            startTime,
-            endTime,
-            durationMinutes,
-            paymentMethod: body.paymentMethod,
-            paymentStatus: body.paymentStatus,
-            fee: clinic.fee,
-            status: body.status,
-            rescheduledFrom: body.rescheduledFrom,
-            cancelledBy: body.cancelledBy,
-            cancellationReason: body.cancellationReason
-        },
-        appointmentDate,
+      payload: {
+        patientId,
+        doctorId: body.doctorId,
+        clinicId,
+        date: appointmentDate,
         startTime,
-        endTime
+        endTime,
+        durationMinutes,
+        paymentMethod: body.paymentMethod,
+        paymentStatus: body.paymentStatus,
+        fee: clinicAvailability.assignment.consultationFee,
+        status: body.status,
+        rescheduledFrom: body.rescheduledFrom,
+        cancelledBy: body.cancelledBy,
+        cancellationReason: body.cancellationReason
+      },
+      appointmentDate,
+      startTime,
+      endTime
     };
 };
 
@@ -300,6 +314,8 @@ const validateAppointmentRules = async (body, doctor, patientId, clinicId, clini
 };
 
 const createAppointment = async (req, res) => {
+    console.log("createAppointment called");
+    console.log(req.body);
     try {
         let patient = null;
 
