@@ -11,14 +11,16 @@ export class AppointmentsComponent implements OnInit {
   selectedSpecialty = '';
   selectedState = '';
   page = 1;
-  limit = 10;
-
+  limit = 5;
+  totalPages = 1;
   doctors: any[] = [];
-  totalPages = 0;
   specialties: any[] = [];
   isModalOpen = false;
-
+  selectedDoctor: any = null;
+  selectedClinic: any = null;
   profileData: any;
+  appointmentDate = '';
+  appointmentTime = '';
   states: string[] = [
     'Cairo',
     'Giza',
@@ -71,7 +73,9 @@ export class AppointmentsComponent implements OnInit {
     });
   }
 
-  openModal() {
+  openModal(doctor: any, clinic: any) {
+    this.selectedDoctor = doctor;
+    this.selectedClinic = clinic;
     this.isModalOpen = true;
   }
 
@@ -104,6 +108,10 @@ export class AppointmentsComponent implements OnInit {
   //     });
   // }
   loadDoctors() {
+    console.log('Loading...', {
+      page: this.page,
+      search: this.search,
+    });
     this.appointmentService
       .getDoctors(
         this.page,
@@ -121,5 +129,41 @@ export class AppointmentsComponent implements OnInit {
         },
         error: (err) => console.log(err),
       });
+  }
+  changePage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+
+    this.page = page;
+    this.loadDoctors();
+  }
+  onFilterChange() {
+    this.page = 1;
+    this.loadDoctors();
+  }
+  bookAppointment() {
+    const body = {
+      doctorId: this.selectedDoctor._id._id,
+      clinicId: this.selectedClinic.clinicId._id,
+
+      date: this.appointmentDate,
+
+      startTime: this.appointmentTime,
+
+      paymentMethod: 'cash',
+    };
+console.log({
+  date: this.appointmentDate,
+  startTime: this.appointmentTime,
+});
+    this.appointmentService.bookAppointment(body).subscribe({
+      next: (res) => {
+        console.log(res);
+
+        this.closeModal();
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 }

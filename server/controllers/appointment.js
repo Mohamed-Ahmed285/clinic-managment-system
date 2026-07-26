@@ -253,7 +253,7 @@ const buildAppointmentPayload = (body, doctor, patientId, clinicId, clinic) => {
     if (workingHoursError) {
         return { error: workingHoursError };
     }
-
+console.log("Clinic:", clinic);
     return {
         payload: {
             patientId,
@@ -265,7 +265,7 @@ const buildAppointmentPayload = (body, doctor, patientId, clinicId, clinic) => {
             durationMinutes,
             paymentMethod: body.paymentMethod,
             paymentStatus: body.paymentStatus,
-            fee: body.fee,
+            fee: clinic.fee,
             status: body.status,
             rescheduledFrom: body.rescheduledFrom,
             cancelledBy: body.cancelledBy,
@@ -322,6 +322,8 @@ const createAppointment = async (req, res) => {
         }
 
         const clinic = await clinicModel.findById(req.body.clinicId);
+        console.log("Clinic:", clinic);
+        console.log("Fee:", clinic?.fee);
         if (!clinic) {
             return res.status(404).send("clinic not found");
         }

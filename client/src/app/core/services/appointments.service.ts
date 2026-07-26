@@ -27,4 +27,7 @@ export class AppointmentService {
       `${environment.apiUrl}/doctor/search?page=${page}&limit=${limit}&search=${search}&specialty=${specialty}&state=${state}`,
     );
   }
+  bookAppointment(data: any) {
+    return this.http.post(`${environment.apiUrl}/appointment`, data);
+  }
 }
