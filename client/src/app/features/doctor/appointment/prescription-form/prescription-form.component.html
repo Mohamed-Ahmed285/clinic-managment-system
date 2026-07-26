@@ -1,6 +1,17 @@
 <section class="card" *ngIf="form" [formGroup]="form">
   <h2 class="card-title">New prescription</h2>
 
+  <div class="field-grid">
+    <div class="field">
+      <label class="field-label">Diagnosis <span class="required-mark">*</span></label>
+      <input type="text" formControlName="diagnosis" placeholder="Mild hypertension" />
+    </div>
+    <div class="field">
+      <label class="field-label">Symptoms</label>
+      <input type="text" formControlName="symptoms" placeholder="Headache, dizziness" />
+    </div>
+  </div>
+
   <div formArrayName="medications">
     <div class="medication-block" *ngFor="let medication of medications.controls; let i = index" [formGroupName]="i">
       <div class="medication-header">

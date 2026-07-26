@@ -7,7 +7,7 @@ import {
   AppointmentService,
   AppointmentDetailResponse,
   MedicalRecordResponse,
-  PrescriptionResponse
+  PrescriptionResponse,
 } from 'src/app/core/services/appointment.service';
 
 @Component({
@@ -127,7 +127,12 @@ export class AppointmentComponent implements OnInit {
     return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
   }
 
-  onSavePrescription(payload: { medications: Medication[]; generalNotes: string }): void {
+  onSavePrescription(payload: {
+    diagnosis: string;
+    symptoms: string;
+    medications: Medication[];
+    generalNotes: string;
+  }): void {
     this.saving = true;
     this.errorMessage = '';
 
@@ -150,29 +155,49 @@ export class AppointmentComponent implements OnInit {
         this.appointment.generalNotes = payload.generalNotes;
         this.appointment.issuedAt = new Date(res.issuedDate).toLocaleString();
 
-        // Saving the prescription is what marks this visit as done, so complete
-        // the appointment right after a successful save.
-        this.appointmentService.completeAppointment(this.appointmentId).subscribe({
-          next: () => {
-            this.saving = false;
-            this.saved = true;
-            setTimeout(() => {
-              this.router.navigate(['/doctor/dashboard']);
-            }, 2000);
-          },
-          error: (err) => {
-            console.error(err);
-            this.saving = false;
-            // The prescription itself saved fine here - only completing the
-            // appointment failed, so say so rather than a generic save error.
-            this.errorMessage = 'Prescription saved, but the appointment could not be marked as completed.';
-          }
-        });
+        // The medical record is created from the diagnosis/symptoms the doctor
+        // just entered - no attachments support here by design.
+        this.appointmentService
+          .createMedicalRecord(
+            this.appointmentId,
+            payload.diagnosis,
+            payload.symptoms,
+            payload.generalNotes
+          )
+          .subscribe({
+            next: () => this.completeVisit(),
+            error: (err) => {
+              console.error(err);
+              this.saving = false;
+              this.errorMessage = 'Prescription saved, but the medical record could not be created.';
+            }
+          });
       },
       error: (err) => {
         console.error(err);
         this.saving = false;
         this.errorMessage = 'Could not save the prescription.';
+      }
+    });
+  }
+
+  private completeVisit(): void {
+    // Saving the prescription is what marks this visit as done, so complete
+    // the appointment right after a successful save.
+    this.appointmentService.completeAppointment(this.appointmentId).subscribe({
+      next: () => {
+        this.saving = false;
+        this.saved = true;
+        setTimeout(() => {
+          this.router.navigate(['/doctor/dashboard']);
+        }, 2000);
+      },
+      error: (err) => {
+        console.error(err);
+        this.saving = false;
+        // The prescription and medical record saved fine here - only completing
+        // the appointment failed, so say so rather than a generic save error.
+        this.errorMessage = 'Prescription saved, but the appointment could not be marked as completed.';
       }
     });
   }

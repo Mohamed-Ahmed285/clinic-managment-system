@@ -101,7 +101,7 @@ export class AppointmentService {
     );
   }
 
-
+  // Update an existing prescription
   updatePrescription(
     prescriptionId: string,
     medications: MedicationPayload[],
@@ -118,6 +118,19 @@ export class AppointmentService {
     return this.http.patch<any>(
       `${this.api}/appointment/${appointmentId}/complete`,
       {}
+    );
+  }
+
+  // Create a medical record for this visit. No attachments support here by design.
+  createMedicalRecord(
+    appointmentId: string,
+    diagnosis: string,
+    symptoms: string,
+    notes: string
+  ): Observable<MedicalRecordResponse> {
+    return this.http.post<MedicalRecordResponse>(
+      `${this.api}/medicalRecord`,
+      { appointmentId, diagnosis, symptoms, notes }
     );
   }
 }

@@ -8,7 +8,12 @@ import { Medication } from '../../models/appointment.model';
 })
 export class PrescriptionFormComponent implements OnInit, OnDestroy {
   @Input() issuedAt: string = '';
-  @Output() save = new EventEmitter<{ medications: Medication[]; generalNotes: string }>();
+  @Output() save = new EventEmitter<{
+    diagnosis: string;
+    symptoms: string;
+    medications: Medication[];
+    generalNotes: string;
+  }>();
 
   frequencyOptions: string[] = [
     'Once Daily',
@@ -31,6 +36,8 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.form = this.fb.group({
+      diagnosis: ['', Validators.required],
+      symptoms: [''],
       medications: this.fb.array([this.createMedicationGroup()]),
       generalNotes: ['']
     });
