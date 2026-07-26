@@ -32,6 +32,29 @@ export interface DoctorProfile {
   appointmentDurationMinutes: number;
   clinics: ClinicAssignment[];
 }
+export interface DashboardResponse {
+  doctor: {
+    name: string;
+    email: string;
+    phone: string;
+    profileImage: string;
+    specialty: any;
+    rating: {
+      average: number;
+      count: number;
+    };
+  };
+
+  stats: {
+    activePatients: number;
+    totalAppointments: number;
+    completedAppointments: number;
+    cancelledAppointments: number;
+    appointmentDuration: number;
+  };
+
+  todayAppointments: any[];
+}
 
 @Injectable({
   providedIn: 'root'
@@ -95,6 +118,13 @@ export class DoctorService {
   return this.http.post<any>(
     `${this.api}/doctor/me/photo`,
     formData
+  );
+}
+
+
+getDashboard(): Observable<DashboardResponse> {
+  return this.http.get<DashboardResponse>(
+    `${this.api}/doctor/dashboard`
   );
 }
 }

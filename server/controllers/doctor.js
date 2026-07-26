@@ -1,5 +1,6 @@
 const doctorModel = require("../models/doctor");
 const userModel = require("../models/user");
+const appointmentModel = require("../models/appointment");
 const specialtyModel = require('../models/specialty');
 
 
@@ -282,6 +283,100 @@ const uploadDoctorPhoto = async (req, res) => {
         return res.status(500).send(err.message);
     }
 };
+const getDoctorDashboard = async (req, res) => {
+    try {
+
+        const doctor = await doctorModel
+            .findById(req.user.id)
+            .populate(populateDoctor);
+
+        if (!doctor) {
+            return res.status(404).send("Doctor profile not found");
+        }
+
+        const today = new Date();
+
+        const startOfDay = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+        );
+
+        const endOfDay = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate() + 1
+        );
+
+        const todayAppointments = await appointmentModel
+            .find({
+                doctorId: doctor._id,
+                date: {
+                    $gte: startOfDay,
+                    $lt: endOfDay
+                }
+            })
+            .populate([
+                {
+                    path: "patientId",
+                    populate: {
+                        path: "_id",
+                        select: "name profileImage"
+                    }
+                },
+                {
+                    path: "clinicId",
+                    select: "name"
+                }
+            ])
+            .sort({ startTime: 1 });
+
+        const activePatients = await appointmentModel.distinct(
+            "patientId",
+            {
+                doctorId: doctor._id,
+                status: {
+                    $ne: "cancelled"
+                }
+            }
+        );
+
+        res.status(200).json({
+
+            doctor: {
+                name: doctor._id.name,
+                email: doctor._id.email,
+                phone: doctor._id.phone,
+                profileImage: doctor._id.profileImage,
+                specialty: doctor.specialtyId,
+                rating: doctor.rating
+            },
+
+            stats: {
+
+                activePatients: activePatients.length,
+
+                totalAppointments:
+                    doctor.bookingStats.totalAppointments,
+
+                completedAppointments:
+                    doctor.bookingStats.completedAppointments,
+
+                cancelledAppointments:
+                    doctor.bookingStats.cancelledAppointments,
+
+                appointmentDuration:
+                    doctor.appointmentDurationMinutes
+            },
+
+            todayAppointments
+
+        });
+
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+};
 
 module.exports = {
     getDoctors,
@@ -292,5 +387,6 @@ module.exports = {
     updateClinicAssignment,
     removeClinicFromMyProfile,
     uploadDoctorPhoto,
+    getDoctorDashboard,
     getDoctorsPaginated
 };

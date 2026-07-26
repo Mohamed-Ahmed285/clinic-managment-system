@@ -110,3 +110,16 @@
 .status--completed {
   color: var(--eyebrow);
 }
+.visit-row {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.visit-row:hover {
+  background-color: #eef8f7;
+}
+
+.visit-row--selected {
+  background-color: #dff3f0;
+  border-left: 4px solid #0f766e;
+}

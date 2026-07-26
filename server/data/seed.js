@@ -140,12 +140,15 @@ const seed = async () => {
       notificationsEnabled: true
     });
 
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
     const appointments = await Appointment.create([
       {
         patientId: patientProfile._id,
         doctorId: doctorProfile._id,
         clinicId: clinics[0]._id,
-        date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+        date: startOfToday,
         startTime: '10:00',
         endTime: '10:30',
         durationMinutes: 30,
@@ -158,7 +161,7 @@ const seed = async () => {
         patientId: patientProfile._id,
         doctorId: doctorProfile._id,
         clinicId: clinics[0]._id,
-        date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+        date: startOfToday,
         startTime: '15:00',
         endTime: '15:30',
         durationMinutes: 30,
@@ -187,7 +190,6 @@ const seed = async () => {
       issuedDate: new Date()
     });
 
-    const now = new Date();
     const currentHour = now.getHours().toString().padStart(2, '0');
     const currentMinute = now.getMinutes().toString().padStart(2, '0');
     const currentTime = `${currentHour}:${currentMinute}`;

@@ -58,9 +58,8 @@
 
 .notification-row__top {
   display: flex;
-  align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
+  align-items: center;
 }
 
 .notification-row__sender {
@@ -88,5 +87,57 @@
   color: var(--muted);
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+}
+.mark-read-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  color: #22c55e;
+  padding: 4px;
+  transition: 0.2s;
+  margin-left: auto; 
+}
+.notification-section-title {
+     font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 18px 0 12px;
+  color: #1f2937;
+}
+
+.notification-divider {
+  margin: 20px 0;
+  border: 20;
+  border-top: 2px solid #e5e7eb;
+}
+
+.mark-read-btn:hover {
+  color: #16a34a;
+  transform: scale(1.15);
+}
+.details-btn {
+  margin-top: 10px;
+  border: none;
+  background: transparent;
+  color: #2b6f6a;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.details-btn:hover {
+  text-decoration: underline;
+}
+
+.appointment-details {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f8fbfa;
+  border: 1px solid #dfe8e6;
+}
+
+.appointment-details p {
+  margin: 6px 0;
 }

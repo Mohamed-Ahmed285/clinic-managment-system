@@ -15,6 +15,7 @@ const routes: Routes = [
   },
   {
     path: 'patient',
+
     loadChildren: () =>
       import('./features/patient/patient.module').then((m) => m.PatientModule),
   },
