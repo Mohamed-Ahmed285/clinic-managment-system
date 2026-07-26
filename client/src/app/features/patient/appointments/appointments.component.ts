@@ -22,6 +22,9 @@ export class AppointmentsComponent implements OnInit {
   profileData: any;
   appointmentDate = '';
   appointmentTime = '';
+  minDate = '';
+  maxDate = '';
+  selectedAvailability: any[] = [];
   states: string[] = [
     'Cairo',
     'Giza',
@@ -60,6 +63,14 @@ export class AppointmentsComponent implements OnInit {
     this.loadProfile();
     this.loadSpecialties();
     this.loadDoctors();
+    const today = new Date();
+
+    this.minDate = today.toISOString().split('T')[0];
+
+    const afterSixMonths = new Date();
+    afterSixMonths.setMonth(afterSixMonths.getMonth() + 6);
+
+    this.maxDate = afterSixMonths.toISOString().split('T')[0];
   }
 
   loadProfile() {
@@ -73,7 +84,7 @@ export class AppointmentsComponent implements OnInit {
       },
     });
   }
-  generateAvailableTimes(startHour: string, endHour: string) {
+  generateAvailableTimes(startHour: string, endHour: string, duration: number) {
     this.availableTimes = [];
 
     let [startH, startM] = startHour.split(':').map(Number);
@@ -90,16 +101,19 @@ export class AppointmentsComponent implements OnInit {
         `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`,
       );
 
-      current += 30;
+      current += duration;
     }
   }
   openModal(doctor: any, clinic: any) {
     console.log(clinic);
+    console.log(doctor);
     this.selectedDoctor = doctor;
     this.selectedClinic = clinic;
+     this.selectedAvailability = clinic.availability;
     this.generateAvailableTimes(
       clinic.clinicId.startHour,
       clinic.clinicId.endHour,
+      doctor.appointmentDurationMinutes,
     );
     this.isModalOpen = true;
   }
@@ -187,7 +201,11 @@ export class AppointmentsComponent implements OnInit {
         this.closeModal();
       },
       error: (err) => {
-        console.log(err);
+          if (err.error === 'appointment time is outside clinic working hours') {
+    alert('Please choose a time within the doctors working hours.');
+  } else {
+    alert(err.error);
+  }
       },
     });
   }
