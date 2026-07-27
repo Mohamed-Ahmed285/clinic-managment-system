@@ -232,39 +232,40 @@
         </div>
         <div>
 
-            <div class="flex justify-between items-center py-8 flex-wrap gap-3"
-               *ngFor="let appointment of upcomingAppointments">
-              <div class="flex gap-5 flex-wrap lg:w-1/2">
+            <div class="flex justify-between items-center py-8 border border-primary flex-wrap gap-3 rounded-3xl p-5 my-5"
+               *ngFor="let appointment of upcomingAppointments ">
+              <div class="flex gap-5 flex-wrap lg:w-1/2 ">
                 <div
-                  class="bg-secondary rounded-2xl w-20 h-20 flex flex-col justify-center items-center p-5"
+                  class="bg-green-200 rounded-2xl w-40 h-[70px] flex flex-col justify-center items-center p-5"
                 >
-                  <span class="text-sm tracking-widest"> Sunday </span>
+                  <span class="text-sm tracking-widest font-semibold italic text-primary">{{appointment.date | date:'EEEE' }} </span>
 
-                  <span class="text-3xl font-semibold"> 9:00 </span>
+                  <span class="text-xl font-semibold italic text-primary">{{ formatTime(appointment.startTime) }}</span>
                 </div>
 
                 <div>
                   <h3 class="text-3xl font-semibold text-black">
-                    Dr.Ahmed Marwan
+                  {{ appointment.doctorId._id.name }}
                   </h3>
+                  <h4>{{ appointment.date | date:'dd/MM/yyyy' }}</h4>
 
-                  <p class="text-gray mt-1">Cardiology · confirmed</p>
+                  <p class="text-gray mt-1">{{ appointment?.doctorId?.specialtyId?.name }}</p>
 
                   <p class="text-2xl mt-2 text-black">Appointment</p>
 
                   <p class="text-gray mt-1 w-fu">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Dolore suscipit vero consequuntur blanditiis dolorum dolorem
-                    officiis, repellendus distinctio voluptas reprehenderit,
-                    pariatur aspernatur. Suscipit blanditiis ratione assumenda
-                    facilis iste neque reiciendis?
+                    {{ appointment?.doctorId?.experienceYears }}
+          {{ appointment?.doctorId?.bio }}
+          {{ appointment?.doctorId?.rating?.average }}
+          {{ appointment?.doctorId?.rating?.count }}
                   </p>
                 </div>
               </div>
               <div class="flex gap-2 flex-wrap">
                 <button class="bg-secondary p-2 rounded-full">Confirmed</button>
-                <button class=" rounded-full py-1 px-2 border border-gray">Reschedule</button>
-                 <button class="text-red-500 border border-red-500 py-2 rounded-full px-4 hover:bg-red-500 hover:text-white">Cancel</button>
+
+                 <button class="text-red-500 border border-red-500 py-2 rounded-full px-4 hover:bg-red-500 hover:text-white"
+                 (click)="cancelAppointment(appointment._id)">Cancel</button>
               </div>
             </div>
 
@@ -358,6 +359,7 @@
       <button
         class="px-4 py-2 bg-primary text-white rounded-lg"
          (click)="bookAppointment()"
+          type="button"
       >
         Purchase
       </button>

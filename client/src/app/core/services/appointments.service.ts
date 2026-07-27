@@ -33,4 +33,10 @@ export class AppointmentService {
   getMyAppointments() {
     return this.http.get(`${environment.apiUrl}/appointment/my`);
   }
+  cancelAppointment(id: string, body: any) {
+    return this.http.patch(
+      `${environment.apiUrl}/appointment/${id}/cancel`,
+      body,
+    );
+  }
 }
