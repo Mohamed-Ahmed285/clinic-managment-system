@@ -325,11 +325,19 @@ const createAppointment = async (req, res) => {
         if (!clinic) {
             return res.status(404).send("clinic not found");
         }
+        const doctorClinic = doctor.clinics.find(
+        c => c.clinicId.toString() === clinic._id.toString()
+         );
+
+        if (!doctorClinic) {
+        return res.status(400).send("Doctor does not work in this clinic");  
+         } 
 
         const built = await validateAppointmentRules(req.body, doctor, patient._id, clinic._id, clinic);
         if (built.error) {
             return res.status(400).send(built.error);
         }
+        built.payload.fee = doctorClinic.consultationFee;
 
         const appointment = await appointmentModel.create(built.payload);
         await appointment.populate(populateAppointment);
