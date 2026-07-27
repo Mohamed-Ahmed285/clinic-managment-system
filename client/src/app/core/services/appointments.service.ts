@@ -30,4 +30,7 @@ export class AppointmentService {
   bookAppointment(data: any) {
     return this.http.post(`${environment.apiUrl}/appointment`, data);
   }
+  getMyAppointments() {
+    return this.http.get(`${environment.apiUrl}/appointment/my`);
+  }
 }

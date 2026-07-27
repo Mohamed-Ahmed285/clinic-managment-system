@@ -25,6 +25,9 @@ export class AppointmentsComponent implements OnInit {
   minDate = '';
   maxDate = '';
   selectedAvailability: any[] = [];
+  appointments: any[] = [];
+  nextAppointment: any;
+  upcomingAppointments: any[] = [];
   states: string[] = [
     'Cairo',
     'Giza',
@@ -63,6 +66,8 @@ export class AppointmentsComponent implements OnInit {
     this.loadProfile();
     this.loadSpecialties();
     this.loadDoctors();
+    this.loadMyAppointments();
+
     const today = new Date();
 
     this.minDate = today.toISOString().split('T')[0];
@@ -109,7 +114,7 @@ export class AppointmentsComponent implements OnInit {
     console.log(doctor);
     this.selectedDoctor = doctor;
     this.selectedClinic = clinic;
-     this.selectedAvailability = clinic.availability;
+    this.selectedAvailability = clinic.availability;
     this.generateAvailableTimes(
       clinic.clinicId.startHour,
       clinic.clinicId.endHour,
@@ -201,12 +206,36 @@ export class AppointmentsComponent implements OnInit {
         this.closeModal();
       },
       error: (err) => {
-          if (err.error === 'appointment time is outside clinic working hours') {
-    alert('Please choose a time within the doctors working hours.');
-  } else {
-    alert(err.error);
-  }
+        if (err.error === 'appointment time is outside clinic working hours') {
+          alert('Please choose a time within the doctors working hours.');
+        } else {
+          alert(err.error);
+        }
       },
+    });
+  }
+  loadMyAppointments() {
+    this.appointmentService.getMyAppointments().subscribe({
+      next: (res: any) => {
+        console.log(res);
+
+        this.appointments = res;
+
+        const today = new Date();
+
+        this.upcomingAppointments = this.appointments
+          .filter(
+            (appointment: any) =>
+              appointment.status !== 'cancelled' &&
+              new Date(appointment.date) >= today,
+          )
+          .sort(
+            (a: any, b: any) =>
+              new Date(a.date).getTime() - new Date(b.date).getTime(),
+        );
+        console.log(this.upcomingAppointments.length);
+      },
+      error: (err) => console.log(err),
     });
   }
 }
