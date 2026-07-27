@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TodoService, TodoResponse, TodoItem, TodoScheduleDose } from 'src/app/core/services/todo.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { TodoService, TodoResponse, TodoItem, TodoScheduleDose } from 'src/app/c
   templateUrl: './medications.component.html',
   styleUrls: ['./medications.component.css']
 })
-export class MedicationsComponent implements OnInit {
+export class MedicationsComponent implements OnInit, OnDestroy {
   todos: TodoResponse[] = [];
   loading = true;
   errorMessage = '';
@@ -15,10 +15,31 @@ export class MedicationsComponent implements OnInit {
   // busy state instead of locking the whole page.
   pendingDoseId: string | null = null;
 
+  // Current time as "HH:MM", used to flag doses that are overdue. Refreshed
+  // every minute so the page stays accurate if left open.
+  private nowTime = '';
+  private clockHandle: ReturnType<typeof setInterval> | null = null;
+
   constructor(private todoService: TodoService) {}
 
   ngOnInit(): void {
     this.loadTodos();
+    this.updateNowTime();
+    this.clockHandle = setInterval(() => this.updateNowTime(), 60000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.clockHandle) {
+      clearInterval(this.clockHandle);
+      this.clockHandle = null;
+    }
+  }
+
+  private updateNowTime(): void {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    this.nowTime = `${hours}:${minutes}`;
   }
 
   loadTodos(): void {
@@ -76,5 +97,35 @@ export class MedicationsComponent implements OnInit {
       (sum, item) => sum + item.schedule.filter((d) => d.completed).length,
       0
     );
+  }
+
+  // Doses in the order they'll actually happen during the day, regardless of
+  // the order the doctor added them in.
+  sortedSchedule(item: TodoItem): TodoScheduleDose[] {
+    return [...item.schedule].sort((a, b) => a.time.localeCompare(b.time));
+  }
+
+  isOverdue(dose: TodoScheduleDose): boolean {
+    return !dose.completed && dose.time < this.nowTime;
+  }
+
+  doseChipClasses(dose: TodoScheduleDose): string {
+    if (dose.completed) {
+      return 'bg-primary text-white border-primary';
+    }
+    if (this.isOverdue(dose)) {
+      return 'bg-red-50 text-red-600 border-red-400';
+    }
+    return 'border-gray text-gray-700';
+  }
+
+  doseIcon(dose: TodoScheduleDose): string {
+    if (dose.completed) {
+      return 'fa-check';
+    }
+    if (this.isOverdue(dose)) {
+      return 'fa-triangle-exclamation';
+    }
+    return 'fa-clock';
   }
 }

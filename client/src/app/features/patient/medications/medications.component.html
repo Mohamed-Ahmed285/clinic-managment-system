@@ -58,17 +58,19 @@
               </div>
             </div>
 
-            <div class="flex flex-wrap gap-2 mt-4">
-              <button type="button" *ngFor="let dose of item.schedule" (click)="toggleDose(todo, item, dose)"
+            <div class="flex flex-wrap gap-2 mt-4" *ngIf="item.schedule.length > 0">
+              <button type="button" *ngFor="let dose of sortedSchedule(item)" (click)="toggleDose(todo, item, dose)"
                 [disabled]="pendingDoseId === dose._id"
                 class="flex items-center gap-2 px-4 py-2 rounded-full border transition"
-                [class.bg-primary]="dose.completed" [class.text-white]="dose.completed"
-                [class.border-primary]="dose.completed" [class.border-gray]="!dose.completed"
-                [class.text-gray-700]="!dose.completed" [class.opacity-60]="pendingDoseId === dose._id">
-                <i class="fa-solid" [class.fa-check]="dose.completed" [class.fa-clock]="!dose.completed"></i>
-                {{ dose.time }}
+                [ngClass]="doseChipClasses(dose)" [class.opacity-60]="pendingDoseId === dose._id">
+                <i class="fa-solid" [ngClass]="doseIcon(dose)"></i>
+                {{ dose.time | time12 }}
               </button>
             </div>
+
+            <p class="text-gray-400 text-sm mt-4 italic" *ngIf="item.schedule.length === 0">
+              No scheduled times were added for this medication.
+            </p>
           </div>
         </div>
       </div>
