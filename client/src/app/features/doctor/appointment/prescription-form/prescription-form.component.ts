@@ -29,6 +29,17 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
     'Every 12 Hours'
   ];
 
+  // Sensible starting times suggested when a frequency is picked. The doctor
+  // can still add, remove, or edit any of these afterward.
+  private frequencyDefaultTimes: { [frequency: string]: string[] } = {
+    'Once Daily': ['08:00'],
+    'Twice Daily': ['08:00', '20:00'],
+    'Three Times Daily': ['08:00', '14:00', '20:00'],
+    'Every 6 Hours': ['00:00', '06:00', '12:00', '18:00'],
+    'Every 8 Hours': ['00:00', '08:00', '16:00'],
+    'Every 12 Hours': ['08:00', '20:00']
+  };
+
   form!: FormGroup;
 
   // Live clock shown while the doctor is writing the prescription. Once an
@@ -83,7 +94,7 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
   }
 
   createMedicationGroup(): FormGroup {
-    return this.fb.group({
+    const group = this.fb.group({
       name: ['', Validators.required],
       dosage: ['', Validators.required],
       frequency: ['', Validators.required],
@@ -91,6 +102,19 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
       times: this.fb.array([]),
       notes: ['']
     });
+
+    group.get('frequency')!.valueChanges.subscribe((frequency: string | null) => {
+      const times = group.get('times') as FormArray;
+      const defaults = frequency ? this.frequencyDefaultTimes[frequency] : undefined;
+
+      // Only suggest times when the list is still empty, so picking a
+      // frequency never overwrites times the doctor already entered by hand.
+      if (defaults && times.length === 0) {
+        defaults.forEach((time) => times.push(this.fb.control(time)));
+      }
+    });
+
+    return group;
   }
 
   addMedication(): void {
