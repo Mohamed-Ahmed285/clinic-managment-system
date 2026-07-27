@@ -48,7 +48,10 @@ constructor(
         this.appointments = res.todayAppointments.map((item: any) => ({
         id: item._id,
         time: item.startTime,
-        patientName: item.patientId?.name ?? 'Unknown Patient',
+        patientName:
+         item.patientId?.name ??
+        item.patientId?._id?.name ??
+        'Unknown Patient',
         visitType: item.clinicId?.name ?? 'Clinic Visit',
         status: this.mapStatus(item.status)
 }));
