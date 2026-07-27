@@ -58,7 +58,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    this.router.navigate(['/']);
+    this.router.navigate(['/auth/login']);
   }
 
   register(data: RegisterRequest): Observable<any> {

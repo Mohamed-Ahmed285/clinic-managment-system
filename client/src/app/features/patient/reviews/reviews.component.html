@@ -1,3 +1,5 @@
+<app-navbar></app-navbar>
+
 <div class="bg-secondary py-8">
 
   <div class="container mx-auto lg:px-24 md:px-24 pt-0 py-12 px-10">
@@ -34,7 +36,8 @@
 
         <div class="flex items-center gap-4">
 
-          <button (click)="openModal()"
+          <button
+            (click)="openModal()"
             class="bg-[#0b6b78] text-white px-5 py-2 rounded-xl hover:bg-[#095963] transition">
 
             + Add Review
@@ -52,7 +55,9 @@
       </div>
 
       <!-- Review Card -->
-      <div *ngFor="let review of reviews" class="border border-[#e0e9eb] rounded-2xl p-6 mb-6">
+      <div
+        *ngFor="let review of reviews"
+        class="border border-[#e0e9eb] rounded-2xl p-6 mb-6">
 
         <div class="flex justify-between items-start flex-wrap gap-4">
 
@@ -83,7 +88,9 @@
         <!-- Stars -->
         <div class="flex gap-1 mt-4 text-yellow-400 text-xl">
 
-          <i *ngFor="let s of [].constructor(review.rating)" class="fa-solid fa-star">
+          <i
+            *ngFor="let s of [].constructor(review.rating)"
+            class="fa-solid fa-star">
           </i>
 
         </div>
@@ -98,7 +105,8 @@
         <!-- Buttons -->
         <div class="flex justify-end gap-3 mt-6">
 
-          <button (click)="editReview(review)"
+          <button
+            (click)="editReview(review)"
             class="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg transition">
 
             <i class="fa-solid fa-pen mr-2"></i>
@@ -107,7 +115,8 @@
 
           </button>
 
-          <button (click)="deleteReview(review._id)"
+          <button
+            (click)="deleteReview(review._id)"
             class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition">
 
             <i class="fa-solid fa-trash mr-2"></i>
@@ -127,7 +136,9 @@
 </div>
 
 <!-- Modal -->
-<div *ngIf="showModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+<div
+  *ngIf="showModal"
+  class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
   <div class="bg-white rounded-2xl w-[500px] max-w-[95%] p-8">
 
@@ -139,7 +150,9 @@
 
       </h2>
 
-      <button (click)="closeModal()" class="text-3xl">
+      <button
+        (click)="closeModal()"
+        class="text-3xl">
 
         ×
 
@@ -156,7 +169,10 @@
 
       </label>
 
-      <input type="text" [(ngModel)]="newReview.appointmentId" [disabled]="isEditing"
+      <input
+        type="text"
+        [(ngModel)]="newReview.appointmentId"
+        [disabled]="isEditing"
         class="w-full border rounded-lg p-3 disabled:bg-gray-100 disabled:text-gray-500">
 
     </div>
@@ -170,7 +186,9 @@
 
       </label>
 
-      <select [(ngModel)]="newReview.rating" class="w-full border rounded-lg p-3">
+      <select
+        [(ngModel)]="newReview.rating"
+        class="w-full border rounded-lg p-3">
 
         <option [value]="1">1 ⭐</option>
         <option [value]="2">2 ⭐⭐</option>
@@ -191,20 +209,27 @@
 
       </label>
 
-      <textarea rows="5" [(ngModel)]="newReview.comment" class="w-full border rounded-lg p-3">
+      <textarea
+        rows="5"
+        [(ngModel)]="newReview.comment"
+        class="w-full border rounded-lg p-3">
       </textarea>
 
     </div>
 
     <div class="flex justify-end gap-3">
 
-      <button (click)="closeModal()" class="border px-5 py-2 rounded-lg hover:bg-gray-100">
+      <button
+        (click)="closeModal()"
+        class="border px-5 py-2 rounded-lg hover:bg-gray-100">
 
         Cancel
 
       </button>
 
-      <button (click)="submitReview()" class="bg-[#0b6b78] hover:bg-[#095963] text-white px-6 py-2 rounded-lg">
+      <button
+        (click)="submitReview()"
+        class="bg-[#0b6b78] hover:bg-[#095963] text-white px-6 py-2 rounded-lg">
 
         {{ isEditing ? 'Update' : 'Submit' }}
 
@@ -215,3 +240,5 @@
   </div>
 
 </div>
+
+<app-footer></app-footer>

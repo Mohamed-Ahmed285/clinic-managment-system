@@ -24,7 +24,7 @@ const routes: Routes = [
 
       {
         path: 'profile',
-        component: UpdateProfileComponent,
+        component: ProfileComponent,
       },
       {
        path: 'dashboard',
