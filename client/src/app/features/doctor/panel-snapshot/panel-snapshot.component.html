@@ -2,9 +2,105 @@
   <h2 class="card__title">Panel snapshot</h2>
 
   <div class="stat-grid">
-    <div class="stat-box" *ngFor="let stat of stats">
+    <div
+      class="stat-box"
+      *ngFor="let stat of stats"
+      [class.disabled]="stat.label === 'Duration time'"
+      (click)="stat.label !== 'Duration time' && openModal(stat.label)"
+    >
       <p class="stat-box__label">{{ stat.label }}</p>
       <p class="stat-box__value">{{ stat.value }}</p>
     </div>
   </div>
 </section>
+
+<div class="modal-overlay" *ngIf="showModal">
+
+  <div class="modal-box">
+
+    <button class="close-btn" (click)="closeModal()">✕</button>
+
+    <h2>{{ modalTitle }}</h2>
+
+    <div *ngIf="modalTitle === 'Active patients'">
+
+      <table class="patients-table">
+
+        <thead>
+          <tr>
+            <th>Photo</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let patient of patients">
+
+            <td>
+              <img
+                [src]="patient.profileImage"
+                alt="Patient"
+                class="patient-img"
+              />
+            </td>
+
+            <td>{{ patient.name }}</td>
+
+            <td>{{ patient.email }}</td>
+
+            <td>{{ patient.phone }}</td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <div *ngIf="modalTitle === 'Total appointments'">
+
+      <table class="patients-table">
+
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Clinic</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let appointment of appointments">
+
+            <td>{{ appointment.patientId?._id?.name }}</td>
+
+            <td>{{ appointment.clinicId?.name }}</td>
+
+            <td>{{ appointment.date | date:'dd/MM/yyyy' }}</td>
+
+            <td>{{ appointment.startTime }}</td>
+
+            <td>{{ appointment.status }}</td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <div *ngIf="modalTitle === 'Completed appointments'">
+
+    </div>
+
+  </div>
+
+</div>
