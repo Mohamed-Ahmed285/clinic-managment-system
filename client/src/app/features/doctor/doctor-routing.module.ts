@@ -9,6 +9,8 @@ import { UpdateProfileComponent } from './update-profile/update-profile.componen
 import { PrescriptionsComponent } from './prescriptions/prescriptions.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { AppointmentComponent } from './appointment/appointment.component';
+//import { PatientsComponent } from './patients/patients.component';
+//import { ScheduleComponent } from './schedule/schedule.component';
 const routes: Routes = [
   {
     path: '',
@@ -24,7 +26,7 @@ const routes: Routes = [
 
       {
         path: 'profile',
-        component: ProfileComponent,
+        component:  UpdateProfileComponent,
       },
       {
        path: 'dashboard',
@@ -60,6 +62,14 @@ const routes: Routes = [
         path: 'notifications',
         component: NotificationsComponent,
       },
+      /*{
+  path: 'patients',
+  component: PatientsComponent,
+},
+{
+  path: 'schedule',
+  component: ScheduleComponent,
+},*/
     ],
   },
 ];
