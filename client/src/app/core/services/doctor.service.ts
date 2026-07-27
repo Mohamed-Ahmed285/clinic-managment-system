@@ -127,4 +127,16 @@ getDashboard(): Observable<DashboardResponse> {
     `${this.api}/doctor/dashboard`
   );
 }
+
+getActivePatients(): Observable<any[]> {
+  return this.http.get<any[]>(
+    `${this.api}/doctor/active-patients`
+  );
+}
+getAppointments() {
+  return this.http.get<any[]>(
+    `${this.api}/doctor/appointments`
+  );
+}
+
 }

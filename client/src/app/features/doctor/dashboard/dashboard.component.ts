@@ -47,7 +47,7 @@ constructor(
 
         this.appointments = res.todayAppointments.map((item: any) => ({
         id: item._id,
-        time: item.startTime,
+        time: this.formatTime(item.startTime),
         patientName:
          item.patientId?.name ??
         item.patientId?._id?.name ??
@@ -93,26 +93,35 @@ constructor(
   }
 
   mapStatus(status: string): Appointment['status'] {
+  switch (status) {
+    case 'pending':
+      return 'Waiting';
 
-    switch (status) {
+    case 'confirmed':
+      return 'Upcoming';
 
-      case 'pending':
-        return 'Waiting';
+    case 'completed':
+      return 'Completed';
 
-      case 'confirmed':
-        return 'Upcoming';
+    case 'cancelled':
+      return 'Completed';
 
-      case 'completed':
-        return 'Completed';
-
-      case 'cancelled':
-        return 'Completed';
-
-      default:
-        return 'Upcoming';
-    }
-
+    default:
+      return 'Upcoming';
   }
+}
+
+formatTime(time: string): string {
+  if (!time) return '';
+
+  const [hours, minutes] = time.split(':').map(Number);
+
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const displayHour = hours % 12 || 12;
+
+  return `${displayHour}:${minutes.toString().padStart(2, '0')} ${period}`;
+}
+  
 
   loadNotifications(): void {
 

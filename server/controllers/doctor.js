@@ -340,6 +340,19 @@ const getDoctorDashboard = async (req, res) => {
                 }
             }
         );
+        const totalAppointments = await appointmentModel.countDocuments({
+  doctorId: doctor._id
+});
+
+const completedAppointments = await appointmentModel.countDocuments({
+  doctorId: doctor._id,
+  status: "completed"
+});
+
+const cancelledAppointments = await appointmentModel.countDocuments({
+  doctorId: doctor._id,
+  status: "cancelled"
+});
 
         res.status(200).json({
 
@@ -354,19 +367,20 @@ const getDoctorDashboard = async (req, res) => {
 
             stats: {
 
-                activePatients: activePatients.length,
+                activePatients: 
+                activePatients.length,
 
                 totalAppointments:
-                    doctor.bookingStats.totalAppointments,
+                 totalAppointments,
 
-                completedAppointments:
-                    doctor.bookingStats.completedAppointments,
+               completedAppointments:
+                completedAppointments,
 
-                cancelledAppointments:
-                    doctor.bookingStats.cancelledAppointments,
-
-                appointmentDuration:
-                    doctor.appointmentDurationMinutes
+               cancelledAppointments: 
+               cancelledAppointments,
+                
+               appointmentDuration:
+                doctor.appointmentDurationMinutes
             },
 
             todayAppointments
@@ -376,6 +390,91 @@ const getDoctorDashboard = async (req, res) => {
     } catch (err) {
         res.status(500).send(err.message);
     }
+};
+const getActivePatients = async (req, res) => {
+  try {
+
+    const doctor = await doctorModel.findById(req.user.id);
+
+    if (!doctor) {
+      return res.status(404).send("Doctor profile not found");
+    }
+
+    const patients = await appointmentModel.find({
+      doctorId: doctor._id,
+      status: { $ne: "cancelled" }
+    })
+    .populate({
+      path: "patientId",
+      populate: {
+        path: "_id",
+        select: "name email phone profileImage"
+      }
+    });
+
+    const uniquePatients = [];
+
+    const patientIds = new Set();
+
+    patients.forEach((appointment) => {
+
+      const patient = appointment.patientId;
+
+      if (
+        patient &&
+        patient._id &&
+        !patientIds.has(patient._id._id.toString())
+      ) {
+
+        patientIds.add(patient._id._id.toString());
+
+        uniquePatients.push({
+          id: patient._id._id,
+          name: patient._id.name,
+          email: patient._id.email,
+          phone: patient._id.phone,
+          profileImage: patient._id.profileImage
+        });
+
+      }
+
+    });
+
+    res.status(200).json(uniquePatients);
+
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+const getDoctorAppointments = async (req, res) => {
+  try {
+
+    const doctor = await doctorModel.findById(req.user.id);
+
+    if (!doctor) {
+      return res.status(404).send("Doctor profile not found");
+    }
+
+    const appointments = await appointmentModel
+      .find({ doctorId: doctor._id })
+      .populate({
+        path: "patientId",
+        populate: {
+          path: "_id",
+          select: "name phone"
+        }
+      })
+      .populate({
+        path: "clinicId",
+        select: "name"
+      })
+      .sort({ date: -1, startTime: 1 });
+
+    res.status(200).json(appointments);
+
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 };
 
 module.exports = {
@@ -388,5 +487,8 @@ module.exports = {
     removeClinicFromMyProfile,
     uploadDoctorPhoto,
     getDoctorDashboard,
-    getDoctorsPaginated
+    getDoctorsPaginated,
+    getActivePatients,
+    getDoctorAppointments
+    
 };
