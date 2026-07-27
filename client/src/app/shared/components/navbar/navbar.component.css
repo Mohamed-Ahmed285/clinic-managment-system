@@ -1,3 +1,7 @@
 .nav-link {
-  @apply rounded-lg px-3 py-1.5 text-sm font-medium text-gray transition-colors duration-200 hover:text-primary;
+  @apply rounded-lg px-3 py-1.5 text-sm font-medium text-gray transition-colors duration-200;
+}
+
+.nav-link:hover {
+  @apply text-primary;
 }
