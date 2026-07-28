@@ -1,3 +1,8 @@
+<app-alert-modal
+  *ngIf="showErrorModal"
+  [message]="errorMessage"
+  (close)="showErrorModal=false">
+</app-alert-modal>
 <section class="bg-secondary min-h-screen py-10">
   <div class="container mx-auto px-6 lg:px-20">
 <div class="flex justify-between flex-wrap items-center">
@@ -21,10 +26,6 @@
         </p>
       </div>
 
-      <button
-        class="border border-gray rounded-xl px-6 py-3 hover:bg-white transition">
-        View my appointments
-      </button>
     </div>
 
 
@@ -107,7 +108,7 @@
       <!-- Avatar -->
       <div
         class="w-16 h-16 rounded-full bg-green-200 flex items-center justify-center text-3xl text-primary">
-        N
+      {{doctor._id.name.charAt(0)}}
       </div>
 
       <!-- Name -->
@@ -120,10 +121,21 @@
          {{ doctor.specialtyId.name }}
         </p>
 
-        <div class="flex items-center gap-1 mt-1">
-          <i class="fa-solid fa-star text-gray text-sm"></i>
-          <span class="text-gray-700">{{doctor.rating.average}}</span>
-        </div>
+      <div class="flex items-center gap-1 mt-1">
+  <div class="flex">
+    <ng-container *ngFor="let star of [1,2,3,4,5]">
+      <i
+        class="fa-star text-yellow-400"
+        [class.fa-solid]="star <= doctor.rating.average"
+        [class.fa-regular]="star > doctor.rating.average">
+      </i>
+    </ng-container>
+  </div>
+
+  <span class="text-gray-700 font-semibold ml-2">
+    {{ doctor.rating.average }}
+  </span>
+</div>
       </div>
 
       </div>
@@ -151,47 +163,7 @@
 
     </div>
 
-    <!-- <div class="mt-8 space-y-4">
 
-
-      <div class="flex flex-col lg:flex-row lg:items-center ">
-
-        <p class="w-36 uppercase tracking-wide text-gray-600 font-semibold">
-        Clinic 1
-        </p>
-
-        <div class="flex flex-wrap gap-2">
-          <button
-            class="px-6 py-2 rounded-xl border bg-primary text-white" (click)="openModal()">
-       Book
-          </button>
-
-
-        </div>
-
-      </div>
-
-      <div class="flex flex-col lg:flex-row lg:items-center ">
-
-        <p class="w-36 uppercase tracking-wide text-gray-600 font-semibold">
-          Clinic 2
-        </p>
-
-        <div class="flex flex-wrap gap-3">
-
-          <button
-            class="px-6 py-2 rounded-xl border  bg-primary text-white " (click)="openModal()">
-
-            Book
-          </button>
-
-
-        </div>
-
-      </div>
-
-
-    </div> -->
 <div *ngFor="let clinic of doctor.clinics,let i=index" class="flex flex-col lg:flex-row lg:items-center">
 
   <p class="me-5 w-50 uppercase tracking-wide text-gray-600 font-semibold">
@@ -236,6 +208,7 @@
   </button>
 
 </div>
+
 <div *ngIf="upcomingAppointments.length">
   <div class="appointments">
 
@@ -278,20 +251,60 @@
 
                   <p class="text-2xl mt-2 text-black">Appointment</p>
 
-                  <p class="text-gray mt-1 w-fu">
+                  <div class="text-gray mt-1 w-fu">
                     {{ appointment?.doctorId?.experienceYears }}
           {{ appointment?.doctorId?.bio }}
-          {{ appointment?.doctorId?.rating?.average }}
-          {{ appointment?.doctorId?.rating?.count }}
-                  </p>
+          <br/>
+  <div class="flex items-center gap-2">
+  <div class="flex text-yellow-400">
+    <ng-container *ngFor="let star of [1,2,3,4,5]">
+      <i
+        [ngClass]="
+          star <= Math.floor(appointment?.doctorId?.rating?.average || 0)
+            ? 'fa-solid fa-star'
+            : star === Math.ceil(appointment?.doctorId?.rating?.average || 0) &&
+              (appointment?.doctorId?.rating?.average || 0) % 1 >= 0.5
+            ? 'fa-solid fa-star-half-stroke'
+            : 'fa-regular fa-star'
+        ">
+      </i>
+    </ng-container>
+  </div>
+
+  <span class="font-bold text-2xl">
+    {{ appointment?.doctorId?.rating?.average | number:'1.1-1' }}
+  </span>
+</div>
+        Number of Reviews:  {{ appointment?.doctorId?.rating?.count }}
+                  </div>
                 </div>
               </div>
               <div class="flex gap-2 flex-wrap">
-                <button class="bg-secondary p-2 rounded-full">Confirmed</button>
 
-                 <button class="text-red-500 border border-red-500 py-2 rounded-full px-4 hover:bg-red-500 hover:text-white"
-                 (click)="cancelAppointment(appointment._id)">Cancel</button>
-              </div>
+  <button class="bg-secondary p-2 rounded-full">
+    Confirmed
+  </button>
+
+<button
+  *ngIf="appointment.paymentStatus !== 'paid'"
+class="bg-[rgb(4_88_92)] text-white px-4 py-2 rounded-full"
+  (click)="payAppointment(appointment._id)">
+  Pay
+</button>
+
+<button
+  *ngIf="appointment.paymentStatus === 'paid'"
+class="bg-[rgb(4_88_92_/_var(--tw-bg-opacity))] text-white px-4 py-2 rounded-full cursor-not-allowed"  disabled>
+  Paid
+</button>
+
+  <button
+      class="text-red-500 border border-red-500 py-2 rounded-full px-4 hover:bg-red-500 hover:text-white"
+      (click)="cancelAppointment(appointment._id)">
+      Cancel
+  </button>
+
+</div>
             </div>
 
         </div>
@@ -386,10 +399,11 @@
          (click)="bookAppointment()"
           type="button"
       >
-        Purchase
+        Book
       </button>
     </div>
 
   </div>
 </div>
+
 

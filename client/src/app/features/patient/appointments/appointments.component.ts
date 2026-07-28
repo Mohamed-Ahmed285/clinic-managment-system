@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ProfileService } from 'src/app/core/services/profile.service';
 import { AppointmentService } from 'src/app/core/services/appointments.service';
+import { ToastrService } from 'ngx-toastr';
+import { PaymentService } from 'src/app/core/services/payment.service';
+import { ActivatedRoute } from '@angular/router';
 import { FavoriteService } from 'src/app/core/services/favorite.service';
 @Component({
   selector: 'app-appointments',
@@ -8,6 +11,7 @@ import { FavoriteService } from 'src/app/core/services/favorite.service';
   styleUrls: ['./appointments.component.css'],
 })
 export class AppointmentsComponent implements OnInit {
+  Math = Math;
   availableTimes: string[] = [];
   search = '';
   selectedSpecialty = '';
@@ -63,6 +67,9 @@ export class AppointmentsComponent implements OnInit {
   constructor(
     private profileService: ProfileService,
     private appointmentService: AppointmentService,
+    private toastr: ToastrService,
+    private paymentService: PaymentService,
+    private route: ActivatedRoute
     private favoriteService: FavoriteService,
   ) {}
 
@@ -195,20 +202,7 @@ export class AppointmentsComponent implements OnInit {
       },
     });
   }
-  // loadDoctors() {
-  //   const searchValue = this.search || this.selectedSpecialty;
 
-  //   this.appointmentService
-  //     .getDoctors(this.page, this.limit, searchValue)
-  //     .subscribe({
-  //       next: (res: any) => {
-  //          console.log('Doctors Response:', res);
-  //         this.doctors = res;
-  //         this.totalPages = res.totalPages;
-  //       },
-  //       error: (err) => console.log(err),
-  //     });
-  // }
   loadDoctors() {
     console.log('Loading...', {
       page: this.page,
@@ -251,7 +245,7 @@ export class AppointmentsComponent implements OnInit {
 
       startTime: this.appointmentTime,
 
-      paymentMethod: 'cash',
+     paymentMethod: this.profileData.profile.preferredPaymentMethod,
     };
     console.log({
       date: this.appointmentDate,
@@ -260,17 +254,48 @@ export class AppointmentsComponent implements OnInit {
     this.appointmentService.bookAppointment(body).subscribe({
       next: (res) => {
         console.log(res);
-
+        this.loadMyAppointments();
         this.closeModal();
       },
       error: (err) => {
+        console.log(err);
+
         if (err.error === 'appointment time is outside clinic working hours') {
-          alert('Please choose a time within the doctors working hours.');
+          this.handleError(
+            'Please choose a time within the doctors working hours.',
+          );
         } else {
-          alert(err.error);
+          this.handleError(err.error);
+  next: (res: any) => {
+
+    if (this.profileData.profile.preferredPaymentMethod === 'online') {
+
+      this.paymentService.checkout(res._id).subscribe({
+        next: (payment: any) => {
+          window.location.href = payment.url;
+        },
+        error: (err) => {
+          console.log(err);
+          alert('Failed to start payment.');
         }
-      },
-    });
+      });
+
+    } else {
+
+      this.closeModal();
+      this.loadMyAppointments();
+
+    }
+
+  },
+  error: (err) => {
+    if (err.error === 'appointment time is outside clinic working hours') {
+      alert('Please choose a time within the doctors working hours.');
+    } else {
+      alert(err.error);
+    }
+  }
+});
   }
   loadMyAppointments() {
     this.appointmentService.getMyAppointments().subscribe({
@@ -318,8 +343,7 @@ export class AppointmentsComponent implements OnInit {
         console.log(res);
 
         this.loadMyAppointments();
-
-        alert('Appointment cancelled successfully.');
+        this.testToast();
       },
       error: (err) => {
         console.log(err);
@@ -327,4 +351,42 @@ export class AppointmentsComponent implements OnInit {
       },
     });
   }
+  showErrorModal = false;
+  errorMessage = '';
+
+  handleError(error: any) {
+    console.log('HANDLE ERROR CALLED');
+
+    this.errorMessage =
+      error?.message || error || 'Something went wrong. Please try again.';
+
+    this.showErrorModal = true;
+
+    console.log(this.showErrorModal, this.errorMessage);
+  }
+  showCancelModal = false;
+  selectedAppointmentId = '';
+
+  openCancelModal(id: string) {
+    this.selectedAppointmentId = id;
+    this.showCancelModal = true;
+  }
+
+  closeCancelModal() {
+    this.showCancelModal = false;
+  }
+  testToast() {
+    this.toastr.success('Appointment cancelled!', 'Success');
+  }
+  payAppointment(appointmentId: string) {
+  this.paymentService.checkout(appointmentId).subscribe({
+    next: (res: any) => {
+      window.location.href = res.url;
+    },
+    error: (err) => {
+      console.error(err);
+      alert('Unable to start payment.');
+    }
+  });
+}
 }
