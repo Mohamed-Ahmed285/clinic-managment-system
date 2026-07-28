@@ -265,4 +265,37 @@ describe('Patient NotificationsComponent', () => {
       expect(component.timeAgo('not-a-date')).toBe('');
     });
   });
+
+  it('keeps a notification pushed while the initial fetch is in flight', () => {
+    fixture.detectChanges(); // ngOnInit fires, GET pending
+    realtime.pushes.next(makePush({ _id: 'pushed' })); // Push arrives before response
+    fixture.detectChanges();
+    http.expectOne(listUrl).flush([makePush({ _id: 'fetched' })]);
+    fixture.detectChanges();
+
+    expect(component.notifications.map(n => n._id)).toEqual(['pushed', 'fetched']);
+  });
+
+  it('does not duplicate a notification present in both the push and the fetch', () => {
+    fixture.detectChanges(); // ngOnInit fires, GET pending
+    realtime.pushes.next(makePush({ _id: 'dup' })); // Push arrives before response
+    fixture.detectChanges();
+    http.expectOne(listUrl).flush([makePush({ _id: 'dup' })]);
+    fixture.detectChanges();
+
+    expect(component.notifications.length).toBe(1);
+  });
+
+  it('does not resurrect buffered pushes on a later reload', () => {
+    fixture.detectChanges(); // ngOnInit fires, GET pending
+    realtime.pushes.next(makePush({ _id: 'ghost' })); // Push arrives before response
+    http.expectOne(listUrl).flush([]);
+    fixture.detectChanges();
+
+    component.load(); // Reload
+    http.expectOne(listUrl).flush([]);
+    fixture.detectChanges();
+
+    expect(component.notifications).toEqual([]);
+  });
 });

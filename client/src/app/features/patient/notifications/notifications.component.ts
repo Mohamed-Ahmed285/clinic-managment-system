@@ -74,6 +74,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   error: string | null = null;
 
   private readonly subscriptions = new Subscription();
+  private pushedDuringLoad: NotificationView[] = [];
 
   constructor(
     private notificationService: NotificationService,
@@ -98,10 +99,16 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   load(): void {
     this.loading = true;
     this.error = null;
+    this.pushedDuringLoad = [];
 
     this.notificationService.getMyNotifications().subscribe({
       next: items => {
-        this.notifications = items.map(item => this.toView(item));
+        const fetched = items.map(item => this.toView(item));
+        const fetchedIds = new Set(fetched.map(n => n._id));
+        const carried = this.pushedDuringLoad.filter(n => !fetchedIds.has(n._id));
+
+        this.notifications = [...carried, ...fetched];
+        this.pushedDuringLoad = [];
         this.loading = false;
       },
       error: () => {
@@ -191,7 +198,12 @@ export class NotificationsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.notifications = [this.toView(push), ...this.notifications];
+    const view = this.toView(push);
+    this.notifications = [view, ...this.notifications];
+
+    if (this.loading) {
+      this.pushedDuringLoad = [view, ...this.pushedDuringLoad];
+    }
   }
 
   private toView(source: NotificationPush): NotificationView {
