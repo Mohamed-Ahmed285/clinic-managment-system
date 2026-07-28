@@ -78,6 +78,16 @@ export class AppointmentsComponent implements OnInit {
     this.loadSpecialties();
     this.loadDoctors();
     this.loadMyAppointments();
+   this.route.queryParams.subscribe((params) => {
+  if (params['payment'] === 'success') {
+    this.toastr.success('Payment Successful', 'Success');
+    this.loadMyAppointments();
+  }
+
+  if (params['payment'] === 'failed') {
+    this.toastr.error('Payment Failed', 'Error');
+  }
+});
     this.loadFavorites();
 
     const today = new Date();
@@ -252,20 +262,6 @@ export class AppointmentsComponent implements OnInit {
       startTime: this.appointmentTime,
     });
     this.appointmentService.bookAppointment(body).subscribe({
-      next: (res) => {
-        console.log(res);
-        this.loadMyAppointments();
-        this.closeModal();
-      },
-      error: (err) => {
-        console.log(err);
-
-        if (err.error === 'appointment time is outside clinic working hours') {
-          this.handleError(
-            'Please choose a time within the doctors working hours.',
-          );
-        } else {
-          this.handleError(err.error);
   next: (res: any) => {
 
     if (this.profileData.profile.preferredPaymentMethod === 'online') {
