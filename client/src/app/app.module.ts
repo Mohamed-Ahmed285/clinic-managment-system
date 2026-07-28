@@ -9,7 +9,8 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './core/services/interceptors/auth.interceptor';
-
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,7 +23,14 @@ import { AuthInterceptor } from './core/services/interceptors/auth.interceptor';
     AppRoutingModule,
 
     HttpClientModule,
-    SharedModule
+    SharedModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      progressBar: true,
+      closeButton: true,
+    }),
 
   ],
   providers: [
