@@ -138,6 +138,7 @@ describe('Patient NotificationsComponent', () => {
     component.markAsRead(component.notifications[0]);
 
     http.expectNone(`${listUrl}/a/read`);
+    expect(component.notifications[0].isRead).toBe(true);
   });
 
   it('leaves the notification unread when marking fails', () => {
@@ -288,12 +289,15 @@ describe('Patient NotificationsComponent', () => {
 
   it('does not resurrect buffered pushes on a later reload', () => {
     fixture.detectChanges(); // ngOnInit fires, GET pending
-    realtime.pushes.next(makePush({ _id: 'ghost' })); // Push arrives before response
-    http.expectOne(listUrl).flush([]);
-    fixture.detectChanges();
 
-    component.load(); // Reload
-    http.expectOne(listUrl).flush([]);
+    realtime.pushes.next(makePush({ _id: 'ghost' })); // Push arrives while loading, buffered
+    http.expectOne(listUrl).flush('boom', {
+      status: 500,
+      statusText: 'Server Error'
+    }); // Load fails; the buffer is left populated by the error path
+
+    component.load(); // Retry
+    http.expectOne(listUrl).flush([]); // Retry succeeds with nothing from the server
     fixture.detectChanges();
 
     expect(component.notifications).toEqual([]);
