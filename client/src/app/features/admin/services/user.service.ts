@@ -3,6 +3,18 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
+export interface WorkingHour {
+  day: string[];
+  startTime: string;
+  endTime: string;
+}
+
+export interface ClinicAssignment {
+  clinicId: string;
+  consultationFee: number;
+  availability: WorkingHour[];
+  isActiveAtClinic?: boolean;
+}
 export interface AppUser {
   _id?: string;
   name: string;
@@ -24,6 +36,8 @@ export interface AppUser {
   experienceYears?: number;
   specialtyId?: string;
   appointmentDurationMinutes?: number;
+  clinics?: ClinicAssignment[];
+  
 }
 
 @Injectable({ providedIn: 'root' })

@@ -38,11 +38,13 @@
   </ng-container>
 
   <ng-container *ngIf="role === 'admin'">
-    <li routerLink="/admin/dashboard" class="cursor-pointer">Dashboard</li>
-    <li routerLink="/admin/doctors" class="cursor-pointer">Doctors</li>
-    <li routerLink="/admin/clinics" class="cursor-pointer">Clinics</li>
-    <li routerLink="/admin/users" class="cursor-pointer">Users</li>
-  </ng-container>
+  <li routerLink="/admin/analytics" class="cursor-pointer">Dashboard</li>
+  <li routerLink="/admin/appointments" class="cursor-pointer">Appointments</li>
+  <li routerLink="/admin/clinics" class="cursor-pointer">Clinics</li>
+  <li routerLink="/admin/specialties" class="cursor-pointer">Specialties</li>
+  <li routerLink="/admin/users" class="cursor-pointer">Users</li>
+  <li routerLink="/admin/profile" class="cursor-pointer">Profile</li>
+</ng-container>
 
   <ng-container *ngIf="!role">
     <li>Contact Us</li>
