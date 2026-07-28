@@ -298,4 +298,119 @@ describe('Patient NotificationsComponent', () => {
 
     expect(component.notifications).toEqual([]);
   });
+
+  describe('rendering', () => {
+    const testId = (id: string): HTMLElement =>
+      fixture.nativeElement.querySelector(`[data-testid="${id}"]`);
+
+    const testIdAll = (id: string) =>
+      Array.from<HTMLElement>(
+        fixture.nativeElement.querySelectorAll(`[data-testid="${id}"]`)
+      );
+
+    it('shows the loader while the request is in flight', () => {
+      fixture.detectChanges();
+
+      expect(testId('notifications-loader')).toBeTruthy();
+
+      http.expectOne(listUrl).flush([]);
+    });
+
+    it('renders one row per notification', () => {
+      initWith([
+        makePush({ _id: 'a', title: 'First' }),
+        makePush({ _id: 'b', title: 'Second' })
+      ]);
+
+      const rows = testIdAll('notification-row');
+
+      expect(rows.length).toBe(2);
+      expect(rows[0].textContent).toContain('First');
+      expect(rows[1].textContent).toContain('Second');
+    });
+
+    it('shows the unread count in the badge', () => {
+      initWith([
+        makePush({ _id: 'a', isRead: false }),
+        makePush({ _id: 'b', isRead: false }),
+        makePush({ _id: 'c', isRead: true })
+      ]);
+
+      expect(testId('unread-badge').textContent).toContain('2 New');
+    });
+
+    it('hides the badge when everything is read', () => {
+      initWith([makePush({ _id: 'a', isRead: true })]);
+
+      expect(testId('unread-badge')).toBeNull();
+    });
+
+    it('shows the empty state when there are no notifications', () => {
+      initWith([]);
+
+      expect(testId('notifications-empty')).toBeTruthy();
+      expect(testIdAll('notification-row').length).toBe(0);
+    });
+
+    it('shows the error state with a working retry button', () => {
+      fixture.detectChanges();
+      http.expectOne(listUrl).flush('boom', {
+        status: 500,
+        statusText: 'Server Error'
+      });
+      fixture.detectChanges();
+
+      expect(testId('notifications-error')).toBeTruthy();
+
+      testId('notifications-retry').click();
+      http.expectOne(listUrl).flush([makePush()]);
+      fixture.detectChanges();
+
+      expect(testId('notifications-error')).toBeNull();
+      expect(testIdAll('notification-row').length).toBe(1);
+    });
+
+    it('offers mark-as-read only on unread rows', () => {
+      initWith([
+        makePush({ _id: 'a', isRead: false }),
+        makePush({ _id: 'b', isRead: true })
+      ]);
+
+      expect(testIdAll('mark-read-button').length).toBe(1);
+      expect(testIdAll('delete-button').length).toBe(2);
+    });
+
+    it('marks a row as read when the check button is clicked', () => {
+      initWith([makePush({ _id: 'a', isRead: false })]);
+
+      testId('mark-read-button').click();
+      http.expectOne(`${listUrl}/a/read`).flush({});
+      fixture.detectChanges();
+
+      expect(testIdAll('mark-read-button').length).toBe(0);
+      expect(testId('unread-badge')).toBeNull();
+    });
+
+    it('removes a row when the delete button is clicked', () => {
+      initWith([makePush({ _id: 'a' }), makePush({ _id: 'b' })]);
+
+      testIdAll('delete-button')[0].click();
+      http.expectOne(`${listUrl}/a`).flush({});
+      fixture.detectChanges();
+
+      expect(testIdAll('notification-row').length).toBe(1);
+    });
+
+    it('renders a pushed notification at the top of the list', () => {
+      initWith([makePush({ _id: 'old', title: 'Older' })]);
+
+      realtime.pushes.next(makePush({ _id: 'new', title: 'Newer' }));
+      fixture.detectChanges();
+
+      const rows = testIdAll('notification-row');
+
+      expect(rows.length).toBe(2);
+      expect(rows[0].textContent).toContain('Newer');
+    });
+  });
 });
