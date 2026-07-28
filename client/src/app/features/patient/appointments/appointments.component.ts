@@ -69,7 +69,7 @@ export class AppointmentsComponent implements OnInit {
     private appointmentService: AppointmentService,
     private toastr: ToastrService,
     private paymentService: PaymentService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
     private favoriteService: FavoriteService,
   ) {}
 
