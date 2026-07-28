@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import { ReviewService } from 'src/app/core/services/review.service';
+import { AppointmentService } from 'src/app/core/services/appointments.service';
 
 @Component({
   selector: 'app-reviews',
@@ -10,9 +12,17 @@ export class ReviewsComponent implements OnInit {
 
   reviews: any[] = [];
 
+  appointments: any[] = [];
+
+  // Appointments the patient is still allowed to review
+  reviewableAppointments: any[] = [];
+
   showModal = false;
   isEditing = false;
   selectedReviewId = '';
+
+  // Appointment shown as read only text while editing an existing review
+  editedAppointment: any = null;
 
   newReview = {
     appointmentId: '',
@@ -20,17 +30,24 @@ export class ReviewsComponent implements OnInit {
     comment: ''
   };
 
-  constructor(private reviewService: ReviewService) {}
+  constructor(
+    private reviewService: ReviewService,
+    private appointmentService: AppointmentService
+  ) {}
 
   ngOnInit(): void {
     this.loadReviews();
   }
 
   loadReviews(): void {
-    this.reviewService.getMyReviews().subscribe({
-      next: (res) => {
-        console.log('Reviews:', res);
-        this.reviews = res;
+    forkJoin({
+      reviews: this.reviewService.getMyReviews(),
+      appointments: this.appointmentService.getMyAppointments()
+    }).subscribe({
+      next: ({ reviews, appointments }) => {
+        this.reviews = reviews;
+        this.appointments = appointments as any[];
+        this.buildReviewableAppointments();
       },
       error: (err) => {
         console.error(err);
@@ -38,11 +55,52 @@ export class ReviewsComponent implements OnInit {
     });
   }
 
+  // Only confirmed or completed appointments that have no review yet can be reviewed
+  buildReviewableAppointments(): void {
+
+    const reviewedIds = new Set(
+      this.reviews.map((review) => this.getAppointmentId(review.appointmentId))
+    );
+
+    this.reviewableAppointments = this.appointments.filter((appointment) =>
+      ['confirmed', 'completed'].includes(appointment.status) &&
+      !reviewedIds.has(appointment._id)
+    );
+
+  }
+
+  // appointmentId comes back as a plain id, but stay safe if it is ever populated
+  getAppointmentId(appointmentId: any): string {
+    return typeof appointmentId === 'object' && appointmentId
+      ? appointmentId._id
+      : appointmentId;
+  }
+
+  appointmentLabel(appointment: any): string {
+
+    const doctor = appointment.doctorId?._id?.name || 'Doctor';
+
+    const specialty = appointment.doctorId?.specialtyId?.name;
+
+    const date = new Date(appointment.date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+
+    const label = `Dr. ${doctor}${specialty ? ' (' + specialty + ')' : ''} — ${date}`;
+
+    return appointment.startTime ? `${label} at ${appointment.startTime}` : label;
+
+  }
+
   openModal(): void {
 
     this.isEditing = false;
 
     this.selectedReviewId = '';
+
+    this.editedAppointment = null;
 
     this.newReview = {
       appointmentId: '',
@@ -61,8 +119,14 @@ export class ReviewsComponent implements OnInit {
 
     this.selectedReviewId = review._id;
 
+    const appointmentId = this.getAppointmentId(review.appointmentId);
+
+    this.editedAppointment = this.appointments.find(
+      (appointment) => appointment._id === appointmentId
+    ) || null;
+
     this.newReview = {
-      appointmentId: review.appointmentId,
+      appointmentId: appointmentId,
       rating: review.rating,
       comment: review.comment
     };
@@ -76,6 +140,8 @@ export class ReviewsComponent implements OnInit {
     this.isEditing = false;
 
     this.selectedReviewId = '';
+
+    this.editedAppointment = null;
 
     this.newReview = {
       appointmentId: '',
@@ -123,7 +189,7 @@ export class ReviewsComponent implements OnInit {
 
       if (!this.newReview.appointmentId) {
 
-        alert('Please enter Appointment ID');
+        alert('Please select an appointment');
 
         return;
 
