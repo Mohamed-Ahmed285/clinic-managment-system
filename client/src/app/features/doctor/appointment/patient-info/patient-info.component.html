@@ -1,0 +1,29 @@
+<section class="card" *ngIf="patient">
+  <p class="eyebrow">Patient</p>
+  <h2 class="card-title">Patient information</h2>
+
+  <div class="info-grid">
+    <div class="info-field">
+      <span class="label">Full name</span>
+      <span class="value">{{ patient.fullName }}</span>
+    </div>
+    <div class="info-field">
+      <span class="label">Age</span>
+      <span class="value">{{ patient.age }}</span>
+    </div>
+
+    <div class="info-field">
+      <span class="label">Gender</span>
+      <span class="value">{{ patient.gender }}</span>
+    </div>
+    <div class="info-field">
+      <span class="label">Phone</span>
+      <span class="value">{{ patient.phone }}</span>
+    </div>
+
+    <div class="info-field full-width">
+      <span class="label">Visit type / reason</span>
+      <span class="value">{{ patient.visitType }} &middot; {{ patient.visitReason }}</span>
+    </div>
+  </div>
+</section>

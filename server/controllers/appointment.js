@@ -387,16 +387,12 @@ const getAppointments = async (req, res) => {
 };
 
 const getMyAppointments = async (req, res) => {
-    try {console.log("User:", req.user);
-        // const patient = await patientModel.findOne({ userId: req.user.id });
-        // const doctor = await doctorModel.findOne({ userId: req.user.id });
-const patient = await patientModel.findById(req.user.id);
-const doctor = await doctorModel.findById(req.user.id);
+    try {
         let query = {};
-        if (patient) {
-            query.patientId = patient._id;
-        } else if (doctor) {
-            query.doctorId = doctor._id;
+        if (req.user.role === "patient") {
+            query.patientId = req.user.id;
+        } else if (req.user.role === "doctor") {
+            query.doctorId = req.user.id;
         } else if (req.user.role !== "admin") {
             return res.status(404).send("profile not found");
         }
@@ -416,11 +412,9 @@ const getAppointmentById = async (req, res) => {
         }
 
         if (req.user.role !== "admin") {
-            const patient = await patientModel.findOne({ userId: req.user.id });
-            const doctor = await doctorModel.findOne({ userId: req.user.id });
-            const canAccess =
-                (patient && appointment.patientId && appointment.patientId._id.toString() === patient._id.toString()) ||
-                (doctor && appointment.doctorId && appointment.doctorId._id.toString() === doctor._id.toString());
+            const patientUserId = appointment.patientId?._id?._id?.toString();
+            const doctorUserId = appointment.doctorId?._id?._id?.toString();
+            const canAccess = req.user.id.toString() === patientUserId || req.user.id.toString() === doctorUserId;
 
             if (!canAccess) {
                 return res.status(403).send("access denied");
@@ -483,7 +477,7 @@ const updateAppointment = async (req, res) => {
                 endTime: built.payload.endTime,
                 durationMinutes: built.payload.durationMinutes
             },
-            { new: true, runValidators: true }
+            { returnDocument: "after", runValidators: true }
         ).populate(populateAppointment);
 
         return res.status(200).json(appointment);
@@ -498,13 +492,10 @@ const cancelAppointment = async (req, res) => {
       return res.status(404).send("appointment not found");
     }
 
-    if (req.user.role !== "admin") {
-      const patient = await patientModel.findOne({ userId: req.user.id });
-      const doctor = await doctorModel.findOne({ userId: req.user.id });
-      const canCancel =
-        (patient &&
-          appointment.patientId.toString() === patient._id.toString()) ||
-        (doctor && appointment.doctorId.toString() === doctor._id.toString());
+        if (req.user.role !== "admin") {
+            const canCancel =
+                appointment.patientId.toString() === req.user.id.toString() ||
+                appointment.doctorId.toString() === req.user.id.toString();
 
       if (!canCancel) {
         return res.status(403).send("access denied");
@@ -600,7 +591,13 @@ const completeAppointment = async (req, res) => {
             });
         }
 
-        await todoService.createFromPrescription(prescription);
+        try {
+            await todoService.createFromPrescription(prescription);
+        } catch (todoErr) {
+            if (todoErr.message !== "Todo already exists for this appointment.") {
+                throw todoErr;
+            }
+        }
 
         appointment.status = "completed";
         await appointment.save();

@@ -43,7 +43,7 @@ const getTodoById = async (req, res) => {
 const completeMedication = async (req, res) => {
     try {
 
-        const { todoId, itemIndex, scheduleIndex } = req.params;
+        const { todoId, itemId, scheduleId } = req.params;
 
         const todo = await todoModel.findById(todoId);
 
@@ -59,7 +59,7 @@ const completeMedication = async (req, res) => {
             });
         }
 
-        const item = todo.items[itemIndex];
+        const item = todo.items.id(itemId);
 
         if (!item) {
             return res.status(404).json({
@@ -67,7 +67,7 @@ const completeMedication = async (req, res) => {
             });
         }
 
-        const dose = item.schedule[scheduleIndex];
+        const dose = item.schedule.id(scheduleId);
 
         if (!dose) {
             return res.status(404).json({
@@ -96,7 +96,7 @@ const completeMedication = async (req, res) => {
 const uncompleteMedication = async (req, res) => {
     try {
 
-        const { todoId, itemIndex, scheduleIndex } = req.params;
+        const { todoId, itemId, scheduleId } = req.params;
 
         const todo = await todoModel.findById(todoId);
 
@@ -112,7 +112,7 @@ const uncompleteMedication = async (req, res) => {
             });
         }
 
-        const item = todo.items[itemIndex];
+        const item = todo.items.id(itemId);
 
         if (!item) {
             return res.status(404).json({
@@ -120,7 +120,7 @@ const uncompleteMedication = async (req, res) => {
             });
         }
 
-        const dose = item.schedule[scheduleIndex];
+        const dose = item.schedule.id(scheduleId);
 
         if (!dose) {
             return res.status(404).json({

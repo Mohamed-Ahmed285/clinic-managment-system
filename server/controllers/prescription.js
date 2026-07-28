@@ -105,8 +105,8 @@ const updatePrescription = async (req, res) => {
             return res.status(404).send("prescription not found");
         }
         if (req.user.role !== "admin") {
-            const doctor = await doctorModel.findOne(req.user.id);
-            if (!doctor || prescription.doctorId.toString() !== doctor._id.toString()) {
+            const isOwner = prescription.doctorId.toString() === req.user.id.toString();
+            if (!isOwner) {
                 return res.status(403).send("access denied");
             }
         }

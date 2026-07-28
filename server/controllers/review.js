@@ -28,9 +28,13 @@ const createReview = async (req, res) => {
         }
 
         console.log(appointment.status)
-        if (appointment.status !== "confirmed") {
-            return res.status(400).send("you can only review completed appointments");
-        }
+        const allowedStatus = ["confirmed", "completed"];
+
+if (!allowedStatus.includes(appointment.status)) {
+    return res
+        .status(400)
+        .send("you can only review confirmed or completed appointments");
+}
 
         var existingReview = await reviewModel.findOne({
             appointmentId: appointment._id
@@ -91,7 +95,7 @@ const getDoctorReviews = async (req, res) => {
 const getMyReviews = async (req, res) => {
     try {
 
-        var patient = await patientModel.findOne(req.user.id);
+        var patient = await patientModel.findById(req.user.id);
 
         if (!patient) {
             return res.status(404).send("patient profile not found");
@@ -123,7 +127,7 @@ const getMyReviews = async (req, res) => {
 const updateReview = async (req, res) => {
     try {
 
-        var patient = await patientModel.findOne(req.user.id);
+        var patient = await patientModel.findById(req.user.id);
 
         if (!patient) {
             return res.status(404).send("patient profile not found");
@@ -167,7 +171,7 @@ const updateReview = async (req, res) => {
 const deleteReview = async (req, res) => {
     try {
 
-        var patient = await patientModel.findOne(req.user.id);
+        var patient = await patientModel.findById(req.user.id);
 
         if (!patient) {
             return res.status(404).send("patient profile not found");

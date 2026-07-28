@@ -6,7 +6,7 @@ import { PatientLayoutComponent } from './patient-layout/patient-layout.componen
 import { ProfileComponent } from './profile/profile.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
-import { PrescriptionsComponent } from './prescriptions/prescriptions.component';
+import { MedicationsComponent } from './medications/medications.component';
 import { ReviewsComponent } from './reviews/reviews.component';
 import { FavoriteComponent } from './favorite/favorite.component';
 import { NotificationsComponent } from './notifications/notifications.component';
@@ -18,7 +18,7 @@ import { FormsModule } from '@angular/forms';
     ProfileComponent,
     UpdateProfileComponent,
     AppointmentsComponent,
-    PrescriptionsComponent,
+    MedicationsComponent,
     ReviewsComponent,
     FavoriteComponent,
     NotificationsComponent,

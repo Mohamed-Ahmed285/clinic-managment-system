@@ -10,6 +10,10 @@ export class NavbarComponent implements OnInit {
   isMenuOpen = false;
   role = '';
   isLoggedIn = false;
+  userName = '';
+
+  readonly navLinkActiveClass =
+    'bg-[#e3f5ea] text-primary font-medium';
 
   constructor(private authService: AuthService) {}
 
@@ -19,14 +23,32 @@ export class NavbarComponent implements OnInit {
     if (user) {
       this.isLoggedIn = true;
       this.role = user.role;
+      this.userName = user.name;
     }
   }
 
-  toggleMenu() {
+  get accountTypeLabel(): string {
+    switch (this.role) {
+      case 'doctor':
+        return 'Doctor account';
+      case 'patient':
+        return 'Patient account';
+      case 'admin':
+        return 'Admin account';
+      default:
+        return '';
+    }
+  }
+
+  toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
-  logout() {
+  closeMenu(): void {
+    this.isMenuOpen = false;
+  }
+
+  logout(): void {
     this.authService.logout();
   }
 }
