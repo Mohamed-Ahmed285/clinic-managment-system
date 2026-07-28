@@ -1,148 +1,215 @@
-<div class="container mx-auto p-2">
-  <div class="flex justify-around  my-3  w-full items-start  h-[70px]">
-<!-- <div class=" h-full flex ">
-  <img src="../../../../assets/Home/logo (3).png" class="w-full  object-fit h-full">
-</div> -->
-<div class="h-full flex items-center gap-3">
-  <img
-    src="../../../../assets/Home/logo (3).png"
-    class="w-full object-fit h-full"
-  >
+<nav class="border-b border-line bg-secondary">
+  <div class="container mx-auto px-6 lg:px-24 ">
+    <div class="flex h-[70px] items-center justify-between gap-4">
+      <!-- Brand -->
+      <div class="flex shrink-0 items-center gap-3">
+        <a routerLink="/" class="flex items-center gap-3" (click)="closeMenu()">
+          <img src="assets/Home/logo_cropped.png" class="h-10 w-auto object-contain" alt="No-Q Logo" />
+          <!-- <span class="font-display text-xl font-medium text-black">No-Q</span> -->
+        </a>
 
-  <span
-    *ngIf="role"
-    class="bg-primary text-white px-3 py-1 rounded-full text-sm capitalize"
-  >
-    {{ role }}
-  </span>
-</div>
-<div class="hidden md:block">
-<!-- <ul class="md:flex gap-5 mt-4 text-gray hidden font-semibold text-md  lg:ms-20 md:ms-10">
-  <li>Contact Us<li>
-  <li>Departments</li>
-</ul> -->
-   <ul class="md:flex gap-5 mt-4 text-gray font-semibold text-md lg:ms-20 md:ms-10">
+        <span *ngIf="role"
+          class="rounded-full bg-[#e3f5ea] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
+          {{ role }}
+        </span>
+      </div>
 
-  <ng-container *ngIf="role === 'patient'">
-    <li routerLink="/patient/home" class="cursor-pointer">Home</li>
-    <li routerLink="/patient/doctors" class="cursor-pointer">Doctors</li>
-    <li routerLink="/patient/appointments" class="cursor-pointer">Appointments</li>
-    <li routerLink="/patient/profile" class="cursor-pointer">Profile</li>
-  </ng-container>
+      <!-- Desktop navigation -->
+      <ul class="hidden items-center gap-1 md:flex">
+        <ng-container *ngIf="role === 'patient'">
+          <li>
+            <a routerLink="/patient/appointments" [routerLinkActive]="navLinkActiveClass"
+              class="nav-link">Appointments</a>
+          </li>
+          <li>
+            <a routerLink="/patient/medications" [routerLinkActive]="navLinkActiveClass"
+              class="nav-link">Medications</a>
+          </li>
+          <li>
+            <a routerLink="/patient/reviews" [routerLinkActive]="navLinkActiveClass" class="nav-link">Reviews</a>
+          </li>
+          <li>
+            <a routerLink="/patient/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link">Profile</a>
+          </li>
+          <li>
+            <a routerLink="/patient/favorite" [routerLinkActive]="navLinkActiveClass" class="nav-link">Favorites</a>
+          </li>
+          <li>
+            <a routerLink="/patient/notifications" [routerLinkActive]="navLinkActiveClass"
+              class="nav-link">Notifications</a>
+          </li>
+        </ng-container>
 
-  <ng-container *ngIf="role === 'doctor'">
-    <li routerLink="/doctor/dashboard" class="cursor-pointer">Dashboard</li>
-    <li routerLink="/doctor/patients" class="cursor-pointer">Patients</li>
-    <li routerLink="/doctor/schedule" class="cursor-pointer">Schedule</li>
-    <li routerLink="/doctor/profile" class="cursor-pointer">Profile</li>
-  </ng-container>
+        <ng-container *ngIf="role === 'doctor'">
+          <li>
+            <a routerLink="/doctor/dashboard" [routerLinkActive]="navLinkActiveClass"
+              [routerLinkActiveOptions]="{ exact: true }" class="nav-link">Dashboard</a>
+          </li>
+          <li>
+            <a routerLink="/doctor/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link">Profile</a>
+          </li>
+        </ng-container>
 
-  <ng-container *ngIf="role === 'admin'">
-  <li routerLink="/admin/analytics" class="cursor-pointer">Dashboard</li>
-  <li routerLink="/admin/appointments" class="cursor-pointer">Appointments</li>
-  <li routerLink="/admin/clinics" class="cursor-pointer">Clinics</li>
-  <li routerLink="/admin/specialties" class="cursor-pointer">Specialties</li>
-  <li routerLink="/admin/users" class="cursor-pointer">Users</li>
-  <li routerLink="/admin/profile" class="cursor-pointer">Profile</li>
-</ng-container>
+        <ng-container *ngIf="role === 'admin'">
+          <li>
+            <a routerLink="/admin/appointments" [routerLinkActive]="navLinkActiveClass"
+              class="nav-link">Appointments</a>
+          </li>
+          <li>
+            <a routerLink="/admin/clinics" [routerLinkActive]="navLinkActiveClass" class="nav-link">Clinics</a>
+          </li>
+          <li>
+            <a routerLink="/admin/users" [routerLinkActive]="navLinkActiveClass" class="nav-link">Users</a>
+          </li>
+          <li>
+            <a routerLink="/admin/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link">Profile</a>
+          </li>
+        </ng-container>
 
-  <ng-container *ngIf="!role">
-    <li>Contact Us</li>
-    <li>Departments</li>
-  </ng-container>
+        <ng-container *ngIf="!role">
+          <li>
+            <a href="#howItWorks" class="nav-link">How it works</a>
+          </li>
+          <li>
+            <a href="#About" class="nav-link">About No-Q</a>
+          </li>
+          <li>
+            <a href="#ourMission" class="nav-link">Our mission</a>
+          </li>
+        </ng-container>
+      </ul>
 
-</ul>
-</div>
-<div class="flex justify-content-center">
-  <i
-  class="fa-solid text-3xl block text-gray md:hidden mt-4 cursor-pointer transition-all duration-300"
-  [class.fa-bars]="!isMenuOpen"
-  [class.fa-xmark]="isMenuOpen"
-  (click)="toggleMenu()">
-</i>
-</div>
-<!-- <div class="md:flex gap-2 md:flex-row flex-col flex-2 hidden" >
-<button class="button bg-primary py-2 px-5 rounded-3xl text-white"  routerLink='/auth/login'>Login</button>
-<button class="button bg-primary py-2 px-5 rounded-3xl text-white" routerLink='/auth/register'>Register</button>
-</div> -->
-<div class="md:flex gap-2 md:flex-row flex-col flex-2 hidden">
+      <!-- Desktop actions -->
+      <div class="hidden items-center gap-4 md:flex">
+        <ng-container *ngIf="!isLoggedIn">
+          <button
+            class="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+            routerLink="/auth/login">
+            Sign in
+          </button>
+        </ng-container>
 
-  <ng-container *ngIf="!isLoggedIn">
-    <button
-      class="button bg-primary py-2 px-5 rounded-3xl text-white"
-      routerLink="/auth/login">
-      Login
-    </button>
+        <ng-container *ngIf="isLoggedIn">
+          <div class="text-right leading-tight">
+            <p class="text-sm font-semibold text-black">{{ userName }}</p>
+            <p class="text-xs text-gray-light">{{ accountTypeLabel }}</p>
+          </div>
 
-    <button
-      class="button bg-primary py-2 px-5 rounded-3xl text-white"
-      routerLink="/auth/register">
-      Register
-    </button>
-  </ng-container>
+          <button
+            class="rounded-full border border-line bg-white px-5 py-2 text-sm font-medium text-gray transition-colors hover:border-primary/30 hover:text-primary"
+            (click)="logout()">
+            Sign out
+          </button>
+        </ng-container>
+      </div>
 
-  <ng-container *ngIf="isLoggedIn">
-    <button
-      class="button bg-red-500 py-2 px-5 rounded-3xl text-white"
-      (click)="logout()">
-      Logout
-    </button>
-  </ng-container>
-
-</div>
-</div>
-<div
-  class="md:hidden overflow-hidden transition-all duration-300 ease-in-out"
-  [style.max-height]="isMenuOpen ? '250px' : '0px'">
-
-  <div class="mx-4 mt-2 rounded-2xl bg-white shadow-xl border border-secondary text-center">
-
-    <!-- <ul class="py-3 text-gray font-semibold">
-
-      <li class="px-5 py-3 hover:bg-secondary cursor-pointer transition-colors duration-200">
-        Contact Us
-      </li>
-
-      <li class="px-5 py-3 hover:bg-secondary cursor-pointer transition-colors duration-200">
-        Departments
-      </li>
-
-    </ul> -->
-    <ul class="md:flex gap-5 mt-4 text-gray font-semibold text-md lg:ms-20 md:ms-10">
-
-  <ng-container *ngIf="role === 'patient'">
-    <li routerLink="/patient/home" class="cursor-pointer">Home</li>
-    <li routerLink="/patient/doctors" class="cursor-pointer">Doctors</li>
-    <li routerLink="/patient/appointments" class="cursor-pointer">Appointments</li>
-    <li routerLink="/patient/profile" class="cursor-pointer">Profile</li>
-  </ng-container>
-
-  <ng-container *ngIf="role === 'doctor'">
-    <li routerLink="/doctor/dashboard" class="cursor-pointer">Dashboard</li>
-    <li routerLink="/doctor/patients" class="cursor-pointer">Patients</li>
-    <li routerLink="/doctor/schedule" class="cursor-pointer">Schedule</li>
-    <li routerLink="/doctor/profile" class="cursor-pointer">Profile</li>
-  </ng-container>
-
-  <ng-container *ngIf="role === 'admin'">
-    <li routerLink="/admin/dashboard" class="cursor-pointer">Dashboard</li>
-    <li routerLink="/admin/doctors" class="cursor-pointer">Doctors</li>
-    <li routerLink="/admin/clinics" class="cursor-pointer">Clinics</li>
-    <li routerLink="/admin/users" class="cursor-pointer">Users</li>
-  </ng-container>
-
-  <ng-container *ngIf="!role">
-    <li>Contact Us</li>
-    <li>Departments</li>
-  </ng-container>
-
-</ul>
-<div class="flex gap-2 md:flex-row flex-col flex-2  items-center justify-center pb-5" >
-<button class="button bg-primary py-2 px-5 rounded-3xl text-white w-1/4">Login</button>
-<button class="button bg-primary py-2 px-5 rounded-3xl text-white w-1/4">Register</button>
-</div>
+      <!-- Mobile menu toggle -->
+      <button type="button"
+        class="inline-flex items-center justify-center rounded-lg p-2 text-gray transition-colors hover:text-primary md:hidden"
+        (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen" aria-label="Toggle navigation menu">
+        <i class="fa-solid text-2xl transition-all duration-300" [class.fa-bars]="!isMenuOpen"
+          [class.fa-xmark]="isMenuOpen"></i>
+      </button>
+    </div>
   </div>
 
-</div>
-</div>
+  <!-- Mobile menu -->
+  <div class="overflow-hidden border-t border-line transition-all duration-300 ease-in-out md:hidden"
+    [style.max-height]="isMenuOpen ? '420px' : '0px'">
+    <div class="container mx-auto space-y-4 px-6 py-4">
+      <ul class="space-y-1">
+        <ng-container *ngIf="role === 'patient'">
+          <li>
+            <a routerLink="/patient/appointments" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Appointments</a>
+          </li>
+          <li>
+            <a routerLink="/patient/prescriptions" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Prescriptions</a>
+          </li>
+          <li>
+            <a routerLink="/patient/reviews" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Reviews</a>
+          </li>
+          <li>
+            <a routerLink="/patient/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Profile</a>
+          </li>
+        </ng-container>
 
+        <ng-container *ngIf="role === 'doctor'">
+          <li>
+            <a routerLink="/doctor/dashboard" [routerLinkActive]="navLinkActiveClass"
+              [routerLinkActiveOptions]="{ exact: true }" class="nav-link block" (click)="closeMenu()">Dashboard</a>
+          </li>
+          <li>
+            <a routerLink="/doctor/appointments" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Appointments</a>
+          </li>
+          <li>
+            <a routerLink="/doctor/prescriptions" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Prescriptions</a>
+          </li>
+          <li>
+            <a routerLink="/doctor/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Profile</a>
+          </li>
+        </ng-container>
+
+        <ng-container *ngIf="role === 'admin'">
+          <li>
+            <a routerLink="/admin/appointments" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Appointments</a>
+          </li>
+          <li>
+            <a routerLink="/admin/clinics" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Clinics</a>
+          </li>
+          <li>
+            <a routerLink="/admin/users" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Users</a>
+          </li>
+          <li>
+            <a routerLink="/admin/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Profile</a>
+          </li>
+        </ng-container>
+
+        <ng-container *ngIf="!role">
+          <li>
+            <a href="#howItWorks" class="nav-link block" (click)="closeMenu()">How it works</a>
+          </li>
+          <li>
+            <a href="#About" class="nav-link block" (click)="closeMenu()">About No-Q</a>
+          </li>
+          <li>
+            <a href="#ourMission" class="nav-link block" (click)="closeMenu()">Our mission</a>
+          </li>
+        </ng-container>
+      </ul>
+
+      <div class="border-t border-line pt-4">
+        <ng-container *ngIf="!isLoggedIn">
+          <button
+            class="w-full rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+            routerLink="/auth/login" (click)="closeMenu()">
+            Sign in
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="isLoggedIn">
+          <div class="mb-3">
+            <p class="text-sm font-semibold text-black">{{ userName }}</p>
+            <p class="text-xs text-gray-light">{{ accountTypeLabel }}</p>
+          </div>
+
+          <button
+            class="w-full rounded-full border border-line bg-white px-5 py-2.5 text-sm font-medium text-gray transition-colors hover:border-primary/30 hover:text-primary"
+            (click)="logout(); closeMenu()">
+            Sign out
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</nav>

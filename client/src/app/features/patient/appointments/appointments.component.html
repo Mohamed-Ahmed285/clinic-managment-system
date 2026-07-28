@@ -1,3 +1,8 @@
+<app-alert-modal
+  *ngIf="showErrorModal"
+  [message]="errorMessage"
+  (close)="showErrorModal=false">
+</app-alert-modal>
 <section class="bg-secondary min-h-screen py-10">
   <div class="container mx-auto px-6 lg:px-20">
 <div class="flex justify-between flex-wrap items-center">
@@ -21,10 +26,6 @@
         </p>
       </div>
 
-      <button
-        class="border border-gray rounded-xl px-6 py-3 hover:bg-white transition">
-        View my appointments
-      </button>
     </div>
 
 
@@ -45,7 +46,7 @@
             placeholder="Doctor or location"
             class="w-full rounded-xl border border-gray p-2 bg-secondary"
              [(ngModel)]="search"
-             (input)="loadDoctors()">
+             (input)="onFilterChange()">
 
         </div>
         <div>
@@ -55,7 +56,7 @@
 
           <select
             class="w-full rounded-xl border border p-2 bg-secondary" [(ngModel)]="selectedSpecialty"
-  (change)="loadDoctors()">
+  (change)="onFilterChange()">
 
             <option value="">All specialties</option>
             <option
@@ -75,7 +76,7 @@
      <select
   class="w-full rounded-xl border border-gray bg-[#F4FBFA] p-3"
  [(ngModel)]="selectedState"
-(change)="loadDoctors()"
+(change)="onFilterChange()"
 >
   <option value="">Select Governorate</option>
 
@@ -91,20 +92,23 @@
       </div>
 
     </div>
+
 <section class="py-8">
   <h2 class="font-serif text-4xl mb-6 italic">
     Doctors Available
   </h2>
 <p>Doctors Count: {{ doctors.length }}</p>
-  <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6"  *ngFor="let doctor of doctors">
+  <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 my-5"  *ngFor="let doctor of doctors">
 
     <!-- Doctor Info -->
-    <div class="flex items-start gap-5">
+    <div class="flex items-start justify-between gap-5">
+
+      <div class="flex items-start gap-5">
 
       <!-- Avatar -->
       <div
         class="w-16 h-16 rounded-full bg-green-200 flex items-center justify-center text-3xl text-primary">
-        N
+      {{doctor._id.name.charAt(0)}}
       </div>
 
       <!-- Name -->
@@ -117,65 +121,59 @@
          {{ doctor.specialtyId.name }}
         </p>
 
-        <div class="flex items-center gap-1 mt-1">
-          <i class="fa-solid fa-star text-gray text-sm"></i>
-          <span class="text-gray-700">{{doctor.rating.average}}</span>
-        </div>
+      <div class="flex items-center gap-1 mt-1">
+  <div class="flex">
+    <ng-container *ngFor="let star of [1,2,3,4,5]">
+      <i
+        class="fa-star text-yellow-400"
+        [class.fa-solid]="star <= doctor.rating.average"
+        [class.fa-regular]="star > doctor.rating.average">
+      </i>
+    </ng-container>
+  </div>
+
+  <span class="text-gray-700 font-semibold ml-2">
+    {{ doctor.rating.average }}
+  </span>
+</div>
       </div>
+
+      </div>
+
+      <!-- Favorite -->
+      <button
+        type="button"
+        class="flex items-center gap-2 border border-gray rounded-full px-4 py-2 hover:bg-secondary transition disabled:opacity-50"
+        [disabled]="isFavoritePending(doctor)"
+        [title]="isFavorite(doctor) ? 'Remove from favorites' : 'Add to favorites'"
+        (click)="toggleFavorite(doctor)">
+
+        <i
+          class="fa-heart text-lg"
+          [class.fa-solid]="isFavorite(doctor)"
+          [class.text-red-500]="isFavorite(doctor)"
+          [class.fa-regular]="!isFavorite(doctor)"
+          [class.text-gray]="!isFavorite(doctor)"></i>
+
+        <span class="text-sm">
+          {{ isFavorite(doctor) ? 'Saved' : 'Add to favorites' }}
+        </span>
+
+      </button>
 
     </div>
 
-    <!-- <div class="mt-8 space-y-4">
 
-
-      <div class="flex flex-col lg:flex-row lg:items-center ">
-
-        <p class="w-36 uppercase tracking-wide text-gray-600 font-semibold">
-        Clinic 1
-        </p>
-
-        <div class="flex flex-wrap gap-2">
-          <button
-            class="px-6 py-2 rounded-xl border bg-primary text-white" (click)="openModal()">
-       Book
-          </button>
-
-
-        </div>
-
-      </div>
-
-      <div class="flex flex-col lg:flex-row lg:items-center ">
-
-        <p class="w-36 uppercase tracking-wide text-gray-600 font-semibold">
-          Clinic 2
-        </p>
-
-        <div class="flex flex-wrap gap-3">
-
-          <button
-            class="px-6 py-2 rounded-xl border  bg-primary text-white " (click)="openModal()">
-
-            Book
-          </button>
-
-
-        </div>
-
-      </div>
-
-
-    </div> -->
 <div *ngFor="let clinic of doctor.clinics,let i=index" class="flex flex-col lg:flex-row lg:items-center">
 
-  <p class="w-36 uppercase tracking-wide text-gray-600 font-semibold">
+  <p class="me-5 w-50 uppercase tracking-wide text-gray-600 font-semibold">
   Clinic   {{ clinic.clinicId.name }}
   </p>
 
   <div class="flex flex-wrap gap-2">
     <button
       class="px-6 py-2 rounded-xl border bg-primary text-white"
-      (click)="openModal()">
+      (click)="openModal(doctor,clinic)">
       Book
     </button>
   </div>
@@ -184,7 +182,36 @@
 
   </div>
 </section>
+<div class="flex justify-center items-center gap-2 mt-8">
+
+  <button
+    class="px-4 py-2 border rounded-lg"
+    (click)="changePage(page - 1)"
+    [disabled]="page === 1">
+    Previous
+  </button>
+
+  <button
+    *ngFor="let _ of [].constructor(totalPages); let i = index"
+    (click)="changePage(i + 1)"
+    class="w-10 h-10 rounded-lg border"
+    [class.bg-primary]="page === i + 1"
+    [class.text-white]="page === i + 1">
+    {{ i + 1 }}
+  </button>
+
+  <button
+    class="px-4 py-2 border rounded-lg"
+    (click)="changePage(page + 1)"
+    [disabled]="page === totalPages">
+    Next
+  </button>
+
+</div>
+
+<div *ngIf="upcomingAppointments.length">
   <div class="appointments">
+
       <div
         class="bg-white rounded-3xl shadow-sm border border-[#e0e9eb] mt-10 p-6 lg:p-8"
       >
@@ -203,47 +230,91 @@
         </div>
         <div>
 
-            <div class="flex justify-between items-center py-8 flex-wrap gap-3">
-              <div class="flex gap-5 flex-wrap lg:w-1/2">
+            <div class="flex justify-between items-center py-8 border border-primary flex-wrap gap-3 rounded-3xl p-5 my-5"
+               *ngFor="let appointment of upcomingAppointments ">
+              <div class="flex gap-5 flex-wrap lg:w-1/2 ">
                 <div
-                  class="bg-secondary rounded-2xl w-20 h-20 flex flex-col justify-center items-center p-5"
+                  class="bg-green-200 rounded-2xl w-40 h-[70px] flex flex-col justify-center items-center p-5"
                 >
-                  <span class="text-sm tracking-widest"> Sunday </span>
+                  <span class="text-sm tracking-widest font-semibold italic text-primary">{{appointment.date | date:'EEEE' }} </span>
 
-                  <span class="text-3xl font-semibold"> 9:00 </span>
+                  <span class="text-xl font-semibold italic text-primary">{{ formatTime(appointment.startTime) }}</span>
                 </div>
 
                 <div>
                   <h3 class="text-3xl font-semibold text-black">
-                    Dr.Ahmed Marwan
+                  {{ appointment.doctorId._id.name }}
                   </h3>
+                  <h4>{{ appointment.date | date:'dd/MM/yyyy' }}</h4>
 
-                  <p class="text-gray mt-1">Cardiology · confirmed</p>
+                  <p class="text-gray mt-1">{{ appointment?.doctorId?.specialtyId?.name }}</p>
 
                   <p class="text-2xl mt-2 text-black">Appointment</p>
 
-                  <p class="text-gray mt-1 w-fu">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Dolore suscipit vero consequuntur blanditiis dolorum dolorem
-                    officiis, repellendus distinctio voluptas reprehenderit,
-                    pariatur aspernatur. Suscipit blanditiis ratione assumenda
-                    facilis iste neque reiciendis?
-                  </p>
+                  <div class="text-gray mt-1 w-fu">
+                    {{ appointment?.doctorId?.experienceYears }}
+          {{ appointment?.doctorId?.bio }}
+          <br/>
+  <div class="flex items-center gap-2">
+  <div class="flex text-yellow-400">
+    <ng-container *ngFor="let star of [1,2,3,4,5]">
+      <i
+        [ngClass]="
+          star <= Math.floor(appointment?.doctorId?.rating?.average || 0)
+            ? 'fa-solid fa-star'
+            : star === Math.ceil(appointment?.doctorId?.rating?.average || 0) &&
+              (appointment?.doctorId?.rating?.average || 0) % 1 >= 0.5
+            ? 'fa-solid fa-star-half-stroke'
+            : 'fa-regular fa-star'
+        ">
+      </i>
+    </ng-container>
+  </div>
+
+  <span class="font-bold text-2xl">
+    {{ appointment?.doctorId?.rating?.average | number:'1.1-1' }}
+  </span>
+</div>
+        Number of Reviews:  {{ appointment?.doctorId?.rating?.count }}
+                  </div>
                 </div>
               </div>
               <div class="flex gap-2 flex-wrap">
-                <button class="bg-secondary p-2 rounded-full">Confirmed</button>
-                <button class=" rounded-full py-1 px-2 border border-gray">Reschedule</button>
-                 <button class="text-red-500 border border-red-500 py-2 rounded-full px-4 hover:bg-red-500 hover:text-white">Cancel</button>
-              </div>
+
+  <button class="bg-secondary p-2 rounded-full">
+    Confirmed
+  </button>
+
+<button
+  *ngIf="appointment.paymentStatus !== 'paid'"
+class="bg-[rgb(4_88_92)] text-white px-4 py-2 rounded-full"
+  (click)="payAppointment(appointment._id)">
+  Pay
+</button>
+
+<button
+  *ngIf="appointment.paymentStatus === 'paid'"
+class="bg-[rgb(4_88_92_/_var(--tw-bg-opacity))] text-white px-4 py-2 rounded-full cursor-not-allowed"  disabled>
+  Paid
+</button>
+
+  <button
+      class="text-red-500 border border-red-500 py-2 rounded-full px-4 hover:bg-red-500 hover:text-white"
+      (click)="cancelAppointment(appointment._id)">
+      Cancel
+  </button>
+
+</div>
             </div>
 
         </div>
       </div>
     </div>
+    </div>
   </div>
 
 </section>
+
 <div
   *ngIf="isModalOpen"
   class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
@@ -260,7 +331,23 @@
     <h2 class="text-2xl font-bold mb-4 font-serif italic">
     Choose the day and the hour
     </h2>
+<div class="mb-4">
+  <p class="font-medium text-gray-700 mb-2">
+    Doctor Availability
+  </p>
 
+  <div
+    *ngFor="let item of selectedAvailability"
+    class="text-sm text-gray-600"
+  >
+    <span class="font-semibold">
+      {{ item.day.join(', ') }}
+    </span>
+
+    :
+    {{ item.startTime }} - {{ item.endTime }}
+  </div>
+</div>
    <div class="space-y-4 mb-6">
 
   <!-- Day -->
@@ -270,6 +357,9 @@
     </label>
     <input
       type="date"
+        [(ngModel)]="appointmentDate"
+          [min]="minDate"
+  [max]="maxDate"
       class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#04585c]"
     />
   </div>
@@ -279,30 +369,19 @@
     <label class="block mb-2 text-sm font-medium text-gray-700">
       Select Time
     </label>
-    <select
-      class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#04585c]"
-    >
-      <option value="">Choose Time</option>
-      <option>08:00 AM</option>
-      <option>08:30 AM</option>
-      <option>09:00 AM</option>
-      <option>09:30 AM</option>
-      <option>10:00 AM</option>
-      <option>10:30 AM</option>
-      <option>11:00 AM</option>
-      <option>11:30 AM</option>
-      <option>12:00 PM</option>
-      <option>12:30 PM</option>
-      <option>01:00 PM</option>
-      <option>01:30 PM</option>
-      <option>02:00 PM</option>
-      <option>02:30 PM</option>
-      <option>03:00 PM</option>
-      <option>03:30 PM</option>
-      <option>04:00 PM</option>
-      <option>04:30 PM</option>
-      <option>05:00 PM</option>
-    </select>
+   <select
+  [(ngModel)]="appointmentTime"
+  class="w-full border border-gray-300 rounded-lg px-4 py-2">
+
+  <option value="">Choose Time</option>
+
+  <option
+    *ngFor="let time of availableTimes"
+    [value]="time">
+    {{ time }}
+  </option>
+
+</select>
   </div>
 
 </div>
@@ -317,11 +396,14 @@
 
       <button
         class="px-4 py-2 bg-primary text-white rounded-lg"
+         (click)="bookAppointment()"
+          type="button"
       >
-        Purchase
+        Book
       </button>
     </div>
 
   </div>
 </div>
+
 

@@ -37,7 +37,7 @@ const markAsRead = async (req, res) => {
         isRead: true
       },
       {
-        new: true
+        returnDocument: "after"
       }
     );
 
@@ -85,10 +85,52 @@ const deleteNotification = async (req, res) => {
   }
 };
 
+const appointmentModel = require("../models/appointment");
+
+const getNotificationAppointment = async (req, res) => {
+  try {
+
+const notification = await notificationModel.findOne({
+  _id: req.params.id,
+  recipientId: req.user.id
+});
+    if (!notification) {
+      return res.status(404).send("Notification not found");
+    }
+
+    const appointment = await appointmentModel
+      .findById(notification.relatedAppointmentId)
+      .populate({
+        path: "patientId",
+        populate: {
+          path: "_id",
+          select: "name email phone"
+        }
+      })
+      .populate("clinicId");
+
+    if (!appointment) {
+      return res.status(404).send("Appointment not found");
+    }
+
+return res.status(200).json({
+  patientName: appointment.patientId._id.name,
+  clinicName: appointment.clinicId.name,
+  date: appointment.date,
+  time: appointment.startTime,
+  fee: appointment.fee,
+  status: appointment.status
+});
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
+};
+
 module.exports = {
   createNotification,
   getMyNotifications,
   markAsRead,
   markAllAsRead,
-  deleteNotification
+  deleteNotification,
+  getNotificationAppointment
 };

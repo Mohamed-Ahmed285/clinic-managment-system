@@ -41,3 +41,67 @@
   font-weight: 600;
   color: var(--ink);
 }
+.stat-box {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.stat-box:hover {
+  transform: translateY(-3px);
+}
+
+.disabled {
+  cursor: default;
+}
+
+.disabled:hover {
+  transform: none;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  width: 700px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  right: 20px;
+  top: 15px;
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+}
+.patients-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.patients-table th,
+.patients-table td{
+    padding:12px;
+    border-bottom:1px solid #e5e7eb;
+    text-align:left;
+}
+
+.patient-img{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    object-fit:cover;
+}

@@ -32,6 +32,29 @@ export interface DoctorProfile {
   appointmentDurationMinutes: number;
   clinics: ClinicAssignment[];
 }
+export interface DashboardResponse {
+  doctor: {
+    name: string;
+    email: string;
+    phone: string;
+    profileImage: string;
+    specialty: any;
+    rating: {
+      average: number;
+      count: number;
+    };
+  };
+
+  stats: {
+    activePatients: number;
+    totalAppointments: number;
+    completedAppointments: number;
+    cancelledAppointments: number;
+    appointmentDuration: number;
+  };
+
+  todayAppointments: any[];
+}
 
 @Injectable({
   providedIn: 'root'
@@ -97,4 +120,23 @@ export class DoctorService {
     formData
   );
 }
+
+
+getDashboard(): Observable<DashboardResponse> {
+  return this.http.get<DashboardResponse>(
+    `${this.api}/doctor/dashboard`
+  );
+}
+
+getActivePatients(): Observable<any[]> {
+  return this.http.get<any[]>(
+    `${this.api}/doctor/active-patients`
+  );
+}
+getAppointments() {
+  return this.http.get<any[]>(
+    `${this.api}/doctor/appointments`
+  );
+}
+
 }

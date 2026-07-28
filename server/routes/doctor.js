@@ -9,7 +9,10 @@ const {
     updateClinicAssignment,
     removeClinicFromMyProfile,
     uploadDoctorPhoto,
-    getDoctorsPaginated
+    getDoctorDashboard,
+    getDoctorsPaginated,
+    getActivePatients,
+    getDoctorAppointments
 } = require("../controllers/doctor");
 const { verifyToken } = require("../middlewares/auth");
 const authorize = require("../middlewares/authorize");
@@ -18,19 +21,14 @@ const upload = require("../middlewares/upload");
 router.get("/", getDoctors);
 router.get("/search",verifyToken, authorize("search:doctors"), getDoctorsPaginated);
 router.get("/me", verifyToken, authorize("get:doctorprofile"), getMyDoctorProfile);
+router.get("/dashboard",verifyToken,authorize("get:doctorprofile"),getDoctorDashboard);
+router.get("/active-patients",verifyToken,authorize("get:doctorprofile"),getActivePatients);
+router.get("/appointments",verifyToken,authorize("get:doctorprofile"),getDoctorAppointments);
 router.get("/:id", getDoctorById);
 router.put("/me", verifyToken, authorize("update:doctorprofile"), updateMyDoctorProfile);
 router.post("/me/clinics", verifyToken, authorize("add:clinicToDoctor"), addClinicToMyProfile);
 router.put("/me/clinics/:clinicId", verifyToken, authorize("update:clinicToDoctor"), updateClinicAssignment);
 router.delete("/me/clinics/:clinicId", verifyToken, authorize("delete:clinicFromDoctor"), removeClinicFromMyProfile);
-router.post(
-    "/me/photo",
-    verifyToken,
-    authorize("update:doctorprofile"),
-    upload.single("profileImage"),
-    uploadDoctorPhoto
-);
-
-
+router.post("/me/photo",verifyToken, authorize("update:doctorprofile"),upload.single("profileImage"), uploadDoctorPhoto);
 
 module.exports = router;

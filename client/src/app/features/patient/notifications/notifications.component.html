@@ -1,5 +1,3 @@
-<app-navbar></app-navbar>
-
 <div class="bg-secondary py-8">
   <div class="container mx-auto lg:px-24 md:px-24 pt-0 py-12 px-10">
 
@@ -31,107 +29,119 @@
           Recent Notifications
         </h2>
 
-        <span class="bg-primary text-white px-4 py-2 rounded-full text-sm">
-          4 New
+        <span
+          *ngIf="unreadCount > 0"
+          data-testid="unread-badge"
+          class="bg-primary text-white px-4 py-2 rounded-full text-sm">
+          {{ unreadCount }} New
         </span>
 
       </div>
 
-      <!-- Notification 1 -->
-      <div class="border-b border-[#e0e9eb] py-6 flex gap-5 items-start">
+      <!-- Loading -->
+      <app-loader
+        *ngIf="loading"
+        data-testid="notifications-loader"
+        message="Loading notifications…">
+      </app-loader>
 
-        <div class="w-14 h-14 rounded-full bg-secondary flex items-center justify-center">
-          <i class="fa-solid fa-calendar-check text-primary text-2xl"></i>
-        </div>
+      <!-- Error -->
+      <div
+        *ngIf="!loading && error"
+        data-testid="notifications-error"
+        class="py-12 text-center">
 
-        <div class="flex-1">
-          <h3 class="text-2xl font-semibold">
-            Appointment Confirmed
-          </h3>
+        <i class="fa-solid fa-triangle-exclamation text-red-500 text-4xl"></i>
 
-          <p class="text-gray mt-2">
-            Your appointment with <strong>Dr. Ahmed Marwan</strong> has been confirmed successfully.
-          </p>
+        <p class="text-gray mt-4 text-lg">
+          {{ error }}
+        </p>
 
-          <span class="text-sm text-gray-500">
-            Today • 10:30 AM
-          </span>
-        </div>
-
-      </div>
-
-      <!-- Notification 2 -->
-      <div class="border-b border-[#e0e9eb] py-6 flex gap-5 items-start">
-
-        <div class="w-14 h-14 rounded-full bg-secondary flex items-center justify-center">
-          <i class="fa-solid fa-pills text-primary text-2xl"></i>
-        </div>
-
-        <div class="flex-1">
-          <h3 class="text-2xl font-semibold">
-            Prescription Ready
-          </h3>
-
-          <p class="text-gray mt-2">
-            Your prescription is now available for download.
-          </p>
-
-          <span class="text-sm text-gray-500">
-            Yesterday
-          </span>
-        </div>
+        <button
+          type="button"
+          data-testid="notifications-retry"
+          (click)="load()"
+          class="mt-5 bg-primary text-white px-6 py-2 rounded-full text-sm hover:bg-primary-dark transition">
+          Try again
+        </button>
 
       </div>
 
-      <!-- Notification 3 -->
-      <div class="border-b border-[#e0e9eb] py-6 flex gap-5 items-start">
+      <!-- Empty -->
+      <div
+        *ngIf="!loading && !error && notifications.length === 0"
+        data-testid="notifications-empty"
+        class="py-12 text-center">
 
-        <div class="w-14 h-14 rounded-full bg-secondary flex items-center justify-center">
-          <i class="fa-solid fa-bell text-primary text-2xl"></i>
-        </div>
+        <i class="fa-regular fa-bell-slash text-gray-light text-4xl"></i>
 
-        <div class="flex-1">
-          <h3 class="text-2xl font-semibold">
-            Appointment Reminder
-          </h3>
-
-          <p class="text-gray mt-2">
-            Don't forget your appointment tomorrow at 9:00 AM.
-          </p>
-
-          <span class="text-sm text-gray-500">
-            Tomorrow • 9:00 AM
-          </span>
-        </div>
+        <p class="text-gray mt-4 text-lg">
+          You have no notifications yet.
+        </p>
 
       </div>
 
-      <!-- Notification 4 -->
-      <div class="py-6 flex gap-5 items-start">
+      <!-- List -->
+      <ng-container *ngIf="!loading && !error">
 
-        <div class="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center">
-          <i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>
+        <div
+          *ngFor="let note of notifications; trackBy: trackById"
+          data-testid="notification-row"
+          class="border-b border-line last:border-b-0 py-6 px-3 -mx-3 rounded-2xl flex gap-5 items-start"
+          [class.bg-secondary]="!note.isRead">
+
+          <div
+            class="w-14 h-14 rounded-full flex items-center justify-center shrink-0 ring-1 ring-line"
+            [ngClass]="note.iconWrap">
+            <i class="fa-solid text-2xl" [ngClass]="[note.icon, note.iconColor]"></i>
+          </div>
+
+          <div class="flex-1 min-w-0">
+
+            <h3 class="text-2xl font-semibold">
+              {{ note.title }}
+            </h3>
+
+            <p class="text-gray mt-2">
+              {{ note.message }}
+            </p>
+
+            <span class="text-sm text-gray-500">
+              {{ timeAgo(note.createdAt) }}
+            </span>
+
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+
+            <button
+              *ngIf="!note.isRead"
+              type="button"
+              data-testid="mark-read-button"
+              title="Mark as read"
+              aria-label="Mark as read"
+              (click)="markAsRead(note)"
+              class="w-10 h-10 rounded-full bg-white ring-1 ring-line text-primary hover:bg-primary hover:text-white transition">
+              <i class="fa-solid fa-check"></i>
+            </button>
+
+            <button
+              type="button"
+              data-testid="delete-button"
+              title="Delete notification"
+              aria-label="Delete notification"
+              (click)="remove(note)"
+              class="w-10 h-10 rounded-full bg-white ring-1 ring-line text-red-500 hover:bg-red-500 hover:text-white transition">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+
+          </div>
+
         </div>
 
-        <div class="flex-1">
-          <h3 class="text-2xl font-semibold">
-            Appointment Cancelled
-          </h3>
-
-          <p class="text-gray mt-2">
-            Unfortunately, your appointment with <strong>Dr. Sara Ali</strong> has been cancelled.
-          </p>
-
-          <span class="text-sm text-gray-500">
-            2 Days Ago
-          </span>
-        </div>
-
-      </div>
+      </ng-container>
 
     </div>
 
   </div>
 </div>
-
-<app-footer></app-footer>

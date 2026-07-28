@@ -1,5 +1,3 @@
-<app-navbar></app-navbar>
-
 <div class="bg-secondary py-8">
   <div class="container mx-auto lg:px-24 md:px-24 pt-0 py-12 px-10">
 
@@ -31,114 +29,79 @@
           Favorite Doctors
         </h2>
 
-        <span class="text-gray-500 text-lg">
-          2 Doctors
+        <span class="text-gray-500 text-lg" *ngIf="!isLoading">
+          {{ favorites.length }} {{ favorites.length === 1 ? 'Doctor' : 'Doctors' }}
         </span>
 
       </div>
 
-      <!-- Doctor 1 -->
+      <!-- Loading -->
+      <p class="text-gray-500 text-lg" *ngIf="isLoading">
+        Loading your favorite doctors...
+      </p>
 
-      <div class="border border-[#e0e9eb] rounded-3xl p-6 mb-6">
+      <!-- Empty -->
+      <div class="text-center py-10" *ngIf="!isLoading && !favorites.length">
 
-        <div class="flex flex-col lg:flex-row justify-between gap-6">
+        <i class="fa-regular fa-heart text-5xl text-gray-300"></i>
 
-          <div class="flex gap-5">
+        <p class="text-gray-600 text-xl mt-5 italic">
+          You haven't saved any doctors yet.
+        </p>
 
-            <div
-              class="w-24 h-24 rounded-full bg-primary text-white flex items-center justify-center text-3xl">
-              AM
-            </div>
-
-            <div>
-
-              <h3 class="text-3xl font-semibold">
-                Dr. Ahmed Marwan
-              </h3>
-
-              <p class="text-gray-500 mt-1">
-                Cardiology Specialist
-              </p>
-
-              <div class="flex items-center gap-2 mt-3">
-
-                <i class="fa-solid fa-star text-yellow-400"></i>
-                <i class="fa-solid fa-star text-yellow-400"></i>
-                <i class="fa-solid fa-star text-yellow-400"></i>
-                <i class="fa-solid fa-star text-yellow-400"></i>
-                <i class="fa-solid fa-star-half-stroke text-yellow-400"></i>
-
-                <span class="text-gray-500">
-                  (4.8)
-                </span>
-
-              </div>
-
-              <p class="text-gray mt-4">
-                15 Years Experience • Alexandria
-              </p>
-
-            </div>
-
-          </div>
-
-          <div class="flex items-center gap-3 flex-wrap">
-
-            <button
-              class="bg-primary text-white px-6 py-3 rounded-xl hover:opacity-90 transition">
-              View Profile
-            </button>
-
-            <button
-              class="border border-red-500 text-red-500 px-6 py-3 rounded-xl hover:bg-red-500 hover:text-white transition">
-              Remove
-            </button>
-
-          </div>
-
-        </div>
+        <button
+          class="bg-primary text-white px-6 py-3 rounded-xl mt-6 hover:opacity-90 transition"
+          routerLink="/patient/appointments">
+          Browse doctors
+        </button>
 
       </div>
 
-      <!-- Doctor 2 -->
-
-      <div class="border border-[#e0e9eb] rounded-3xl p-6">
+      <!-- Doctors -->
+      <div
+        class="border border-[#e0e9eb] rounded-3xl p-6 mb-6"
+        *ngFor="let doctor of favorites">
 
         <div class="flex flex-col lg:flex-row justify-between gap-6">
 
           <div class="flex gap-5">
 
-            <div
-              class="w-24 h-24 rounded-full bg-primary text-white flex items-center justify-center text-3xl">
-              SA
-            </div>
+            <img
+              *ngIf="doctor._id?.profileImage; else initials"
+              [src]="doctor._id.profileImage"
+              [alt]="doctor._id?.name"
+              class="w-24 h-24 rounded-full object-cover" />
+
+            <ng-template #initials>
+              <div class="w-24 h-24 rounded-full bg-primary text-white flex items-center justify-center text-3xl">
+                {{ getInitials(doctor._id?.name) }}
+              </div>
+            </ng-template>
 
             <div>
 
               <h3 class="text-3xl font-semibold">
-                Dr. Sara Ali
+                Dr. {{ doctor._id?.name }}
               </h3>
 
               <p class="text-gray-500 mt-1">
-                Dermatologist
+                {{ doctor.specialtyId?.name }}
               </p>
 
               <div class="flex items-center gap-2 mt-3">
 
-                <i class="fa-solid fa-star text-yellow-400"></i>
-                <i class="fa-solid fa-star text-yellow-400"></i>
-                <i class="fa-solid fa-star text-yellow-400"></i>
-                <i class="fa-solid fa-star text-yellow-400"></i>
-                <i class="fa-solid fa-star text-yellow-400"></i>
+                <i
+                  *ngFor="let star of getStars(doctor.rating?.average)"
+                  [class]="star + ' text-yellow-400'"></i>
 
                 <span class="text-gray-500">
-                  (5.0)
+                  ({{ doctor.rating?.average || 0 }})
                 </span>
 
               </div>
 
               <p class="text-gray mt-4">
-                10 Years Experience • Cairo
+                {{ doctor.experienceYears || 0 }} Years Experience
               </p>
 
             </div>
@@ -148,12 +111,15 @@
           <div class="flex items-center gap-3 flex-wrap">
 
             <button
-              class="bg-primary text-white px-6 py-3 rounded-xl hover:opacity-90 transition">
-              View Profile
+              class="bg-primary text-white px-6 py-3 rounded-xl hover:opacity-90 transition"
+              routerLink="/patient/appointments">
+              Book appointment
             </button>
 
             <button
-              class="border border-red-500 text-red-500 px-6 py-3 rounded-xl hover:bg-red-500 hover:text-white transition">
+              class="border border-red-500 text-red-500 px-6 py-3 rounded-xl hover:bg-red-500 hover:text-white transition disabled:opacity-50"
+              [disabled]="isRemoving(doctor)"
+              (click)="removeFavorite(doctor)">
               Remove
             </button>
 
@@ -167,5 +133,3 @@
 
   </div>
 </div>
-
-<app-footer></app-footer>

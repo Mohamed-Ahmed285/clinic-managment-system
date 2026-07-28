@@ -6,22 +6,26 @@ import { PatientLayoutComponent } from './patient-layout/patient-layout.componen
 import { ProfileComponent } from './profile/profile.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
-import { PrescriptionsComponent } from './prescriptions/prescriptions.component';
+import { MedicationsComponent } from './medications/medications.component';
 import { ReviewsComponent } from './reviews/reviews.component';
 import { FavoriteComponent } from './favorite/favorite.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { SharedModule } from '../../shared/shared.module';
 import { FormsModule } from '@angular/forms';
+import { AlertModalComponent } from './appointments/components/alert-modal/alert-modal.component';
+
+
 @NgModule({
   declarations: [
     PatientLayoutComponent,
     ProfileComponent,
     UpdateProfileComponent,
     AppointmentsComponent,
-    PrescriptionsComponent,
+    MedicationsComponent,
     ReviewsComponent,
     FavoriteComponent,
     NotificationsComponent,
+    AlertModalComponent
   ],
   imports: [CommonModule, PatientRoutingModule, SharedModule,FormsModule],
 })
