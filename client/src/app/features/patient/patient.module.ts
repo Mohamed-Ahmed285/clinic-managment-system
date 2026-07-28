@@ -12,6 +12,9 @@ import { FavoriteComponent } from './favorite/favorite.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { SharedModule } from '../../shared/shared.module';
 import { FormsModule } from '@angular/forms';
+import { AlertModalComponent } from './appointments/components/alert-modal/alert-modal.component';
+
+
 @NgModule({
   declarations: [
     PatientLayoutComponent,
@@ -22,6 +25,7 @@ import { FormsModule } from '@angular/forms';
     ReviewsComponent,
     FavoriteComponent,
     NotificationsComponent,
+    AlertModalComponent
   ],
   imports: [CommonModule, PatientRoutingModule, SharedModule,FormsModule],
 })

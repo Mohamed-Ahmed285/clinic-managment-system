@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ProfileService } from 'src/app/core/services/profile.service';
 import { AppointmentService } from 'src/app/core/services/appointments.service';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',
   styleUrls: ['./appointments.component.css'],
 })
 export class AppointmentsComponent implements OnInit {
+  Math = Math;
   availableTimes: string[] = [];
   search = '';
   selectedSpecialty = '';
@@ -60,6 +62,7 @@ export class AppointmentsComponent implements OnInit {
   constructor(
     private profileService: ProfileService,
     private appointmentService: AppointmentService,
+    private toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {
@@ -137,20 +140,7 @@ export class AppointmentsComponent implements OnInit {
       },
     });
   }
-  // loadDoctors() {
-  //   const searchValue = this.search || this.selectedSpecialty;
 
-  //   this.appointmentService
-  //     .getDoctors(this.page, this.limit, searchValue)
-  //     .subscribe({
-  //       next: (res: any) => {
-  //          console.log('Doctors Response:', res);
-  //         this.doctors = res;
-  //         this.totalPages = res.totalPages;
-  //       },
-  //       error: (err) => console.log(err),
-  //     });
-  // }
   loadDoctors() {
     console.log('Loading...', {
       page: this.page,
@@ -202,14 +192,18 @@ export class AppointmentsComponent implements OnInit {
     this.appointmentService.bookAppointment(body).subscribe({
       next: (res) => {
         console.log(res);
-
+        this.loadMyAppointments();
         this.closeModal();
       },
       error: (err) => {
+        console.log(err);
+
         if (err.error === 'appointment time is outside clinic working hours') {
-          alert('Please choose a time within the doctors working hours.');
+          this.handleError(
+            'Please choose a time within the doctors working hours.',
+          );
         } else {
-          alert(err.error);
+          this.handleError(err.error);
         }
       },
     });
@@ -260,13 +254,39 @@ export class AppointmentsComponent implements OnInit {
         console.log(res);
 
         this.loadMyAppointments();
-
-        alert('Appointment cancelled successfully.');
+        this.testToast();
       },
       error: (err) => {
         console.log(err);
         alert(err.error);
       },
     });
+  }
+  showErrorModal = false;
+  errorMessage = '';
+
+  handleError(error: any) {
+    console.log('HANDLE ERROR CALLED');
+
+    this.errorMessage =
+      error?.message || error || 'Something went wrong. Please try again.';
+
+    this.showErrorModal = true;
+
+    console.log(this.showErrorModal, this.errorMessage);
+  }
+  showCancelModal = false;
+  selectedAppointmentId = '';
+
+  openCancelModal(id: string) {
+    this.selectedAppointmentId = id;
+    this.showCancelModal = true;
+  }
+
+  closeCancelModal() {
+    this.showCancelModal = false;
+  }
+  testToast() {
+    this.toastr.success('Appointment cancelled!', 'Success');
   }
 }
