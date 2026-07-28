@@ -1,0 +1,80 @@
+<section class="bg-secondary min-h-screen py-10">
+  <div class="container mx-auto px-6 lg:px-20">
+
+    <div class="flex justify-between flex-wrap items-center">
+      <div>
+        <p class="uppercase tracking-[4px] text-gray-400 text-sm">Your care plan</p>
+        <h1 class="text-5xl font-serif italic mt-2">Medications</h1>
+        <p class="text-gray mt-3 text-lg">
+          Track today's doses from your prescriptions and check them off as you take them.
+        </p>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="mt-10" *ngIf="loading">
+      <app-loader message="Loading your medications…"></app-loader>
+    </div>
+
+    <!-- Error -->
+    <div class="mt-10 bg-red-50 border border-red-200 text-red-700 rounded-2xl px-6 py-4"
+      *ngIf="!loading && errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Empty state -->
+    <div class="mt-10 bg-white rounded-3xl shadow-sm border border-gray-100 p-10 text-center"
+      *ngIf="!loading && !errorMessage && todos.length === 0">
+      <p class="text-2xl font-serif italic text-gray-600">No medications right now</p>
+      <p class="text-gray mt-2">Once a doctor prescribes something, it will show up here.</p>
+    </div>
+
+    <!-- One card per todo (per appointment / prescription) -->
+    <div class="mt-10 space-y-8" *ngIf="!loading && !errorMessage && todos.length > 0">
+      <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 lg:p-8" *ngFor="let todo of todos">
+        <div class="flex flex-wrap justify-between items-center gap-3">
+          <div>
+            <h2 class="text-2xl font-semibold">Prescription</h2>
+            <p class="text-gray text-sm mt-1">
+              Added {{ todo.createdAt | date: 'mediumDate' }}
+            </p>
+          </div>
+          <span class="bg-secondary rounded-full px-4 py-1 text-sm font-semibold text-primary">
+            {{ completedDoses(todo) }} / {{ totalDoses(todo) }} doses taken
+          </span>
+        </div>
+
+        <div class="mt-6 space-y-6">
+          <div class="border-t border-gray-100 pt-6 first:border-t-0 first:pt-0" *ngFor="let item of todo.items">
+            <div class="flex flex-wrap justify-between items-start gap-2">
+              <div>
+                <h3 class="text-xl font-medium">{{ item.name }}</h3>
+                <p class="text-gray text-sm mt-1" *ngIf="item.dosage || item.frequency">
+                  <span *ngIf="item.dosage">{{ item.dosage }}</span>
+                  <span *ngIf="item.dosage && item.frequency"> &middot; </span>
+                  <span *ngIf="item.frequency">{{ item.frequency }}</span>
+                </p>
+                <p class="text-gray-500 text-sm mt-1 italic" *ngIf="item.notes">{{ item.notes }}</p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mt-4" *ngIf="item.schedule.length > 0">
+              <button type="button" *ngFor="let dose of sortedSchedule(item)" (click)="toggleDose(todo, item, dose)"
+                [disabled]="pendingDoseId === dose._id"
+                class="flex items-center gap-2 px-4 py-2 rounded-full border transition"
+                [ngClass]="doseChipClasses(dose)" [class.opacity-60]="pendingDoseId === dose._id">
+                <i class="fa-solid" [ngClass]="doseIcon(dose)"></i>
+                {{ dose.time | time12 }}
+              </button>
+            </div>
+
+            <p class="text-gray-400 text-sm mt-4 italic" *ngIf="item.schedule.length === 0">
+              No scheduled times were added for this medication.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

@@ -232,10 +232,41 @@ export class AppointmentsComponent implements OnInit {
           .sort(
             (a: any, b: any) =>
               new Date(a.date).getTime() - new Date(b.date).getTime(),
-        );
+          );
         console.log(this.upcomingAppointments.length);
       },
       error: (err) => console.log(err),
+    });
+  }
+  formatTime(time: string): string {
+    const [hours, minutes] = time.split(':').map(Number);
+
+    const date = new Date();
+    date.setHours(hours, minutes);
+
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+  }
+  cancelAppointment(id: string) {
+    const body = {
+      cancellationReason: 'Cancelled by patient',
+    };
+
+    this.appointmentService.cancelAppointment(id, body).subscribe({
+      next: (res) => {
+        console.log(res);
+
+        this.loadMyAppointments();
+
+        alert('Appointment cancelled successfully.');
+      },
+      error: (err) => {
+        console.log(err);
+        alert(err.error);
+      },
     });
   }
 }

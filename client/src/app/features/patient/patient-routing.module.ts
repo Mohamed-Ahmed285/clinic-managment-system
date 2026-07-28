@@ -6,7 +6,7 @@ import { PatientLayoutComponent } from './patient-layout/patient-layout.componen
 import { ProfileComponent } from './profile/profile.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
-import { PrescriptionsComponent } from './prescriptions/prescriptions.component';
+import { MedicationsComponent } from './medications/medications.component';
 import { ReviewsComponent } from './reviews/reviews.component';
 import { FavoriteComponent } from './favorite/favorite.component';
 import { NotificationsComponent } from './notifications/notifications.component';
@@ -36,8 +36,8 @@ const routes: Routes = [
         component: AppointmentsComponent,
       },
       {
-        path: 'prescriptions',
-        component: PrescriptionsComponent,
+        path: 'medications',
+        component: MedicationsComponent,
       },
       {
         path: 'reviews',
