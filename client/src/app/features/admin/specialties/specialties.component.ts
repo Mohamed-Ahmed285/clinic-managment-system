@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SpecialtyService, Specialty } from '../services/specialty.service';
+import { DoctorService, Doctor } from '../services/doctor.service';
 
 @Component({
   selector: 'app-specialties',
@@ -8,25 +10,42 @@ import { SpecialtyService, Specialty } from '../services/specialty.service';
 })
 export class SpecialtiesComponent implements OnInit {
   specialties: Specialty[] = [];
+  doctorCounts: { [specialtyId: string]: number } = {};
+
   loading = true;
   errorMessage = '';
 
   showForm = false;
   editMode = false;
-  currentSpecialty: Specialty = { name: '', description: '', icon: '' };
+  editingId: string | null = null;
 
-  constructor(private specialtyService: SpecialtyService) {}
+  specialtyForm: FormGroup;
+
+  constructor(
+    private specialtyService: SpecialtyService,
+    private doctorService: DoctorService,
+    private fb: FormBuilder
+  ) {
+    this.specialtyForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      description: ['', [Validators.maxLength(300)]],
+      icon: ['']
+    });
+  }
 
   ngOnInit(): void {
     this.loadSpecialties();
   }
+
+  get name() { return this.specialtyForm.get('name'); }
+  get description() { return this.specialtyForm.get('description'); }
 
   loadSpecialties(): void {
     this.loading = true;
     this.specialtyService.getAll().subscribe({
       next: (response) => {
         this.specialties = response.data;
-        this.loading = false;
+        this.loadDoctorCounts();
       },
       error: () => {
         this.errorMessage = 'Could not load specialties';
@@ -35,15 +54,51 @@ export class SpecialtiesComponent implements OnInit {
     });
   }
 
+  loadDoctorCounts(): void {
+    this.doctorService.getAll().subscribe({
+      next: (response) => {
+       
+        const doctors: Doctor[] = response;
+        
+        this.doctorCounts = {};
+
+        for (const doctor of doctors) {
+          const id = typeof doctor.specialtyId === 'string'
+            ? doctor.specialtyId
+            : (doctor.specialtyId as any)?._id;
+
+          if (id) {
+            this.doctorCounts[id] = (this.doctorCounts[id] || 0) + 1;
+          }
+        }
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
+  }
+
+  getDoctorCount(specialtyId?: string): number {
+    if (!specialtyId) return 0;
+    return this.doctorCounts[specialtyId] || 0;
+  }
+
   openAddForm(): void {
     this.editMode = false;
-    this.currentSpecialty = { name: '', description: '', icon: '' };
+    this.editingId = null;
+    this.specialtyForm.reset({ name: '', description: '', icon: '' });
     this.showForm = true;
   }
 
   openEditForm(specialty: Specialty): void {
     this.editMode = true;
-    this.currentSpecialty = { ...specialty };
+    this.editingId = specialty._id ?? null;
+    this.specialtyForm.setValue({
+      name: specialty.name,
+      description: specialty.description,
+      icon: specialty.icon || ''
+    });
     this.showForm = true;
   }
 
@@ -52,8 +107,15 @@ export class SpecialtiesComponent implements OnInit {
   }
 
   saveSpecialty(): void {
-    if (this.editMode && this.currentSpecialty._id) {
-      this.specialtyService.update(this.currentSpecialty._id, this.currentSpecialty).subscribe({
+    if (this.specialtyForm.invalid) {
+      this.specialtyForm.markAllAsTouched();
+      return;
+    }
+
+    const payload: Specialty = this.specialtyForm.value;
+
+    if (this.editMode && this.editingId) {
+      this.specialtyService.update(this.editingId, payload).subscribe({
         next: () => {
           this.showForm = false;
           this.loadSpecialties();
@@ -61,7 +123,7 @@ export class SpecialtiesComponent implements OnInit {
         error: () => this.errorMessage = 'Could not update specialty'
       });
     } else {
-      this.specialtyService.create(this.currentSpecialty).subscribe({
+      this.specialtyService.create(payload).subscribe({
         next: () => {
           this.showForm = false;
           this.loadSpecialties();

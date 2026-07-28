@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule ,ReactiveFormsModule } from '@angular/forms';
 import { AdminRoutingModule } from './admin-routing.module';
 
 import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
@@ -11,7 +11,7 @@ import { ClinicsComponent } from './clinics/clinics.component';
 import { UsersComponent } from './users/users.component';
 import { SpecialtiesComponent } from './specialties/specialties.component';
 import { AnalyticsComponent } from './analytics/analytics.component';
-
+import { SharedModule } from '../../shared/shared.module';
 @NgModule({
   declarations: [
     AdminLayoutComponent,
@@ -23,6 +23,6 @@ import { AnalyticsComponent } from './analytics/analytics.component';
     SpecialtiesComponent,
     AnalyticsComponent,
   ],
-  imports: [CommonModule, AdminRoutingModule, FormsModule],
+  imports: [CommonModule, AdminRoutingModule, FormsModule, ReactiveFormsModule,SharedModule],
 })
 export class AdminModule {}

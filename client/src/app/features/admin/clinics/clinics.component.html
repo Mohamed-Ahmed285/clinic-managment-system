@@ -2,189 +2,167 @@
 
   <!-- Header -->
   <div class="mb-8 flex items-center justify-between border-b border-primary/20 pb-5">
-    <h2 class="font-['Fraunces'] text-4xl font-semibold text-primary">
-      Clinics
-    </h2>
-
+      <div>
+      <div class="text-xs uppercase tracking-[0.2em] text-gray">Administration</div>
+      <h1 class="font-['Fraunces'] text-4xl font-semibold text-primary">Clinics</h1>
+    </div>
     <button
       (click)="openAddForm()"
-      class="rounded-full bg-primary px-6 py-3 font-['Inter'] text-base font-medium text-white transition hover:opacity-90"
+      class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
     >
       + Add Clinic
     </button>
   </div>
 
   <!-- Loading -->
-  <p *ngIf="loading" class="mb-4 font-['Inter'] text-base text-gray">
-    Loading...
-  </p>
+  <p *ngIf="loading" class="mb-4 text-sm text-gray">Loading clinics...</p>
 
   <!-- Error -->
-  <p *ngIf="errorMessage" class="mb-4 font-['Inter'] text-base text-red-600">
+  <p *ngIf="errorMessage" class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
     {{ errorMessage }}
   </p>
 
-  <!-- Add / Edit Form -->
-  <div
-    *ngIf="showForm"
-    class="mb-8 rounded-2xl border border-gray/30 bg-white p-6 shadow-sm"
-  >
-
-    <h3 class="mb-5 font-['Fraunces'] text-2xl text-primary">
-      {{ editMode ? 'Edit' : 'Add' }} Clinic
-    </h3>
-
-    <form (ngSubmit)="saveClinic()" class="space-y-5">
-
-      <label class="block font-['Inter'] text-base text-black">
-        Name
-        <input
-          type="text"
-          [(ngModel)]="currentClinic.name"
-          name="name"
-          required
-          class="mt-2 w-full rounded-xl border border-gray/40 px-4 py-3 text-base outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-        />
-      </label>
-
-      <label class="block font-['Inter'] text-base text-black">
-        City
-        <input
-          type="text"
-          [(ngModel)]="currentClinic.address.city"
-          name="city"
-          required
-          class="mt-2 w-full rounded-xl border border-gray/40 px-4 py-3 text-base outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-        />
-      </label>
-
-      <label class="block font-['Inter'] text-base text-black">
-        Street
-        <input
-          type="text"
-          [(ngModel)]="currentClinic.address.street"
-          name="street"
-          class="mt-2 w-full rounded-xl border border-gray/40 px-4 py-3 text-base outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-        />
-      </label>
-
-      <label class="block font-['Inter'] text-base text-black">
-        Phone
-        <input
-          type="text"
-          [(ngModel)]="currentClinic.phone"
-          name="phone"
-          class="mt-2 w-full rounded-xl border border-gray/40 px-4 py-3 text-base outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-        />
-      </label>
-
-      <div class="flex gap-4">
-
-        <button
-          type="submit"
-          class="rounded-full bg-primary px-6 py-3 font-['Inter'] text-white transition hover:opacity-90"
-        >
-          {{ editMode ? 'Update' : 'Create' }}
-        </button>
-
-        <button
-          type="button"
-          (click)="cancelForm()"
-          class="rounded-full border border-gray px-6 py-3 font-['Inter'] text-black transition hover:bg-secondary"
-        >
-          Cancel
-        </button>
-
+  <!-- Card grid -->
+  <div *ngIf="!loading && clinics.length > 0" class="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <div
+      *ngFor="let clinic of clinics"
+      class="rounded-xl border border-gray/20 bg-white p-6 shadow"
+    >
+      <div class="flex items-start justify-between">
+        <h3 class="font-['Fraunces'] text-xl text-primary">{{ clinic.name }}</h3>
+        <div class="flex gap-2">
+          <button (click)="openEditForm(clinic)" class="rounded-md border border-gray/30 px-2.5 py-1 text-xs hover:bg-secondary">Edit</button>
+          <button (click)="deleteClinic(clinic._id!)" class="rounded-md border border-red-300 px-2.5 py-1 text-xs text-red-600 hover:bg-red-50">Delete</button>
+        </div>
       </div>
 
-    </form>
+      <p class="mt-2 text-sm text-gray">
+        {{ clinic.address?.street ? clinic.address.street + ', ' : '' }}{{ clinic.address?.city }}
+        <span *ngIf="clinic.address?.state">, {{ clinic.address.state }}</span>
+        <span *ngIf="clinic.address?.country">, {{ clinic.address.country }}</span>
+      </p>
 
+      <p class="mt-1 text-sm text-gray" *ngIf="clinic.phone">{{ clinic.phone }}</p>
+      <p class="mt-1 text-sm text-gray" *ngIf="clinic.email">{{ clinic.email }}</p>
+    </div>
   </div>
 
-  <!-- Table -->
-  <div
-    *ngIf="!loading && clinics.length > 0"
-    class="overflow-x-auto rounded-2xl border border-gray/30 bg-white p-6 shadow-sm"
-  >
-
-    <table class="w-full">
-
-      <thead>
-
-        <tr class="border-b border-primary/20 font-['Inter'] text-sm uppercase tracking-wider text-gray">
-
-          <th class="pb-4 text-left">Name</th>
-          <th class="pb-4 text-left">City</th>
-          <th class="pb-4 text-left">Phone</th>
-          <th class="pb-4 text-left w-52">Actions</th>
-
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-        <tr
-          *ngFor="let clinic of clinics"
-          class="border-b border-gray/20 transition hover:bg-secondary"
-        >
-
-          <td class="py-5 font-['Fraunces'] text-2xl text-black">
-            {{ clinic.name }}
-          </td>
-
-          <td class="py-5 font-['Inter'] text-base text-gray">
-            {{ clinic.address.city }}
-          </td>
-
-          <td class="py-5 font-['Inter'] text-base text-gray">
-            {{ clinic.phone }}
-          </td>
-
-          <td class="py-5">
-
-            <div class="flex gap-3">
-
-              <button
-                (click)="openEditForm(clinic)"
-                class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary"
-              >
-                Edit
-              </button>
-
-              <button
-                (click)="deleteClinic(clinic._id!)"
-                class="rounded-full border border-red-300 px-5 py-2 font-['Inter'] text-red-600 transition hover:bg-red-50"
-              >
-                Delete
-              </button>
-
-            </div>
-
-          </td>
-
-        </tr>
-
-      </tbody>
-
-    </table>
-
+  <!-- Empty state -->
+  <div *ngIf="!loading && clinics.length === 0" class="rounded-xl border-2 border-dashed border-primary/30 bg-white p-12 text-center">
+    <h3 class="mb-2 font-['Fraunces'] text-2xl text-primary">No Clinics</h3>
+    <p class="text-sm text-gray">Add your first clinic to get started.</p>
   </div>
 
-  <!-- Empty State -->
-  <div
-    *ngIf="!loading && clinics.length === 0"
-    class="rounded-2xl border-2 border-dashed border-primary/30 bg-white p-12 text-center"
-  >
+  
+  <div *ngIf="showForm" class="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4">
+    <div class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
+      <h3 class="font-['Fraunces'] text-2xl text-primary">
+        {{ editMode ? 'Edit Clinic' : 'Add Clinic' }}
+      </h3>
 
-    <h3 class="mb-2 font-['Fraunces'] text-2xl text-primary">
-      No Clinics
-    </h3>
+      <form [formGroup]="clinicForm" (ngSubmit)="saveClinic()" class="mt-5 space-y-4">
 
-    <p class="font-['Inter'] text-base text-gray">
-      Add your first clinic to get started.
-    </p>
+        <label class="block">
+          <span class="text-xs font-medium text-gray">Name</span>
+          <input
+            type="text"
+            formControlName="name"
+            class="mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
+            [class.border-red-400]="name?.invalid && name?.touched"
+            [class.border-gray-300]="!(name?.invalid && name?.touched)"
+          />
+          <span *ngIf="name?.invalid && name?.touched" class="mt-1 block text-xs text-red-600">
+            <span *ngIf="name?.errors?.['required']">Name is required.</span>
+            <span *ngIf="name?.errors?.['minlength']">Name must be at least 2 characters.</span>
+            <span *ngIf="name?.errors?.['maxlength']">Name must be under 100 characters.</span>
+          </span>
+        </label>
 
+        <label class="block">
+          <span class="text-xs font-medium text-gray">Phone</span>
+          <input
+            type="text"
+            formControlName="phone"
+            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
+          />
+        </label>
+
+        <label class="block">
+          <span class="text-xs font-medium text-gray">Email</span>
+          <input
+            type="email"
+            formControlName="email"
+            class="mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
+            [class.border-red-400]="email?.invalid && email?.touched"
+            [class.border-gray-300]="!(email?.invalid && email?.touched)"
+          />
+          <span *ngIf="email?.invalid && email?.touched" class="mt-1 block text-xs text-red-600">
+            Enter a valid email address.
+          </span>
+        </label>
+
+        <label class="block">
+          <span class="text-xs font-medium text-gray">Image URL</span>
+          <input
+            type="text"
+            formControlName="image"
+            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
+          />
+        </label>
+
+        <div formGroupName="address" class="space-y-4 rounded-md border border-gray/20 p-4">
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray">Address</span>
+
+          <label class="block">
+            <span class="text-xs font-medium text-gray">City</span>
+            <input
+              type="text"
+              formControlName="city"
+              class="mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
+              [class.border-red-400]="city?.invalid && city?.touched"
+              [class.border-gray-300]="!(city?.invalid && city?.touched)"
+            />
+            <span *ngIf="city?.invalid && city?.touched" class="mt-1 block text-xs text-red-600">
+              City is required.
+            </span>
+          </label>
+
+          <label class="block">
+            <span class="text-xs font-medium text-gray">Street</span>
+            <input
+              type="text"
+              formControlName="street"
+              class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
+            />
+          </label>
+
+          <label class="block">
+            <span class="text-xs font-medium text-gray">State</span>
+            <input
+              type="text"
+              formControlName="state"
+              class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
+            />
+          </label>
+
+          <label class="block">
+            <span class="text-xs font-medium text-gray">Country</span>
+            <input
+              type="text"
+              formControlName="country"
+              class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
+            />
+          </label>
+        </div>
+
+        <div class="mt-6 flex justify-end gap-2">
+          <button type="button" (click)="cancelForm()" class="rounded-md border border-gray/30 px-4 py-2 text-sm">Cancel</button>
+          <button type="submit" class="rounded-md bg-primary px-4 py-2 text-sm text-white hover:opacity-90">
+            {{ editMode ? 'Update' : 'Create' }}
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
 </div>

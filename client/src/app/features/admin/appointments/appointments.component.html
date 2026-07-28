@@ -2,141 +2,140 @@
 
   <!-- Header -->
   <div class="mb-8 border-b border-primary/20 pb-5">
-    <h2 class="font-['Fraunces'] text-4xl font-semibold text-primary">
-      Appointments
-    </h2>
+    <div class="text-xs uppercase tracking-[0.2em] text-gray">Administration</div>
+    <h2 class="font-['Fraunces'] text-4xl font-semibold text-primary">Appointments</h2>
+    <p class="mt-1 text-sm text-gray">All appointments across every clinic and their current status.</p>
   </div>
 
-  <!-- Filters -->
-  <div class="mb-8 flex flex-wrap gap-3">
+  <!-- Stat cards -->
+  <div class="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
+    <div class="rounded-xl border border-gray/20 bg-white p-4">
+      <div class="text-xs uppercase tracking-wider text-gray">Total</div>
+      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">{{ allAppointments.length }}</div>
+    </div>
+    <div class="rounded-xl border border-gray/20 bg-white p-4">
+      <div class="text-xs uppercase tracking-wider text-gray">Pending</div>
+      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">{{ countByStatus('pending') }}</div>
+    </div>
+    <div class="rounded-xl border border-gray/20 bg-white p-4">
+      <div class="text-xs uppercase tracking-wider text-gray">Confirmed</div>
+      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">{{ countByStatus('confirmed') }}</div>
+    </div>
+    <div class="rounded-xl border border-gray/20 bg-white p-4">
+      <div class="text-xs uppercase tracking-wider text-gray">Completed</div>
+      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">{{ countByStatus('completed') }}</div>
+    </div>
+    <div class="rounded-xl border border-gray/20 bg-white p-4">
+      <div class="text-xs uppercase tracking-wider text-gray">Cancelled</div>
+      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">{{ countByStatus('cancelled') }}</div>
+    </div>
+  </div>
 
-    <button
-      (click)="filterByStatus('')"
-      [class.active]="activeFilter === ''"
-      class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary"
-    >
-      All
-    </button>
+  <!-- Search + filters -->
+  <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="onSearchChange()"
+      placeholder="Search patient, doctor, clinic..."
+      class="w-full rounded-md border border-gray-300 px-4 py-2 text-sm outline-none focus:ring-1 focus:ring-primary sm:max-w-xs"
+    />
 
-    <button
-      (click)="filterByStatus('pending')"
-      [class.active]="activeFilter === 'pending'"
-      class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary"
-    >
-      Pending
-    </button>
-
-    <button
-      (click)="filterByStatus('confirmed')"
-      [class.active]="activeFilter === 'confirmed'"
-      class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary"
-    >
-      Confirmed
-    </button>
-
-    <button
-      (click)="filterByStatus('completed')"
-      [class.active]="activeFilter === 'completed'"
-      class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary"
-    >
-      Completed
-    </button>
-
-    <button
-      (click)="filterByStatus('cancelled')"
-      [class.active]="activeFilter === 'cancelled'"
-      class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary"
-    >
-      Cancelled
-    </button>
-
+    <div class="flex flex-wrap gap-2">
+      <button
+        (click)="filterByStatus('')"
+        class="rounded-full border px-4 py-1.5 text-sm capitalize transition"
+        [class.bg-primary]="activeFilter === ''"
+        [class.text-white]="activeFilter === ''"
+        [class.border-primary]="activeFilter === ''"
+        [class.text-primary]="activeFilter !== ''"
+        [class.border-gray]="activeFilter !== ''"
+      >
+        All
+      </button>
+      <button
+        *ngFor="let status of statuses"
+        (click)="filterByStatus(status)"
+        class="rounded-full border px-4 py-1.5 text-sm capitalize transition"
+        [class.bg-primary]="activeFilter === status"
+        [class.text-white]="activeFilter === status"
+        [class.border-primary]="activeFilter === status"
+        [class.text-primary]="activeFilter !== status"
+        [class.border-gray]="activeFilter !== status"
+      >
+        {{ status }}
+      </button>
+    </div>
   </div>
 
   <!-- Loading -->
-  <p *ngIf="loading" class="mb-4 font-['Inter'] text-base text-gray">
-    Loading...
-  </p>
+  <p *ngIf="loading" class="mb-4 text-sm text-gray">Loading appointments...</p>
 
   <!-- Table -->
-  <div
-    *ngIf="!loading"
-    class="overflow-x-auto rounded-2xl border border-gray/30 bg-white p-6 shadow-sm"
-  >
+  <div *ngIf="!loading" class="rounded-xl border border-gray/20 bg-white shadow">
+    <div class="flex items-center justify-between px-6 pt-6">
+      <h3 class="font-['Fraunces'] text-xl text-primary">
+        {{ activeFilter ? (activeFilter | titlecase) : 'All' }} appointments
+      </h3>
+      <span class="text-sm text-gray">{{ appointments.length }} results</span>
+    </div>
 
-    <table class="w-full">
-
-      <thead>
-
-        <tr class="border-b border-primary/20 font-['Inter'] text-sm uppercase tracking-wider text-gray">
-
-          <th class="pb-4 text-left">Patient</th>
-          <th class="pb-4 text-left">Doctor</th>
-          <th class="pb-4 text-left">Clinic</th>
-          <th class="pb-4 text-left">Date</th>
-          <th class="pb-4 text-left">Status</th>
-          <th class="pb-4 text-left w-40">Actions</th>
-
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-        <tr
-          *ngFor="let appt of appointments"
-          class="border-b border-gray/20 transition hover:bg-secondary"
-        >
-
-          <td class="py-5 font-['Inter'] text-base text-black">
-            {{ appt.patientId?.userId?.name || 'Unknown' }}
-          </td>
-
-          <td class="py-5 font-['Inter'] text-base text-black">
-            {{ appt.doctorId?._id?.name || 'Unknown' }}
-          </td>
-
-          <td class="py-5 font-['Inter'] text-base text-gray">
-            {{ appt.clinicId?.name }}
-          </td>
-
-          <td class="py-5 font-['Inter'] text-base text-gray">
-            {{ appt.date | date:'mediumDate' }}
-          </td>
-
-          <td class="py-5">
-
-            <span
-              class="rounded-full px-4 py-2 font-['Inter'] text-sm capitalize"
-              [ngClass]="{
-                'bg-yellow-100 text-yellow-700': appt.status === 'pending',
-                'bg-blue-100 text-blue-700': appt.status === 'confirmed',
-                'bg-green-100 text-green-700': appt.status === 'completed',
-                'bg-red-100 text-red-700': appt.status === 'cancelled'
-              }"
-            >
-              {{ appt.status }}
-            </span>
-
-          </td>
-
-          <td class="py-5">
-
-            <button
-              *ngIf="appt.status !== 'cancelled' && appt.status !== 'completed'"
-              (click)="cancelAppointment(appt._id)"
-              class="rounded-full border border-red-300 px-5 py-2 font-['Inter'] text-red-600 transition hover:bg-red-50"
-            >
-              Cancel
-            </button>
-
-          </td>
-
-        </tr>
-
-      </tbody>
-
-    </table>
-
+    <div class="overflow-x-auto p-6">
+      <table class="w-full text-sm">
+        <thead class="text-left text-xs uppercase tracking-wider text-gray">
+          <tr>
+            <th class="py-2 pr-4">Date</th>
+            <th class="py-2 pr-4">Time</th>
+            <th class="py-2 pr-4">Patient</th>
+            <th class="py-2 pr-4">Doctor</th>
+            <th class="py-2 pr-4">Specialty</th>
+            <th class="py-2 pr-4">Clinic</th>
+            <th class="py-2 pr-4">Status</th>
+            <th class="py-2 pr-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray/10">
+          <tr *ngFor="let appt of appointments">
+            <td class="py-3 pr-4">{{ appt.date | date:'mediumDate' }}</td>
+            <td class="py-3 pr-4">{{ appt.startTime }}</td>
+            <td class="py-3 pr-4 font-medium">{{ appt.patientId?._id?.name || 'Unknown' }}</td>
+            <td class="py-3 pr-4">{{ appt.doctorId?._id?.name || 'Unknown' }}</td>
+            <td class="py-3 pr-4 text-gray">{{ appt.doctorId?.specialtyId?.name || '—' }}</td>
+            <td class="py-3 pr-4 text-gray">{{ appt.clinicId?.name }}</td>
+            <td class="py-3 pr-4">
+              <span
+                class="rounded-full px-3 py-1 text-xs capitalize"
+                [ngClass]="{
+                  'bg-yellow-100 text-yellow-700': appt.status === 'pending',
+                  'bg-blue-100 text-blue-700': appt.status === 'confirmed',
+                  'bg-green-100 text-green-700': appt.status === 'completed',
+                  'bg-red-100 text-red-700': appt.status === 'cancelled',
+                  'bg-gray-100 text-gray-700': appt.status === 'rescheduled'
+                }"
+              >
+                {{ appt.status }}
+              </span>
+            </td>
+            <td class="py-3 pr-4 text-right">
+              <button
+                *ngIf="appt.status === 'confirmed'"
+                (click)="completeAppointment(appt._id)"
+                class="rounded-md border border-green-300 px-2.5 py-1 text-xs text-green-700 hover:bg-green-50"
+              >
+                Complete
+              </button>
+              <button
+                *ngIf="appt.status !== 'cancelled' && appt.status !== 'completed'"
+                (click)="cancelAppointment(appt._id)"
+                class="ml-2 rounded-md border border-red-300 px-2.5 py-1 text-xs text-red-600 hover:bg-red-50"
+              >
+                Cancel
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
 </div>
