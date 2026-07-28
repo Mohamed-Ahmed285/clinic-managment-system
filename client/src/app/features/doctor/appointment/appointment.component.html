@@ -1,0 +1,32 @@
+<div class="page" *ngIf="loading">
+  <app-loader message="Loading appointment…"></app-loader>
+</div>
+
+<div class="page" *ngIf="!loading && errorMessage && !appointment">
+  <a class="back-link" routerLink="/doctor/dashboard"> <span class="arrow">&larr;</span> Back to today's clinic
+  </a>
+  <p>{{ errorMessage }}</p>
+</div>
+
+<div class="page" *ngIf="!loading && saved">
+  <div class="success-state">
+    <h1 class="page-title">Prescription saved &middot; Appointment completed</h1>
+    <p>Redirecting you back to today's clinic&hellip;</p>
+  </div>
+</div>
+
+<div class="page" *ngIf="!loading && appointment && !saved">
+  <a class="back-link" routerLink="/doctor/dashboard"> <span class="arrow">&larr;</span> Back to today's clinic
+  </a>
+
+  <h1 class="page-title">Appointment &middot; {{ appointment.time }}</h1>
+
+  <p class="save-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <app-patient-info [patient]="appointment.patient"></app-patient-info>
+
+  <app-medical-history [history]="appointment.history"></app-medical-history>
+
+  <app-prescription-form [issuedAt]="appointment.issuedAt" [saving]="saving"
+    (save)="onSavePrescription($event)"></app-prescription-form>
+</div>

@@ -40,6 +40,22 @@ const canAccessPatientClinicalData = async (req, patientId) => {
     return !!hasAppointment;
   }
   return false;
+    if (req.user.role === "admin") {
+        return true;
+    }
+    const patient = await patientModel.findById(req.user.id);
+    if (patient && patient._id.toString() === patientId.toString()) {
+        return true;
+    }
+    const doctor = await doctorModel.findById(req.user.id);
+    if (doctor) {
+        const hasAppointment = await appointmentModel.exists({
+            doctorId: doctor._id,
+            patientId
+        });
+        return !!hasAppointment;
+    }
+    return false;
 };
 module.exports = {
   resolveAppointmentForDoctor,

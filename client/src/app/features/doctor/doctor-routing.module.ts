@@ -6,9 +6,11 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { DoctorLayoutComponent } from './doctor-layout/doctor-layout.component';
 import { ProfileComponent } from './profile/profile.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
-import { AppointmentsComponent } from './appointments/appointments.component';
 import { PrescriptionsComponent } from './prescriptions/prescriptions.component';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { AppointmentComponent } from './appointment/appointment.component';
+//import { PatientsComponent } from './patients/patients.component';
+//import { ScheduleComponent } from './schedule/schedule.component';
 const routes: Routes = [
   {
     path: '',
@@ -24,7 +26,8 @@ const routes: Routes = [
 
       {
         path: 'profile',
-        component: ProfileComponent,
+        //component: UpdateProfileComponent,
+        component:  UpdateProfileComponent,
       },
       {
        path: 'dashboard',
@@ -37,9 +40,19 @@ const routes: Routes = [
       },
 
       {
-        path: 'appointments',
-        component: AppointmentsComponent,
-      },
+     path: 'appointments',
+      component: AppointmentComponent,
+},
+
+{
+  path: 'appointment/:id',
+  component: AppointmentComponent,
+},
+
+{
+  path: 'prescriptions',
+  component: PrescriptionsComponent,
+},
 
       {
         path: 'prescriptions',
@@ -50,6 +63,14 @@ const routes: Routes = [
         path: 'notifications',
         component: NotificationsComponent,
       },
+      /*{
+  path: 'patients',
+  component: PatientsComponent,
+},
+{
+  path: 'schedule',
+  component: ScheduleComponent,
+},*/
     ],
   },
 ];

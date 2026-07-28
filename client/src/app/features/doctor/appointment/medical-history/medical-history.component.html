@@ -1,0 +1,13 @@
+<section class="card">
+  <h2 class="card-title">Medical history</h2>
+
+  <div class="history-list">
+    <div class="history-row" *ngFor="let entry of history">
+      <span class="history-date">{{ entry.date }}</span>
+      <span class="badge" [ngClass]="'badge--' + entry.type.toLowerCase()">{{ entry.type }}</span>
+      <span class="history-desc">{{ entry.description }}</span>
+    </div>
+
+    <p class="empty" *ngIf="!history || history.length === 0">No history recorded yet.</p>
+  </div>
+</section>
