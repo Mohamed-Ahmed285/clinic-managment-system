@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ProfileService } from 'src/app/core/services/profile.service';
 import { AppointmentService } from 'src/app/core/services/appointments.service';
+import { PaymentService } from 'src/app/core/services/payment.service';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',
@@ -60,6 +62,8 @@ export class AppointmentsComponent implements OnInit {
   constructor(
     private profileService: ProfileService,
     private appointmentService: AppointmentService,
+    private paymentService: PaymentService,
+     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -67,6 +71,23 @@ export class AppointmentsComponent implements OnInit {
     this.loadSpecialties();
     this.loadDoctors();
     this.loadMyAppointments();
+    this.route.queryParams.subscribe(params => {
+
+  if (params['payment'] === 'success') {
+
+    alert('Payment Successful ✅');
+
+    this.loadMyAppointments();
+
+  }
+
+  if (params['payment'] === 'failed') {
+
+    alert('Payment Failed ❌');
+
+  }
+
+});
 
     const today = new Date();
 
@@ -193,26 +214,43 @@ export class AppointmentsComponent implements OnInit {
 
       startTime: this.appointmentTime,
 
-      paymentMethod: 'cash',
+     paymentMethod: this.profileData.profile.preferredPaymentMethod,
     };
     console.log({
       date: this.appointmentDate,
       startTime: this.appointmentTime,
     });
     this.appointmentService.bookAppointment(body).subscribe({
-      next: (res) => {
-        console.log(res);
+  next: (res: any) => {
 
-        this.closeModal();
-      },
-      error: (err) => {
-        if (err.error === 'appointment time is outside clinic working hours') {
-          alert('Please choose a time within the doctors working hours.');
-        } else {
-          alert(err.error);
+    if (this.profileData.profile.preferredPaymentMethod === 'online') {
+
+      this.paymentService.checkout(res._id).subscribe({
+        next: (payment: any) => {
+          window.location.href = payment.url;
+        },
+        error: (err) => {
+          console.log(err);
+          alert('Failed to start payment.');
         }
-      },
-    });
+      });
+
+    } else {
+
+      this.closeModal();
+      this.loadMyAppointments();
+
+    }
+
+  },
+  error: (err) => {
+    if (err.error === 'appointment time is outside clinic working hours') {
+      alert('Please choose a time within the doctors working hours.');
+    } else {
+      alert(err.error);
+    }
+  }
+});
   }
   loadMyAppointments() {
     this.appointmentService.getMyAppointments().subscribe({
@@ -269,4 +307,15 @@ export class AppointmentsComponent implements OnInit {
       },
     });
   }
+  payAppointment(appointmentId: string) {
+  this.paymentService.checkout(appointmentId).subscribe({
+    next: (res: any) => {
+      window.location.href = res.url;
+    },
+    error: (err) => {
+      console.error(err);
+      alert('Unable to start payment.');
+    }
+  });
+}
 }
