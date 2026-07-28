@@ -387,7 +387,11 @@ const getAppointments = async (req, res) => {
 };
 
 const getMyAppointments = async (req, res) => {
-    try {
+    try {console.log("User:", req.user);
+        // const patient = await patientModel.findOne({ userId: req.user.id });
+        // const doctor = await doctorModel.findOne({ userId: req.user.id });
+const patient = await patientModel.findById(req.user.id);
+const doctor = await doctorModel.findById(req.user.id);
         let query = {};
         if (req.user.role === "patient") {
             query.patientId = req.user.id;
