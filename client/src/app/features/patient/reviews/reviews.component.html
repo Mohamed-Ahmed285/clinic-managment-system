@@ -147,17 +147,44 @@
 
     </div>
 
-    <!-- Appointment ID -->
+    <!-- Appointment -->
     <div class="mb-5">
 
       <label class="block mb-2 font-medium">
 
-        Appointment ID
+        Appointment
 
       </label>
 
-      <input type="text" [(ngModel)]="newReview.appointmentId" [disabled]="isEditing"
-        class="w-full border rounded-lg p-3 disabled:bg-gray-100 disabled:text-gray-500">
+      <!-- The appointment cannot change once the review exists -->
+      <div *ngIf="isEditing" class="w-full border rounded-lg p-3 bg-gray-100 text-gray-500">
+
+        {{ editedAppointment ? appointmentLabel(editedAppointment) : 'Appointment' }}
+
+      </div>
+
+      <ng-container *ngIf="!isEditing">
+
+        <select *ngIf="reviewableAppointments.length" [(ngModel)]="newReview.appointmentId"
+          class="w-full border rounded-lg p-3">
+
+          <option value="" disabled>Select an appointment</option>
+
+          <option *ngFor="let appointment of reviewableAppointments" [value]="appointment._id">
+
+            {{ appointmentLabel(appointment) }}
+
+          </option>
+
+        </select>
+
+        <p *ngIf="!reviewableAppointments.length" class="border rounded-lg p-3 bg-gray-100 text-gray-500">
+
+          You have no confirmed or completed appointments left to review.
+
+        </p>
+
+      </ng-container>
 
     </div>
 
@@ -204,7 +231,8 @@
 
       </button>
 
-      <button (click)="submitReview()" class="bg-[#0b6b78] hover:bg-[#095963] text-white px-6 py-2 rounded-lg">
+      <button (click)="submitReview()" [disabled]="!isEditing && !newReview.appointmentId"
+        class="bg-[#0b6b78] hover:bg-[#095963] text-white px-6 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
 
         {{ isEditing ? 'Update' : 'Submit' }}
 

@@ -10,7 +10,8 @@ const {
     deleteSpecialty
 } = require("../controllers/specialty");
 
-router.post("/", verifyToken, authorize("create:speciality"), createSpecialty);
+
+router.post("/" , verifyToken, authorize("create:speciality"), createSpecialty);
 router.get("/", getAllSpecialties);
 router.get("/:id", getSpecialtyById);
 router.put("/:id", verifyToken, authorize("update:speciality"), updateSpecialty);

@@ -17,5 +17,38 @@ export class ProfileService {
       }),
     });
   }
+  updateProfile(data: any) {
+    const token = localStorage.getItem('token');
 
+    return this.http.put(
+      `${environment.apiUrl}/patient/updateMyProfile`,
+      data,
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        }),
+      },
+    );
+  }
+  updateUser(formData: FormData) {
+    const token = localStorage.getItem('token');
+
+    return this.http.put(`${environment.apiUrl}/user/me`, formData, {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${token}`,
+      }),
+    });
+  }
+  getMedicalRecords(patientId: string) {
+    const token = localStorage.getItem('token');
+
+    return this.http.get(
+      `${environment.apiUrl}/medicalRecord/patient/${patientId}`,
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        }),
+      },
+    );
+  }
 }
