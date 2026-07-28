@@ -126,8 +126,8 @@ try{
 //     try {
 //         // Pass the required data to the service layer
 //         const updated = await updateMyProfileService(
-//             req.user.id, 
-//             req.body, 
+//             req.user.id,
+//             req.body,
 //             req.file
 //         );
 
@@ -136,8 +136,11 @@ try{
 //         return res.status(500).send(err.message);
 //     }
 // };
+// ----------------
 const updateMe = async (req, res) => {
     try {
+        console.log("BODY:", req.body);
+        console.log("FILE:", req.file);
         // Fallback to an empty object if req.body is undefined
         const body = req.body || {}; 
         
@@ -166,7 +169,7 @@ const updateMe = async (req, res) => {
         return res.status(500).send(err.message);
     }
 };
-
+// ----------
 //update password (user is already in)
 const updatePassword = async(req,res)=>{
 try{

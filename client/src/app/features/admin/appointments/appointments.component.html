@@ -1,1 +1,142 @@
-<p>appointments works!</p>
+<div class="min-h-screen bg-secondary p-8">
+
+  <!-- Header -->
+  <div class="mb-8 border-b border-primary/20 pb-5">
+    <h2 class="font-['Fraunces'] text-4xl font-semibold text-primary">
+      Appointments
+    </h2>
+  </div>
+
+  <!-- Filters -->
+  <div class="mb-8 flex flex-wrap gap-3">
+
+    <button
+      (click)="filterByStatus('')"
+      [class.active]="activeFilter === ''"
+      class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary"
+    >
+      All
+    </button>
+
+    <button
+      (click)="filterByStatus('pending')"
+      [class.active]="activeFilter === 'pending'"
+      class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary"
+    >
+      Pending
+    </button>
+
+    <button
+      (click)="filterByStatus('confirmed')"
+      [class.active]="activeFilter === 'confirmed'"
+      class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary"
+    >
+      Confirmed
+    </button>
+
+    <button
+      (click)="filterByStatus('completed')"
+      [class.active]="activeFilter === 'completed'"
+      class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary"
+    >
+      Completed
+    </button>
+
+    <button
+      (click)="filterByStatus('cancelled')"
+      [class.active]="activeFilter === 'cancelled'"
+      class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary"
+    >
+      Cancelled
+    </button>
+
+  </div>
+
+  <!-- Loading -->
+  <p *ngIf="loading" class="mb-4 font-['Inter'] text-base text-gray">
+    Loading...
+  </p>
+
+  <!-- Table -->
+  <div
+    *ngIf="!loading"
+    class="overflow-x-auto rounded-2xl border border-gray/30 bg-white p-6 shadow-sm"
+  >
+
+    <table class="w-full">
+
+      <thead>
+
+        <tr class="border-b border-primary/20 font-['Inter'] text-sm uppercase tracking-wider text-gray">
+
+          <th class="pb-4 text-left">Patient</th>
+          <th class="pb-4 text-left">Doctor</th>
+          <th class="pb-4 text-left">Clinic</th>
+          <th class="pb-4 text-left">Date</th>
+          <th class="pb-4 text-left">Status</th>
+          <th class="pb-4 text-left w-40">Actions</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr
+          *ngFor="let appt of appointments"
+          class="border-b border-gray/20 transition hover:bg-secondary"
+        >
+
+          <td class="py-5 font-['Inter'] text-base text-black">
+            {{ appt.patientId?.userId?.name || 'Unknown' }}
+          </td>
+
+          <td class="py-5 font-['Inter'] text-base text-black">
+            {{ appt.doctorId?._id?.name || 'Unknown' }}
+          </td>
+
+          <td class="py-5 font-['Inter'] text-base text-gray">
+            {{ appt.clinicId?.name }}
+          </td>
+
+          <td class="py-5 font-['Inter'] text-base text-gray">
+            {{ appt.date | date:'mediumDate' }}
+          </td>
+
+          <td class="py-5">
+
+            <span
+              class="rounded-full px-4 py-2 font-['Inter'] text-sm capitalize"
+              [ngClass]="{
+                'bg-yellow-100 text-yellow-700': appt.status === 'pending',
+                'bg-blue-100 text-blue-700': appt.status === 'confirmed',
+                'bg-green-100 text-green-700': appt.status === 'completed',
+                'bg-red-100 text-red-700': appt.status === 'cancelled'
+              }"
+            >
+              {{ appt.status }}
+            </span>
+
+          </td>
+
+          <td class="py-5">
+
+            <button
+              *ngIf="appt.status !== 'cancelled' && appt.status !== 'completed'"
+              (click)="cancelAppointment(appt._id)"
+              class="rounded-full border border-red-300 px-5 py-2 font-['Inter'] text-red-600 transition hover:bg-red-50"
+            >
+              Cancel
+            </button>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
