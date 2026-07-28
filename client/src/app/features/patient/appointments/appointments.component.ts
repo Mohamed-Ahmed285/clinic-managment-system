@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProfileService } from 'src/app/core/services/profile.service';
 import { AppointmentService } from 'src/app/core/services/appointments.service';
+import { FavoriteService } from 'src/app/core/services/favorite.service';
 @Component({
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',
@@ -28,6 +29,8 @@ export class AppointmentsComponent implements OnInit {
   appointments: any[] = [];
   nextAppointment: any;
   upcomingAppointments: any[] = [];
+  favoriteIds = new Set<string>();
+  pendingFavoriteIds = new Set<string>();
   states: string[] = [
     'Cairo',
     'Giza',
@@ -60,6 +63,7 @@ export class AppointmentsComponent implements OnInit {
   constructor(
     private profileService: ProfileService,
     private appointmentService: AppointmentService,
+    private favoriteService: FavoriteService,
   ) {}
 
   ngOnInit(): void {
@@ -67,6 +71,7 @@ export class AppointmentsComponent implements OnInit {
     this.loadSpecialties();
     this.loadDoctors();
     this.loadMyAppointments();
+    this.loadFavorites();
 
     const today = new Date();
 
@@ -86,6 +91,59 @@ export class AppointmentsComponent implements OnInit {
       },
       error: (err) => {
         console.log(err);
+      },
+    });
+  }
+  loadFavorites() {
+    this.favoriteService.getMyFavorites().subscribe({
+      next: (res: any) => {
+        this.favoriteIds = new Set(
+          (res || []).map((favorite: any) => this.getDoctorId(favorite)),
+        );
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
+  getDoctorId(doctor: any): string {
+    return doctor?._id?._id || doctor?._id;
+  }
+  isFavorite(doctor: any): boolean {
+    return this.favoriteIds.has(this.getDoctorId(doctor));
+  }
+  isFavoritePending(doctor: any): boolean {
+    return this.pendingFavoriteIds.has(this.getDoctorId(doctor));
+  }
+  toggleFavorite(doctor: any) {
+    const doctorId = this.getDoctorId(doctor);
+
+    if (!doctorId || this.pendingFavoriteIds.has(doctorId)) return;
+
+    const wasFavorite = this.favoriteIds.has(doctorId);
+
+    const request = wasFavorite
+      ? this.favoriteService.removeFavorite(doctorId)
+      : this.favoriteService.addFavorite(doctorId);
+
+    this.pendingFavoriteIds.add(doctorId);
+
+    request.subscribe({
+      next: () => {
+        if (wasFavorite) {
+          this.favoriteIds.delete(doctorId);
+        } else {
+          this.favoriteIds.add(doctorId);
+        }
+
+        this.pendingFavoriteIds.delete(doctorId);
+      },
+      error: (err) => {
+        console.log(err);
+
+        this.pendingFavoriteIds.delete(doctorId);
+
+        alert(err.error);
       },
     });
   }
