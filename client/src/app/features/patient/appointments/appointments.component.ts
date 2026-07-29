@@ -262,36 +262,36 @@ export class AppointmentsComponent implements OnInit {
       startTime: this.appointmentTime,
     });
     this.appointmentService.bookAppointment(body).subscribe({
-  next: (res: any) => {
-
-    if (this.profileData.profile.preferredPaymentMethod === 'online') {
-
-      this.paymentService.checkout(res._id).subscribe({
-        next: (payment: any) => {
-          window.location.href = payment.url;
-        },
-        error: (err) => {
-          console.log(err);
-          alert('Failed to start payment.');
+      next: (res: any) => {
+        if (this.profileData.profile.preferredPaymentMethod === 'online') {
+          this.paymentService.checkout(res._id).subscribe({
+            next: (payment: any) => {
+              window.location.href = payment.url;
+            },
+            error: (err) => {
+              console.log(err);
+              this.handleError('Failed to start payment.');
+            },
+          });
+        } else {
+          this.closeModal();
+          this.loadMyAppointments();
         }
-      });
-
-    } else {
-
-      this.closeModal();
-      this.loadMyAppointments();
-
-    }
-
-  },
-  error: (err) => {
-    if (err.error === 'appointment time is outside clinic working hours') {
-      alert('Please choose a time within the doctors working hours.');
-    } else {
-      alert(err.error);
-    }
-  }
-});
+      },
+      error: (err) => {
+        if (err.error?.includes('E11000')) {
+          this.handleError('This appointment has already been booked.');
+        } else if (
+          err.error === 'appointment time is outside clinic working hours'
+        ) {
+          this.handleError(
+            "Please choose a time within the doctor's working hours.",
+          );
+        } else {
+          this.handleError(err.error);
+        }
+      },
+    });
   }
   loadMyAppointments() {
     this.appointmentService.getMyAppointments().subscribe({
@@ -343,7 +343,7 @@ export class AppointmentsComponent implements OnInit {
       },
       error: (err) => {
         console.log(err);
-        alert(err.error);
+        this.handleError(err.error)
       },
     });
   }
@@ -381,7 +381,7 @@ export class AppointmentsComponent implements OnInit {
     },
     error: (err) => {
       console.error(err);
-      alert('Unable to start payment.');
+      this.handleError('Unable to start payment.');
     }
   });
 }
