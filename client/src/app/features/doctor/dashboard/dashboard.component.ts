@@ -27,6 +27,8 @@ dashboard: DashboardResponse | null = null;
   notifications: NotificationItem[] = [
    ];
 
+   loadingDashboard = true;
+
 constructor(
   private doctorService: DoctorService,
   private notificationService: NotificationService
@@ -36,61 +38,64 @@ constructor(
     this.loadNotifications();
   }
 
-  loadDashboard(): void {
+loadDashboard(): void {
 
-    this.doctorService.getDashboard().subscribe({
+  this.loadingDashboard = true;
 
+  this.doctorService.getDashboard().subscribe({
 
-      next: (res) => {
+    next: (res) => {
 
-        this.dashboard = res;
+      this.dashboard = res;
 
-        this.appointments = res.todayAppointments.map((item: any) => ({
+      this.appointments = res.todayAppointments.map((item: any) => ({
         id: item._id,
         time: this.formatTime(item.startTime),
         patientName:
-         item.patientId?.name ??
-        item.patientId?._id?.name ??
-        'Unknown Patient',
+          item.patientId?.name ??
+          item.patientId?._id?.name ??
+          'Unknown Patient',
         visitType: item.clinicId?.name ?? 'Clinic Visit',
         status: this.mapStatus(item.status)
-}));
+      }));
 
-        this.panelStats = [
-          {
-            label: 'Active patients',
-            value: res.stats.activePatients.toString()
-          },
-          {
-            label: 'Duration time',
-            value: `${res.stats.appointmentDuration} min`
-          },
-          {
-            label: 'Total appointments',
-            value: res.stats.totalAppointments.toString()
-          },
-          {
-            label: 'Completed appointments',
-            value: res.stats.completedAppointments.toString()
-          }
-        ];
+      this.panelStats = [
+        {
+          label: 'Active patients',
+          value: res.stats.activePatients.toString()
+        },
+        {
+          label: 'Duration time',
+          value: `${res.stats.appointmentDuration} min`
+        },
+        {
+          label: 'Total appointments',
+          value: res.stats.totalAppointments.toString()
+        },
+        {
+          label: 'Completed appointments',
+          value: res.stats.completedAppointments.toString()
+        }
+      ];
 
-        this.ratingSummary = {
-          averageRating: res.doctor.rating.average,
-          maxRating: 5,
-          ratingCount: res.doctor.rating.count,
-          eligiblePatients: res.stats.activePatients
-        };
+      this.ratingSummary = {
+        averageRating: res.doctor.rating.average,
+        maxRating: 5,
+        ratingCount: res.doctor.rating.count,
+        eligiblePatients: res.stats.activePatients
+      };
 
-      },
+      this.loadingDashboard = false;
+    },
 
-      error: (err) => {
-        console.error(err);
-      }
+    error: (err) => {
+      console.error(err);
+      this.loadingDashboard = false;
+    }
 
-    });
+  });
 
-  }
+}
 
   mapStatus(status: string): Appointment['status'] {
   switch (status) {
