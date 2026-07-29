@@ -154,6 +154,14 @@
             <a routerLink="/doctor/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
               (click)="closeMenu()">Profile</a>
           </li>
+               <li>
+            <a routerLink="/patient/favorite" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">favourites</a>
+          </li>
+                 <li>
+            <a routerLink="/patient/notifications" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Notifications</a>
+          </li>
         </ng-container>
 
         <ng-container *ngIf="role === 'admin'">
