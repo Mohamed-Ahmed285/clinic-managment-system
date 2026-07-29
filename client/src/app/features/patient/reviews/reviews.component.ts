@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { ReviewService } from 'src/app/core/services/review.service';
 import { AppointmentService } from 'src/app/core/services/appointments.service';
-
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-reviews',
   templateUrl: './reviews.component.html',
@@ -32,7 +32,8 @@ export class ReviewsComponent implements OnInit {
 
   constructor(
     private reviewService: ReviewService,
-    private appointmentService: AppointmentService
+    private appointmentService: AppointmentService,
+      private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {

@@ -1,7 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ProfileService } from '../../../core/services/profile.service';
-
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -19,7 +19,10 @@ export class ProfileComponent implements OnInit {
   isErrorPopupOpen = false;
   errorMessage: string | null = null;
 
-  constructor(private profileService: ProfileService) {}
+  constructor(
+    private profileService: ProfileService,
+    private toastr: ToastrService,
+  ) {}
 
   ngOnInit(): void {
     this.profileService.getProfile().subscribe({
@@ -177,7 +180,7 @@ export class ProfileComponent implements OnInit {
 
             localStorage.setItem('user', JSON.stringify(patientRes.user));
 
-            alert('Profile updated successfully');
+             this.toastr.success('Profile Updated successfully', 'Success');
           },
           error: (err) => {
             console.log(err);

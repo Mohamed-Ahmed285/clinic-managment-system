@@ -133,7 +133,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         note.isRead = true;
       },
       error: () => {
-        // Leave the row unread; nothing was changed locally.
+    
       }
     });
   }
@@ -146,7 +146,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         );
       },
       error: () => {
-        // Leave the row in place; nothing was changed locally.
+
       }
     });
   }

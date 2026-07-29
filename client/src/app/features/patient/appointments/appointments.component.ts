@@ -149,8 +149,14 @@ export class AppointmentsComponent implements OnInit {
       next: () => {
         if (wasFavorite) {
           this.favoriteIds.delete(doctorId);
+                     this.toastr.success(
+                       'You removed this doctor from your favourite',
+                       'Success',
+                     );
+
         } else {
           this.favoriteIds.add(doctorId);
+           this.toastr.success('You added this dovtor to your favourite', 'Success');
         }
 
         this.pendingFavoriteIds.delete(doctorId);
