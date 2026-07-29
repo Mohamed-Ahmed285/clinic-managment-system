@@ -11,6 +11,9 @@ export class AppointmentsComponent implements OnInit {
   appointments: any[] = [];
   loading = true;
   activeFilter = '';
+  searchTerm = '';
+
+  statuses = ['pending', 'confirmed', 'completed', 'cancelled', 'rescheduled'];
 
   constructor(private appointmentService: AppointmentService) {}
 
@@ -22,7 +25,8 @@ export class AppointmentsComponent implements OnInit {
     this.loading = true;
     this.appointmentService.getAll().subscribe({
       next: (response) => {
-        this.allAppointments = response.data;
+        console.log('Appointments response:', response);
+        this.allAppointments = response;
         this.applyFilter();
         this.loading = false;
       },
@@ -32,10 +36,37 @@ export class AppointmentsComponent implements OnInit {
     });
   }
 
-  applyFilter(): void {
-    this.appointments = this.activeFilter
-      ? this.allAppointments.filter(a => a.status === this.activeFilter)
-      : this.allAppointments;
+  // count of appointments per status, for the stat cards
+  countByStatus(status: string): number {
+    return this.allAppointments.filter(a => a.status === status).length;
+  }
+
+ applyFilter(): void {
+  let result = this.activeFilter
+    ? this.allAppointments.filter(a => a.status === this.activeFilter)
+    : this.allAppointments;
+
+  if (this.searchTerm.trim()) {
+    const term = this.searchTerm.trim().toLowerCase();
+
+    result = result.filter(a => {
+      const patient = a.patientId?._id?.name?.toLowerCase() ?? '';
+      const doctor = a.doctorId?._id?.name?.toLowerCase() ?? '';
+      const clinic = a.clinicId?.name?.toLowerCase() ?? '';
+
+      return (
+        patient.includes(term) ||
+        doctor.includes(term) ||
+        clinic.includes(term)
+      );
+    });
+  }
+
+  this.appointments = result;
+}
+
+  onSearchChange(): void {
+    this.applyFilter();
   }
 
   filterByStatus(status: string): void {
@@ -57,5 +88,3 @@ export class AppointmentsComponent implements OnInit {
     });
   }
 }
-
-

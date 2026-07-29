@@ -1,193 +1,125 @@
-<!-- <div class="page">
-  <div class="page-header">
-    <h2>Specialties</h2>
-    <button (click)="openAddForm()">+ Add Specialty</button>
-  </div>
-
-  <p *ngIf="loading">Loading...</p>
-  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
-
-  <div *ngIf="showForm" class="form-panel">
-    <h3>{{ editMode ? 'Edit' : 'Add' }} Specialty</h3>
-    <form (ngSubmit)="saveSpecialty()">
-      <label>
-        Name
-        <input type="text" [(ngModel)]="currentSpecialty.name" name="name" required />
-      </label>
-      <label>
-        Description
-        <textarea [(ngModel)]="currentSpecialty.description" name="description"></textarea>
-      </label>
-      <button type="submit">{{ editMode ? 'Update' : 'Create' }}</button>
-      <button type="button" (click)="cancelForm()">Cancel</button>
-    </form>
-  </div>
-
-  <table *ngIf="!loading && specialties.length > 0">
-    <thead>
-      <tr><th>Name</th><th>Description</th><th>Actions</th></tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let specialty of specialties">
-        <td>{{ specialty.name }}</td>
-        <td>{{ specialty.description }}</td>
-        <td>
-          <button (click)="openEditForm(specialty)">Edit</button>
-          <button (click)="deleteSpecialty(specialty._id!)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div> -->
 <div class="min-h-screen bg-secondary p-8">
 
   <!-- Header -->
-  <div class="mb-8 flex items-center justify-between border-b border-primary/20 pb-5">
-    <h2 class="font-['Fraunces'] text-4xl font-semibold text-primary">
-      Specialties
-    </h2>
-
+  <div class="mb-8 flex items-end justify-between border-b border-gray/20 pb-5">
+    <div>
+      <div class="text-xs uppercase tracking-[0.2em] text-gray">Administration</div>
+      <h1 class="font-['Fraunces'] text-4xl font-semibold text-primary">Specialties</h1>
+    </div>
     <button
       (click)="openAddForm()"
-      class="rounded-full bg-primary px-6 py-3 font-['Inter'] text-base font-medium text-white transition hover:opacity-90"
+      class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
     >
       + Add Specialty
     </button>
   </div>
 
   <!-- Loading -->
-  <p *ngIf="loading" class="mb-4 font-['Inter'] text-base text-gray">
-    Loading...
-  </p>
+  <p *ngIf="loading" class="mb-4 text-sm text-gray">Loading specialties...</p>
 
   <!-- Error -->
-  <p *ngIf="errorMessage" class="mb-4 font-['Inter'] text-base text-red-600">
+  <p *ngIf="errorMessage" class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
     {{ errorMessage }}
   </p>
 
-  <!-- Add / Edit Form -->
-  <div
-    *ngIf="showForm"
-    class="mb-8 rounded-2xl border border-gray/30 bg-white p-6 shadow-sm"
-  >
-    <h3 class="mb-5 font-['Fraunces'] text-2xl text-primary">
-      {{ editMode ? 'Edit' : 'Add' }} Specialty
-    </h3>
+  <!-- Table card -->
+  <div *ngIf="!loading && specialties.length > 0" class="rounded-xl border border-gray/20 bg-white shadow">
+    <div class="px-6 pt-6">
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-gray">
+        {{ specialties.length }} specialt{{ specialties.length === 1 ? 'y' : 'ies' }}
+      </h2>
+    </div>
 
-    <form (ngSubmit)="saveSpecialty()" class="space-y-5">
-
-      <label class="block font-['Inter'] text-base text-black">
-        Name
-        <input
-          type="text"
-          [(ngModel)]="currentSpecialty.name"
-          name="name"
-          required
-          class="mt-2 w-full rounded-xl border border-gray/40 px-4 py-3 text-base outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-        />
-      </label>
-
-      <label class="block font-['Inter'] text-base text-black">
-        Description
-        <textarea
-          [(ngModel)]="currentSpecialty.description"
-          name="description"
-          rows="4"
-          class="mt-2 w-full rounded-xl border border-gray/40 px-4 py-3 text-base outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-        ></textarea>
-      </label>
-
-      <div class="flex gap-4">
-
-        <button
-          type="submit"
-          class="rounded-full bg-primary px-6 py-3 font-['Inter'] text-white transition hover:opacity-90"
-        >
-          {{ editMode ? 'Update' : 'Create' }}
-        </button>
-
-        <button
-          type="button"
-          (click)="cancelForm()"
-          class="rounded-full border border-gray px-6 py-3 font-['Inter'] text-black transition hover:bg-secondary"
-        >
-          Cancel
-        </button>
-
-      </div>
-
-    </form>
+    <div class="overflow-x-auto p-6">
+      <table class="w-full text-sm">
+        <thead class="text-left text-xs uppercase tracking-wider text-gray">
+          <tr>
+            <th class="py-2 pr-4">Name</th>
+            <th class="py-2 pr-4">Description</th>
+            <th class="py-2 pr-4">Doctors</th>
+            <th class="py-2 pr-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray/10">
+          <tr *ngFor="let specialty of specialties">
+            <td class="py-3 pr-4 font-medium">
+              <span class="mr-2 text-lg">{{ specialty.icon }}</span>{{ specialty.name }}
+            </td>
+            <td class="py-3 pr-4 text-gray">{{ specialty.description }}</td>
+            <td class="py-3 pr-4 text-gray">{{ getDoctorCount(specialty._id) }}</td>
+            <td class="py-3 pr-4 text-right">
+              <button (click)="openEditForm(specialty)" class="rounded-md border border-gray/30 px-2.5 py-1 text-xs hover:bg-secondary">Edit</button>
+              <button (click)="deleteSpecialty(specialty._id!)" class="ml-2 rounded-md border border-red-300 px-2.5 py-1 text-xs text-red-600 hover:bg-red-50">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- Table -->
-  <div
-    *ngIf="!loading && specialties.length > 0"
-    class="overflow-x-auto rounded-2xl border border-gray/30 bg-white p-6 shadow-sm"
-  >
-    <table class="w-full">
-
-      <thead>
-        <tr class="border-b border-primary/20 font-['Inter'] text-sm uppercase tracking-wider text-gray">
-          <th class="pb-4 text-left">Name</th>
-          <th class="pb-4 text-left">Description</th>
-          <th class="pb-4 text-left w-52">Actions</th>
-        </tr>
-      </thead>
-
-      <tbody>
-
-        <tr
-          *ngFor="let specialty of specialties"
-          class="border-b border-gray/20 hover:bg-secondary transition"
-        >
-
-          <td class="py-5 font-['Fraunces'] text-2xl text-black">
-            {{ specialty.name }}
-          </td>
-
-          <td class="py-5 font-['Inter'] text-base text-gray">
-            {{ specialty.description }}
-          </td>
-
-          <td class="py-5">
-            <div class="flex gap-3">
-
-              <button
-                (click)="openEditForm(specialty)"
-                class="rounded-full border border-primary px-5 py-2 font-['Inter'] text-primary transition hover:bg-secondary"
-              >
-                Edit
-              </button>
-
-              <button
-                (click)="deleteSpecialty(specialty._id!)"
-                class="rounded-full border border-red-300 px-5 py-2 font-['Inter'] text-red-600 transition hover:bg-red-50"
-              >
-                Delete
-              </button>
-
-            </div>
-          </td>
-
-        </tr>
-
-      </tbody>
-
-    </table>
+  <!-- Empty state -->
+  <div *ngIf="!loading && specialties.length === 0" class="rounded-xl border-2 border-dashed border-primary/30 bg-white p-12 text-center">
+    <h3 class="mb-2 font-['Fraunces'] text-2xl text-primary">No Specialties</h3>
+    <p class="text-sm text-gray">Add your first specialty to get started.</p>
   </div>
 
-  <!-- Empty State -->
-  <div
-    *ngIf="!loading && specialties.length === 0"
-    class="rounded-2xl border-2 border-dashed border-primary/30 bg-white p-12 text-center"
-  >
-    <h3 class="mb-2 font-['Fraunces'] text-2xl text-primary">
-      No Specialties
-    </h3>
 
-    <p class="font-['Inter'] text-base text-gray">
-      Add your first specialty to get started.
-    </p>
+  <div *ngIf="showForm" class="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4">
+    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+      <h3 class="font-['Fraunces'] text-2xl text-primary">
+        {{ editMode ? 'Edit Specialty' : 'Add Specialty' }}
+      </h3>
+
+      <form [formGroup]="specialtyForm" (ngSubmit)="saveSpecialty()" class="mt-5 space-y-4">
+
+        <label class="block">
+          <span class="text-xs font-medium text-gray">Name</span>
+          <input
+            type="text"
+            formControlName="name"
+            class="mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
+            [class.border-red-400]="name?.invalid && name?.touched"
+            [class.border-gray-300]="!(name?.invalid && name?.touched)"
+          />
+          <span *ngIf="name?.invalid && name?.touched" class="mt-1 block text-xs text-red-600">
+            <span *ngIf="name?.errors?.['required']">Name is required.</span>
+            <span *ngIf="name?.errors?.['minlength']">Name must be at least 3 characters.</span>
+            <span *ngIf="name?.errors?.['maxlength']">Name must be under 50 characters.</span>
+          </span>
+        </label>
+
+        <label class="block">
+          <span class="text-xs font-medium text-gray">Description</span>
+          <textarea
+            formControlName="description"
+            rows="4"
+            class="mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
+            [class.border-red-400]="description?.invalid && description?.touched"
+            [class.border-gray-300]="!(description?.invalid && description?.touched)"
+          ></textarea>
+          <span *ngIf="description?.invalid && description?.touched" class="mt-1 block text-xs text-red-600">
+            Description must be under 300 characters.
+          </span>
+        </label>
+
+        <label class="block">
+          <span class="text-xs font-medium text-gray">Icon</span>
+          <input
+            type="text"
+            formControlName="icon"
+            placeholder="e.g. 🫀"
+            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
+          />
+        </label>
+
+        <div class="mt-6 flex justify-end gap-2">
+          <button type="button" (click)="cancelForm()" class="rounded-md border border-gray/30 px-4 py-2 text-sm">Cancel</button>
+          <button type="submit" class="rounded-md bg-primary px-4 py-2 text-sm text-white hover:opacity-90">
+            {{ editMode ? 'Update' : 'Create' }}
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
 </div>

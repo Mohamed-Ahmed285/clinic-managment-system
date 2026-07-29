@@ -15,7 +15,7 @@
       </div>
 
       <!-- Desktop navigation -->
-      <ul class="hidden items-center gap-1 md:flex">
+      <ul class="hidden items-center gap-1 lg:flex">
         <ng-container *ngIf="role === 'patient'">
           <li>
             <a routerLink="/patient/appointments" [routerLinkActive]="navLinkActiveClass"
@@ -80,7 +80,7 @@
       </ul>
 
       <!-- Desktop actions -->
-      <div class="hidden items-center gap-4 md:flex">
+      <div class="hidden items-center gap-4 lg:flex">
         <ng-container *ngIf="!isLoggedIn">
           <button
             class="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
@@ -105,7 +105,7 @@
 
       <!-- Mobile menu toggle -->
       <button type="button"
-        class="inline-flex items-center justify-center rounded-lg p-2 text-gray transition-colors hover:text-primary md:hidden"
+        class="inline-flex items-center justify-center rounded-lg p-2 text-gray transition-colors hover:text-primary lg:hidden"
         (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen" aria-label="Toggle navigation menu">
         <i class="fa-solid text-2xl transition-all duration-300" [class.fa-bars]="!isMenuOpen"
           [class.fa-xmark]="isMenuOpen"></i>
@@ -114,7 +114,7 @@
   </div>
 
   <!-- Mobile menu -->
-  <div class="overflow-hidden border-t border-line transition-all duration-300 ease-in-out md:hidden"
+  <div class="overflow-hidden border-t border-line transition-all duration-300 ease-in-out lg:hidden"
     [style.max-height]="isMenuOpen ? '420px' : '0px'">
     <div class="container mx-auto space-y-4 px-6 py-4">
       <ul class="space-y-1">
@@ -124,8 +124,8 @@
               (click)="closeMenu()">Appointments</a>
           </li>
           <li>
-            <a routerLink="/patient/prescriptions" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Prescriptions</a>
+            <a routerLink="/patient/medications" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Medications</a>
           </li>
           <li>
             <a routerLink="/patient/reviews" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
@@ -135,6 +135,14 @@
             <a routerLink="/patient/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
               (click)="closeMenu()">Profile</a>
           </li>
+                 <li>
+            <a routerLink="/patient/favorite" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">favourites</a>
+          </li>
+                 <li>
+            <a routerLink="/patient/notifications" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">Notifications</a>
+          </li>
         </ng-container>
 
         <ng-container *ngIf="role === 'doctor'">
@@ -142,14 +150,7 @@
             <a routerLink="/doctor/dashboard" [routerLinkActive]="navLinkActiveClass"
               [routerLinkActiveOptions]="{ exact: true }" class="nav-link block" (click)="closeMenu()">Dashboard</a>
           </li>
-          <li>
-            <a routerLink="/doctor/appointments" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Appointments</a>
-          </li>
-          <li>
-            <a routerLink="/doctor/prescriptions" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Prescriptions</a>
-          </li>
+
           <li>
             <a routerLink="/doctor/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
               (click)="closeMenu()">Profile</a>
