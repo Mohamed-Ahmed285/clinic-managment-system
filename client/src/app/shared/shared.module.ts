@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { RouterModule } from '@angular/router';
-import { LoaderComponent } from './components/loader/loader.component';
+import { LoaderComponent } from './components/loader/Loader.component';
 import { Time12Pipe } from './pipes/time12.pipe';
 
 @NgModule({
