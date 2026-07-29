@@ -1,6 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ProfileService } from '../../../core/services/profile.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-profile',
@@ -19,7 +20,9 @@ export class ProfileComponent implements OnInit {
   isErrorPopupOpen = false;
   errorMessage: string | null = null;
 
-  constructor(private profileService: ProfileService) {}
+  constructor(private profileService: ProfileService,
+             private toastr: ToastrService
+             ) {}
 
   ngOnInit(): void {
     this.profileService.getProfile().subscribe({
@@ -168,26 +171,37 @@ export class ProfileComponent implements OnInit {
     };
 
     this.profileService.updateUser(formData).subscribe({
-      next: (userRes: any) => {
-        this.profileService.updateProfile(body).subscribe({
-          next: (patientRes: any) => {
-            console.log('Updated Successfully', patientRes);
+  next: (userRes: any) => {
+    this.profileService.updateProfile(body).subscribe({
+      next: (patientRes: any) => {
+        console.log('Updated Successfully', patientRes);
 
-            this.profileData = patientRes;
+        this.profileData = patientRes;
 
-            localStorage.setItem('user', JSON.stringify(patientRes.user));
+        localStorage.setItem('user', JSON.stringify(patientRes.user));
 
-            alert('Profile updated successfully');
-          },
-          error: (err) => {
-            console.log(err);
-          },
-        });
+        this.toastr.success(
+          'Profile updated successfully',
+          'Success'
+        );
       },
       error: (err) => {
         console.log(err);
+        this.toastr.error(
+          err.error || 'Failed to update profile',
+          'Error'
+        );
       },
     });
+  },
+  error: (err) => {
+    console.log(err);
+    this.toastr.error(
+      err.error || 'Failed to update user',
+      'Error'
+    );
+  },
+});
   }
 
   medicalRecords: any[] = [];
