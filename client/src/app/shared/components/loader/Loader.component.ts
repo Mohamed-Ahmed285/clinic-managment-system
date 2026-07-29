@@ -2,8 +2,8 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-loader',
-  templateUrl: './loader.component.html',
-  styleUrls: ['./loader.component.css'],
+  templateUrl: './Loader.component.html',
+  styleUrls: ['./Loader.component.css'],
 })
 export class LoaderComponent {
   @Input() message: string = 'Loading…';

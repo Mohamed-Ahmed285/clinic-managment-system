@@ -42,9 +42,13 @@ export class UsersComponent implements OnInit {
     this.specialtyService.getAll().subscribe({
       next: (res) => this.specialties = res.data
     });
-    this.clinicService.getAll().subscribe({
-      next: (res) => this.clinics = res.data
-    });
+this.clinicService.getAll().subscribe({
+  next: (res) => {
+    console.log('Clinics response:', res);
+    this.clinics = res;
+    console.log('Clinics array:', this.clinics);
+  }
+});
   }
 
   loadUsers(): void {
