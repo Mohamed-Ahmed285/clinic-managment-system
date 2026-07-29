@@ -492,72 +492,71 @@ const updateAppointment = async (req, res) => {
 const cancelAppointment = async (req, res) => {
   try {
     const appointment = await appointmentModel.findById(req.params.id);
+
     if (!appointment) {
-      return res.status(404).send("appointment not found");
+      return res.status(404).send("Appointment not found");
     }
 
-        if (req.user.role !== "admin") {
-            const canCancel =
-                appointment.patientId.toString() === req.user.id.toString() ||
-                appointment.doctorId.toString() === req.user.id.toString();
+    if (req.user.role !== "admin") {
+      const canCancel =
+        appointment.patientId.toString() === req.user.id.toString() ||
+        appointment.doctorId.toString() === req.user.id.toString();
 
       if (!canCancel) {
-        return res.status(403).send("access denied");
+        return res.status(403).send("Access denied");
       }
     }
 
-    const updated = await appointmentModel
-      .findByIdAndUpdate(
-        req.params.id,
-        {
-          status: "cancelled",
-          cancelledBy: req.body.cancelledBy || req.user.role,
-          cancellationReason: req.body.cancellationReason
-        },
-        { new: true, runValidators: true }
-      )
-      .populate(populateAppointment);
+    // Populate before deleting so we can use the data in notifications
+    await appointment.populate(populateAppointment);
+
+    const deletedAppointment = appointment;
+
+    // Delete appointment permanently
+    await appointment.deleteOne();
 
     if (req.user.role === "patient") {
       await notificationService.createNotification({
-        recipientId: updated.doctorId._id,
+        recipientId: deletedAppointment.doctorId._id,
         recipientType: "doctor",
         title: "Appointment Cancelled",
         message: "A patient cancelled the appointment.",
         type: "appointmentCancelled",
-        relatedAppointmentId: updated._id
+        relatedAppointmentId: deletedAppointment._id,
       });
     } else if (req.user.role === "doctor") {
       await notificationService.createNotification({
-        recipientId: updated.patientId._id,
+        recipientId: deletedAppointment.patientId._id,
         recipientType: "patient",
         title: "Appointment Cancelled",
         message: "Your appointment has been cancelled by the doctor.",
         type: "appointmentCancelled",
-        relatedAppointmentId: updated._id
+        relatedAppointmentId: deletedAppointment._id,
       });
     } else if (req.user.role === "admin") {
       await Promise.all([
         notificationService.createNotification({
-          recipientId: updated.doctorId._id,
+          recipientId: deletedAppointment.doctorId._id,
           recipientType: "doctor",
           title: "Appointment Cancelled",
           message: "An appointment has been cancelled by the administration.",
           type: "appointmentCancelled",
-          relatedAppointmentId: updated._id
+          relatedAppointmentId: deletedAppointment._id,
         }),
         notificationService.createNotification({
-          recipientId: updated.patientId._id,
+          recipientId: deletedAppointment.patientId._id,
           recipientType: "patient",
           title: "Appointment Cancelled",
           message: "Your appointment has been cancelled by the administration.",
           type: "appointmentCancelled",
-          relatedAppointmentId: updated._id
-        })
+          relatedAppointmentId: deletedAppointment._id,
+        }),
       ]);
     }
 
-    return res.status(200).json(updated);
+    return res.status(200).json({
+      message: "Appointment cancelled successfully.",
+    });
   } catch (err) {
     return res.status(500).send(err.message);
   }
