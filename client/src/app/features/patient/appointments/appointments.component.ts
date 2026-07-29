@@ -71,6 +71,7 @@ export class AppointmentsComponent implements OnInit {
     private toastr: ToastrService,
     private paymentService: PaymentService,
     private route: ActivatedRoute,
+    private router: Router,
     private favoriteService: FavoriteService,
   ) {}
 
