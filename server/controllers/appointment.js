@@ -44,16 +44,18 @@ const parseDateInput = (value) => {
     }
 
     if (value instanceof Date && !Number.isNaN(value.getTime())) {
-        return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+        return new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate()));
     }
 
     if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
         const [year, month, day] = value.split("-").map(Number);
-        return new Date(year, month - 1, day);
+        return new Date(Date.UTC(year, month - 1, day));
     }
 
     const parsed = new Date(value);
-    return Number.isNaN(parsed.getTime()) ? null : new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+    return Number.isNaN(parsed.getTime())
+        ? null
+        : new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate()));
 };
 
 const addMinutesToTime = (time, minutes) => {
@@ -78,7 +80,7 @@ const timeToMinutes = (time) => {
     return hours * 60 + mins;
 };
 
-const normalizeDateOnly = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+const normalizeDateOnly = (date) => new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 
 const getDateBounds = (date) => {
     const start = normalizeDateOnly(date);
