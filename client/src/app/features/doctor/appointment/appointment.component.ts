@@ -4,6 +4,7 @@ import { SharedModule } from '../../../shared/shared.module';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Appointment, Medication } from '../models/appointment.model';
+import { ToastrService } from 'ngx-toastr';
 import {
   AppointmentService,
   AppointmentDetailResponse,
@@ -30,7 +31,8 @@ export class AppointmentComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private appointmentService: AppointmentService
+    private appointmentService: AppointmentService,
+    private toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {
@@ -63,9 +65,13 @@ export class AppointmentComponent implements OnInit {
             : of([] as MedicalRecordResponse[]),
           prescription: this.appointmentService
             .getPrescriptionByAppointment(this.appointmentId)
-            .pipe(catchError(() => of(null as PrescriptionResponse | null)))
+            .pipe(catchError(() => of(null as PrescriptionResponse | null))),
         }).subscribe(({ history, prescription }) => {
-          this.appointment = this.mapToAppointment(appointment, history, prescription);
+          this.appointment = this.mapToAppointment(
+            appointment,
+            history,
+            prescription,
+          );
           this.existingPrescriptionId = prescription ? prescription._id : null;
           this.loading = false;
         });
@@ -74,14 +80,14 @@ export class AppointmentComponent implements OnInit {
         console.error(err);
         this.errorMessage = 'Could not load this appointment.';
         this.loading = false;
-      }
+      },
     });
   }
 
   private mapToAppointment(
     appointment: AppointmentDetailResponse,
     history: MedicalRecordResponse[],
-    prescription: PrescriptionResponse | null
+    prescription: PrescriptionResponse | null,
   ): Appointment {
     const patientUser = appointment.patientId?._id;
 
@@ -93,29 +99,33 @@ export class AppointmentComponent implements OnInit {
         gender: appointment.patientId?.gender ?? '',
         phone: patientUser?.phone ?? '',
         visitType: appointment.clinicId?.name ?? 'Clinic Visit',
-        visitReason: ''
+        visitReason: '',
       },
       history: history
         // most recent history is already sorted server-side, but keep this dependable either way
         .slice()
-        .sort((a, b) => new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime())
+        .sort(
+          (a, b) =>
+            new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime(),
+        )
         .map((record) => ({
           date: record.visitDate,
           type: 'Condition',
-          description: record.diagnosis
+          description: record.diagnosis,
         })),
-      medications: prescription?.medications?.map((m) => ({
-        name: m.name,
-        dosage: m.dosage,
-        frequency: m.frequency,
-        duration: m.duration ?? '',
-        times: m.times ?? [],
-        notes: m.notes ?? ''
-      })) ?? [],
+      medications:
+        prescription?.medications?.map((m) => ({
+          name: m.name,
+          dosage: m.dosage,
+          frequency: m.frequency,
+          duration: m.duration ?? '',
+          times: m.times ?? [],
+          notes: m.notes ?? '',
+        })) ?? [],
       generalNotes: prescription?.generalNotes ?? '',
       issuedAt: prescription
         ? new Date(prescription.issuedDate).toLocaleString()
-        : ''
+        : '',
     };
   }
 
@@ -141,12 +151,12 @@ export class AppointmentComponent implements OnInit {
       ? this.appointmentService.updatePrescription(
           this.existingPrescriptionId,
           payload.medications,
-          payload.generalNotes
+          payload.generalNotes,
         )
       : this.appointmentService.createPrescription(
           this.appointmentId,
           payload.medications,
-          payload.generalNotes
+          payload.generalNotes,
         );
 
     save$.subscribe({
@@ -155,7 +165,7 @@ export class AppointmentComponent implements OnInit {
         this.appointment.medications = payload.medications;
         this.appointment.generalNotes = payload.generalNotes;
         this.appointment.issuedAt = new Date(res.issuedDate).toLocaleString();
-
+ this.toastr.success('Prescription saved successfully!', 'Success');
         // The medical record is created from the diagnosis/symptoms the doctor
         // just entered - no attachments support here by design.
         this.appointmentService
@@ -163,22 +173,23 @@ export class AppointmentComponent implements OnInit {
             this.appointmentId,
             payload.diagnosis,
             payload.symptoms,
-            payload.generalNotes
+            payload.generalNotes,
           )
           .subscribe({
             next: () => this.completeVisit(),
             error: (err) => {
               console.error(err);
               this.saving = false;
-              this.errorMessage = 'Prescription saved, but the medical record could not be created.';
-            }
+              this.errorMessage =
+                'Prescription saved, but the medical record could not be created.';
+            },
           });
       },
       error: (err) => {
         console.error(err);
         this.saving = false;
         this.errorMessage = 'Could not save the prescription.';
-      }
+      },
     });
   }
 
@@ -198,8 +209,9 @@ export class AppointmentComponent implements OnInit {
         this.saving = false;
         // The prescription and medical record saved fine here - only completing
         // the appointment failed, so say so rather than a generic save error.
-        this.errorMessage = 'Prescription saved, but the appointment could not be marked as completed.';
-      }
+        this.errorMessage =
+          'Prescription saved, but the appointment could not be marked as completed.';
+      },
     });
   }
 }

@@ -83,8 +83,8 @@ this.toastr.success('You removed this doctor from your favourite', 'Success');
         console.log(err);
 
         this.removingIds.delete(doctorId);
-
-        alert(err.error);
+ this.toastr.success('The doctor wasn t removed from favourites', 'Error');
+        // alert(err.error);
       },
     });
   }
