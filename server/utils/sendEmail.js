@@ -3,13 +3,15 @@ const nodemailer = require("nodemailer");
 // دالة عامة لإرسال أي إيميل، بنستخدمها في forgetPassword ومستقبلا في أي حاجة تانية
 // (زي تأكيد الحجز، أو ترحيب بعد التسجيل)
 const sendEmail = async(options)=>{
+    const emailPassword = process.env.EMAIL_PASS?.replace(/\s/g, "");
     var transporter = nodemailer.createTransport({
         host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
+        port: Number(process.env.EMAIL_PORT),
+        requireTLS: Number(process.env.EMAIL_PORT) === 587,
         secure: Number(process.env.EMAIL_PORT) === 465, // true لو بورت 465 (SSL)، غير كده false (TLS)
         auth:{
             user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
+            pass: emailPassword
         }
     });
 

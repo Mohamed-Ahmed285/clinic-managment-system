@@ -16,6 +16,7 @@ const appointmentSchema = new mongoose.Schema(
         },
         paymentMethod:{type:String, enum:["online","cash"], required:true},
         paymentStatus:{type:String, enum:["pending","paid","refunded"], default:"pending"},
+        paymentConfirmationEmailSentAt:{type:Date},
         fee:{type:Number, required:true, min:0},
 
         rescheduledFrom:{type:mongoose.Schema.Types.ObjectId, ref:"appointment"},
