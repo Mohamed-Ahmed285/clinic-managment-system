@@ -6,8 +6,8 @@
 <section class="bg-secondary min-h-screen py-10" font-display>
   <div class="container mx-auto px-6 lg:px-20">
 <div class="flex justify-between flex-wrap items-center">
-      <h1 class="text-primaty italic text-5xl my-5 font-semibold font-sans">Hello {{ profileData?.user?.name }}</h1>
-<button class=" bg-primary text-white font-semibold h-[50px] rounded-full px-3 my-2 font-display
+      <h1 class="text-primaty italic text-4xl my-5 font-semibold font-display">Hello {{ profileData?.user?.name }}</h1>
+<button class=" bg-primary text-white font-semibold h-[50px] rounded-full px-3 my-2 font-display text-sm
 " routerLink="../../patient/profile">Go to my profile</button>
 </div>
 
@@ -17,7 +17,7 @@
           Find Care
         </p>
 
-        <h1 class="text-5xl font-sans  mt-2">
+        <h1 class="text-5xl font-diaplay italic mt-2">
           Book an appointment
         </h1>
 
@@ -98,6 +98,7 @@
     Doctors Available
   </h2>
 <p>Doctors Count: {{ doctors.length }}</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
   <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 my-5"  *ngFor="let doctor of doctors">
 
     <!-- Doctor Info -->
@@ -156,7 +157,8 @@
       <!-- Favorite -->
       <button
         type="button"
-        class="flex items-center gap-2 border border-gray rounded-full px-4 py-2 hover:bg-secondary transition disabled:opacity-50 my-2"
+        class="flex items-center gap-2 border border-gray rounded-full px-4 py-2 hover:bg-secondary transition disabled:opacity-50 my-2
+        font-sans"
         [disabled]="isFavoritePending(doctor)"
         [title]="isFavorite(doctor) ? 'Remove from favorites' : 'Add to favorites'"
         (click)="toggleFavorite(doctor)">
@@ -177,15 +179,15 @@
     </div>
 
 
-<div *ngFor="let clinic of doctor.clinics,let i=index" class="flex flex-col lg:flex-row lg:items-center">
+<div *ngFor="let clinic of doctor.clinics,let i=index" class="w-full flex flex-col lg:flex-row lg:items-center lg:justify-between">
 
-  <p class="me-5 w-50 uppercase tracking-wide text-gray-600 font-semibold my-3">
+  <p class="me-5 w-50   text-gray-100  my-4 font-sans font-md ">
   Clinic   {{ clinic.clinicId.name }}
   </p>
 
   <div class="flex flex-wrap gap-2">
     <button
-      class="px-6 py-2 rounded-xl border bg-primary text-white"
+      class="px-6 py-2 rounded-xl border bg-primary text-white text-diaplay"
       (click)="openModal(doctor,clinic)">
       Book
     </button>
@@ -193,6 +195,7 @@
 
 </div>
 
+  </div>
   </div>
 </section>
 <div class="flex justify-center items-center gap-2 mt-8">
@@ -230,7 +233,7 @@
       >
         <div class="flex flex-wrap justify-between items-center gap-5">
     <div>
-            <h1 class="text-4xl font-semibold mt-2 italic font-serif">
+            <h1 class="text-4xl mt-2 italic font-serif">
             Your Next Appointements
           </h1>
 
@@ -241,11 +244,11 @@
     </div>
 
         </div>
-        <div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <div class="flex justify-between items-center py-8 border border-primary flex-wrap gap-3 rounded-3xl p-5 my-5"
+            <div class="flex justify-between items-center py-8 border border-primary flex-wrap gap-3 rounded-3xl p-5 my-5 hover:bg-secondary"
                *ngFor="let appointment of upcomingAppointments ">
-              <div class="flex gap-5 flex-wrap lg:w-1/2 ">
+              <div class="flex gap-5 flex-wrap lg:w-1/2 flex-col ">
                 <div
                   class="bg-green-200 rounded-2xl w-40 h-[70px] flex flex-col justify-center items-center p-5"
                 >
@@ -260,7 +263,7 @@
                   </h3>
                   <h4>{{ appointment.date | date:'dd/MM/yyyy' }}</h4>
 
-                  <p class="text-gray mt-1">{{ appointment?.doctorId?.specialtyId?.name }}</p>
+                  <p class="text-gray ">{{ appointment?.doctorId?.specialtyId?.name }}</p>
 
                   <!-- <p class="text-2xl mt-2 text-black">Appointment</p> -->
 
@@ -294,7 +297,7 @@
               </div>
               <div class="flex gap-2 flex-wrap">
 
-  <button class="bg-secondary p-2 rounded-full">
+  <button class="bg-green-200 p-2 rounded-full">
     {{appointment?.status}}
   </button>
 

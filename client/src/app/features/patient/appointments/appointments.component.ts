@@ -17,7 +17,7 @@ export class AppointmentsComponent implements OnInit {
   selectedSpecialty = '';
   selectedState = '';
   page = 1;
-  limit = 5;
+  limit = 6;
   totalPages = 1;
   doctors: any[] = [];
   specialties: any[] = [];

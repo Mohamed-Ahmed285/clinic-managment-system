@@ -133,17 +133,19 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         note.isRead = true;
       },
       error: () => {
-    
+
       }
     });
   }
 
   remove(note: NotificationView): void {
     this.notificationService.deleteNotification(note._id).subscribe({
-      next: () => {
+      next: (res) => {
+        console.log('Success', res);
         this.notifications = this.notifications.filter(
           n => n._id !== note._id
         );
+
       },
       error: () => {
 

@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DoctorService } from 'src/app/core/services/doctor.service';
 import { Clinic } from '../../models/profile.model';
+import { ToastrService } from 'ngx-toastr';
+
 import {
   ClinicService,
   Clinic as ApiClinic
@@ -9,17 +11,17 @@ import {
 @Component({
   selector: 'app-clinics',
   templateUrl: './clinics.component.html',
-  styleUrls: ['./clinics.component.css']
+  styleUrls: ['./clinics.component.css'],
 })
 export class ClinicsComponent implements OnInit {
-
   @Input() clinics!: Clinic[];
 
   availableClinics: ApiClinic[] = [];
 
   constructor(
     private doctorService: DoctorService,
-    private clinicService: ClinicService
+    private clinicService: ClinicService,
+    private toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {
@@ -34,7 +36,7 @@ export class ClinicsComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Failed to load clinics', err);
-      }
+      },
     });
   }
 
@@ -47,12 +49,11 @@ export class ClinicsComponent implements OnInit {
       status: 'Active',
       isActiveAtClinic: true,
       consultationFee: 0,
-      schedule: []
+      schedule: [],
     });
   }
 
   removeClinic(index: number): void {
-
     const clinic = this.clinics[index];
 
     // Clinic hasn't been saved yet
@@ -65,61 +66,63 @@ export class ClinicsComponent implements OnInit {
     this.doctorService.deleteClinic(clinic.id).subscribe({
       next: () => {
         this.clinics.splice(index, 1);
-        alert('Clinic removed successfully');
+                  this.toastr.success('Clinic removed successfully', 'Success');
       },
       error: (err: any) => {
         console.error('Delete clinic error:', err);
         console.error(err.error);
-        alert('Failed to remove clinic');
-      }
+                       this.toastr.error(
+                         'Failed to remove clinic',
+                         'Error',
+                       );
+
+      },
     });
   }
 
   saveClinic(clinic: Clinic): void {
-
     const body = {
       clinicId: clinic.selectedClinicId || clinic.id,
       consultationFee: clinic.consultationFee,
       isActiveAtClinic: clinic.isActiveAtClinic,
-      availability: clinic.schedule.map(entry => ({
+      availability: clinic.schedule.map((entry) => ({
         day: entry.days,
         startTime: entry.start,
-        endTime: entry.end
-      }))
+        endTime: entry.end,
+      })),
     };
 
     // Existing clinic assignment
     if (clinic.id) {
-
       this.doctorService.updateClinic(clinic.id, body).subscribe({
         next: () => {
-          alert('Clinic updated successfully');
+          this.toastr.success('Clinic updated successfully', 'Success');
         },
         error: (err: any) => {
           console.error('Update clinic error:', err);
           console.error(err.error);
-          alert('Failed to update clinic');
-        }
+          this.toastr.error('Failed to update clinic', 'Error');
+        },
       });
-
     }
 
     // New clinic assignment
     else {
-
       this.doctorService.addClinic(body).subscribe({
         next: () => {
-          alert('Clinic added successfully');
+                   this.toastr.success(
+                     'Clinic added successfully',
+                     'Success',
+                   );
+
         },
         error: (err: any) => {
           console.error('Add clinic error:', err);
           console.error(err.error);
-          alert('Failed to add clinic');
-        }
+                this.toastr.error('Failed to add clinic', 'Error');
+
+        },
       });
-
     }
-
   }
-
 }
