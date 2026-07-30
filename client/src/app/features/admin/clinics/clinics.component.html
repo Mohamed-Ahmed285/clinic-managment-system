@@ -37,7 +37,7 @@
       </div>
 
       <p class="mt-2 text-sm text-gray">
-        {{ clinic.address?.street ? clinic.address.street + ', ' : '' }}{{ clinic.address?.city }}
+        {{ clinic.address.street ? clinic.address.street + ', ' : '' }}{{ clinic.address.city }}
         <span *ngIf="clinic.address?.state">, {{ clinic.address.state }}</span>
         <span *ngIf="clinic.address?.country">, {{ clinic.address.country }}</span>
       </p>
