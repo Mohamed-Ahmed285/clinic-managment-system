@@ -171,7 +171,7 @@ export class ProfileComponent implements OnInit {
       notificationsEnabled: this.profileData.profile.notificationsEnabled,
     };
 
-    this.profileService.updateUser(formData).subscribe({
+      this.profileService.updateUser(formData).subscribe({
   next: (userRes: any) => {
     this.profileService.updateProfile(body).subscribe({
       next: (patientRes: any) => {
@@ -181,12 +181,10 @@ export class ProfileComponent implements OnInit {
 
         localStorage.setItem('user', JSON.stringify(patientRes.user));
 
-             this.toastr.success('Profile Updated successfully', 'Success');
-          },
-          error: (err) => {
-            console.log(err);
-          },
-        });
+        this.toastr.success(
+          'Profile updated successfully',
+          'Success'
+        );
       },
       error: (err) => {
         console.log(err);
@@ -196,6 +194,15 @@ export class ProfileComponent implements OnInit {
         );
       },
     });
+  },
+  error: (err) => {
+    console.log(err);
+    this.toastr.error(
+      err.error || 'Failed to update user',
+      'Error'
+    );
+  },
+});
   }
 
   medicalRecords: any[] = [];
