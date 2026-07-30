@@ -26,8 +26,16 @@ export class NotificationsComponent {
   return this.notifications.filter(n => !n.read);
 }
 
+
 get readNotifications(): NotificationItem[] {
-  return this.notifications.filter(n => n.read);
+  return this.notifications
+    .filter(n => n.read)
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() -
+        new Date(a.createdAt).getTime()
+    )
+    .slice(0, 10);
 }
 
 toggleDetails(note: NotificationItem) {

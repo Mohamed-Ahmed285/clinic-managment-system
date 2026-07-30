@@ -140,6 +140,7 @@ formatTime(time: string): string {
         subject: item.title,
         preview: item.message,
         timeAgo: new Date(item.createdAt).toLocaleString(),
+        createdAt: item.createdAt,
         read: item.isRead
       }));
   console.log("Notifications:", this.notifications);
