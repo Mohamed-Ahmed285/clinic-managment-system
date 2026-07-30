@@ -608,6 +608,16 @@ const completeAppointment = async (req, res) => {
             });
         }
 
+        if(req.user.role === "admin"){
+            appointment.status = "completed";
+            await appointment.save();
+
+            return res.status(200).json({
+                message: "Appointment completed successfully.",
+                appointment
+            });
+        }
+
         if (req.user.role === "doctor" && appointment.doctorId.toString() !== req.user.id) {
             return res.status(403).json({
                 message: "You are not allowed to complete this appointment."
