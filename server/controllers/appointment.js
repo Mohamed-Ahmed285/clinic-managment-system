@@ -499,6 +499,10 @@ const cancelAppointment = async (req, res) => {
       return res.status(404).send("Appointment not found");
     }
 
+    if (appointment.status === "cancelled") {
+      return res.status(400).send("Appointment is already cancelled");
+    }
+
     if (req.user.role !== "admin") {
       const canCancel =
         appointment.patientId.toString() === req.user.id.toString() ||
@@ -509,55 +513,55 @@ const cancelAppointment = async (req, res) => {
       }
     }
 
-    // Populate before deleting so we can use the data in notifications
+    // Update status instead of deleting
+    appointment.status = "cancelled";
+    await appointment.save();
+
+    // Populate data for notifications and response
     await appointment.populate(populateAppointment);
-
-    const deletedAppointment = appointment;
-
-    // Delete appointment permanently
-    await appointment.deleteOne();
 
     if (req.user.role === "patient") {
       await notificationService.createNotification({
-        recipientId: deletedAppointment.doctorId._id,
+        recipientId: appointment.doctorId._id,
         recipientType: "doctor",
         title: "Appointment Cancelled",
         message: "A patient cancelled the appointment.",
         type: "appointmentCancelled",
-        relatedAppointmentId: deletedAppointment._id,
+        relatedAppointmentId: appointment._id,
       });
     } else if (req.user.role === "doctor") {
       await notificationService.createNotification({
-        recipientId: deletedAppointment.patientId._id,
+        recipientId: appointment.patientId._id,
         recipientType: "patient",
         title: "Appointment Cancelled",
         message: "Your appointment has been cancelled by the doctor.",
         type: "appointmentCancelled",
-        relatedAppointmentId: deletedAppointment._id,
+        relatedAppointmentId: appointment._id,
       });
     } else if (req.user.role === "admin") {
       await Promise.all([
         notificationService.createNotification({
-          recipientId: deletedAppointment.doctorId._id,
+          recipientId: appointment.doctorId._id,
           recipientType: "doctor",
           title: "Appointment Cancelled",
           message: "An appointment has been cancelled by the administration.",
           type: "appointmentCancelled",
-          relatedAppointmentId: deletedAppointment._id,
+          relatedAppointmentId: appointment._id,
         }),
         notificationService.createNotification({
-          recipientId: deletedAppointment.patientId._id,
+          recipientId: appointment.patientId._id,
           recipientType: "patient",
           title: "Appointment Cancelled",
           message: "Your appointment has been cancelled by the administration.",
           type: "appointmentCancelled",
-          relatedAppointmentId: deletedAppointment._id,
+          relatedAppointmentId: appointment._id,
         }),
       ]);
     }
 
     return res.status(200).json({
       message: "Appointment cancelled successfully.",
+      appointment
     });
   } catch (err) {
     return res.status(500).send(err.message);
