@@ -9,7 +9,27 @@
 
   <div class="dashboard__grid">
     <div class="dashboard__col dashboard__col--left">
-      <app-schedule [appointments]="appointments"></app-schedule>
+<ng-container *ngIf="loadingDashboard; else dashboardContent">
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading appointments...</p>
+  </div>
+</ng-container>
+
+<ng-template #dashboardContent>
+
+  <div *ngIf="appointments.length > 0; else noAppointments">
+    <app-schedule [appointments]="appointments"></app-schedule>
+  </div>
+
+  <ng-template #noAppointments>
+    <div class="empty-state">
+      <h3>No appointments for today</h3>
+      <p>Your schedule is clear. Enjoy the rest of your day!</p>
+    </div>
+  </ng-template>
+
+</ng-template>
       <app-notifications [notifications]="notifications"></app-notifications>
     </div>
 

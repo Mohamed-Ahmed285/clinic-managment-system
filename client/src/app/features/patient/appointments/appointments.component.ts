@@ -3,8 +3,9 @@ import { ProfileService } from 'src/app/core/services/profile.service';
 import { AppointmentService } from 'src/app/core/services/appointments.service';
 import { ToastrService } from 'ngx-toastr';
 import { PaymentService } from 'src/app/core/services/payment.service';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FavoriteService } from 'src/app/core/services/favorite.service';
+
 @Component({
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',
@@ -70,6 +71,7 @@ export class AppointmentsComponent implements OnInit {
     private toastr: ToastrService,
     private paymentService: PaymentService,
     private route: ActivatedRoute,
+    private router: Router,
     private favoriteService: FavoriteService,
   ) {}
 
@@ -82,10 +84,20 @@ export class AppointmentsComponent implements OnInit {
   if (params['payment'] === 'success') {
     this.toastr.success('Payment Successful', 'Success');
     this.loadMyAppointments();
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+      replaceUrl: true,
+    });
   }
 
   if (params['payment'] === 'failed') {
     this.toastr.error('Payment Failed', 'Error');
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+      replaceUrl: true,
+    });
   }
 });
     this.loadFavorites();

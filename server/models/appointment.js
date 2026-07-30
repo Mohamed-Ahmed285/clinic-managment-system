@@ -25,7 +25,17 @@ const appointmentSchema = new mongoose.Schema(
     {timestamps:true}
 );
 
-appointmentSchema.index({doctorId:1, clinicId:1, date:1, startTime:1}, {unique:true});
+appointmentSchema.index(
+  {
+    doctorId: 1,
+    clinicId: 1,
+    date: 1,
+    startTime: 1,
+  },
+  {
+    unique: true,
+  }
+);
 
 var appointmentModel = mongoose.model("appointment", appointmentSchema);
 module.exports = appointmentModel;

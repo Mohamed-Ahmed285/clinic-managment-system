@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProfileService } from '../../../core/services/profile.service';
 import { ToastrService } from 'ngx-toastr';
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -171,14 +172,14 @@ export class ProfileComponent implements OnInit {
     };
 
     this.profileService.updateUser(formData).subscribe({
-      next: (userRes: any) => {
-        this.profileService.updateProfile(body).subscribe({
-          next: (patientRes: any) => {
-            console.log('Updated Successfully', patientRes);
+  next: (userRes: any) => {
+    this.profileService.updateProfile(body).subscribe({
+      next: (patientRes: any) => {
+        console.log('Updated Successfully', patientRes);
 
-            this.profileData = patientRes;
+        this.profileData = patientRes;
 
-            localStorage.setItem('user', JSON.stringify(patientRes.user));
+        localStorage.setItem('user', JSON.stringify(patientRes.user));
 
              this.toastr.success('Profile Updated successfully', 'Success');
           },
@@ -189,8 +190,21 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         console.log(err);
+        this.toastr.error(
+          err.error || 'Failed to update profile',
+          'Error'
+        );
       },
     });
+  },
+  error: (err) => {
+    console.log(err);
+    this.toastr.error(
+      err.error || 'Failed to update user',
+      'Error'
+    );
+  },
+});
   }
 
   medicalRecords: any[] = [];
