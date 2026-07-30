@@ -75,46 +75,26 @@ return res.status(200).json({
 
 }
 
-const webhook = async (req, res) => {
-  let event;
+// Builds and sends the confirmation email. Deliberately NOT awaited by the
+// webhook response — Gmail's SMTP handshake is slow enough that waiting on
+// it before responding is what was causing Stripe to time out the delivery
+// and mark it "Failed" (see Stripe's dashboard error insight for the event).
+const sendAppointmentConfirmationEmail = async (appointment) => {
+  const user = await User.findById(appointment.patientId);
+  const doctor = await Doctor.findById(appointment.doctorId);
+  const doctorUser = doctor ? await User.findById(doctor._id) : null;
 
-  try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      req.headers["stripe-signature"],
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
-    console.log("Event:", event.type);
-  } catch (err) {
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+  if (!user) {
+    console.error(`No user found for appointment ${appointment._id}, skipping confirmation email`);
+    return;
   }
 
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
+  await sendEmail({
+    to: user.email,
 
-    const appointmentId = session.metadata.appointmentId;
+    subject: "Appointment Confirmation",
 
-    const appointment = await Appointment.findById(appointmentId);
-
-    if (appointment) {
-      appointment.paymentStatus = "paid";
-      appointment.status = "confirmed";
-      
-
-      await appointment.save();
-
-const user = await User.findById(appointment.patientId);
-const doctor = await Doctor.findById(appointment.doctorId);
-
-const doctorUser = await User.findById(doctor._id);
-
-if (user) {
-    await sendEmail({
-        to: user.email,
-
-        subject: "Appointment Confirmation",
-
-      html: `
+    html: `
 <div style="font-family: Arial, sans-serif; max-width:600px; margin:auto; border:1px solid #ddd; border-radius:10px; overflow:hidden;">
     
     <div style="background:#0d6efd; color:white; padding:20px; text-align:center;">
@@ -128,7 +108,7 @@ if (user) {
         <p>We are pleased to inform you that your payment has been received successfully.</p>
 
         <p>
-            <strong>Doctor:</strong> Dr. ${doctorUser.name}<br>
+            <strong>Doctor:</strong> Dr. ${doctorUser ? doctorUser.name : "N/A"}<br>
             <strong>Payment Status:</strong>
             <span style="color:green;">Paid ✅</span>
         </p>
@@ -150,8 +130,63 @@ if (user) {
 
 </div>
 `
-    });
-}
+  });
+
+  console.log(`Confirmation email sent to ${user.email} for appointment ${appointment._id}`);
+};
+
+const webhook = async (req, res) => {
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      req.headers["stripe-signature"],
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+    console.log("Event:", event.type);
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+    const appointmentId = session.metadata.appointmentId;
+
+    try {
+      const appointment = await Appointment.findById(appointmentId);
+
+      if (!appointment) {
+        return res.status(200).send("Webhook received");
+      }
+
+      // Idempotency guard: Stripe retries webhook deliveries it considers
+      // failed (e.g. the timeouts you were seeing). Without this check, a
+      // retry of an event we'd actually already processed would re-save the
+      // appointment and send a second confirmation email.
+      if (appointment.paymentStatus === "paid") {
+        return res.status(200).send("Already processed");
+      }
+
+      appointment.paymentStatus = "paid";
+      appointment.status = "confirmed";
+      await appointment.save();
+
+      // Respond to Stripe now that the important state is safely persisted.
+      // Everything below (email) runs after the response, so a slow or
+      // failing SMTP call can never cause Stripe to see this as a timeout.
+      res.status(200).send("Webhook received");
+
+      sendAppointmentConfirmationEmail(appointment).catch((emailErr) => {
+        console.error(
+          `Failed to send confirmation email for appointment ${appointment._id}:`,
+          emailErr.message
+        );
+      });
+      return;
+    } catch (err) {
+      console.error("Webhook processing failed:", err.message);
+      return res.status(500).send("Webhook processing failed");
     }
   }
 
