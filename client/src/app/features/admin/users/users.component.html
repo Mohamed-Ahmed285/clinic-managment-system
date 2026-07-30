@@ -58,7 +58,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray/10">
-          <tr *ngFor="let user of users">
+          <tr *ngFor="let user of pagedUsers">
             <td class="py-3 pr-4 font-medium">{{ user.name }}</td>
             <td class="py-3 pr-4 text-gray">{{ user.email }}</td>
             <td class="py-3 pr-4 text-gray">{{ user.phone || '—' }}</td>
@@ -79,6 +79,44 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- Pagination -->
+      <div *ngIf="totalPages > 1" class="mt-6 flex flex-col items-center justify-between gap-3 border-t border-gray/10 pt-4 sm:flex-row">
+        <span class="text-xs text-gray">
+          Page {{ currentPage }} of {{ totalPages }}
+        </span>
+
+        <div class="flex items-center gap-1">
+          <button
+            (click)="goToPage(currentPage - 1)"
+            [disabled]="currentPage === 1"
+            class="rounded-full border border-gray/30 px-3 py-1.5 text-sm text-primary transition disabled:cursor-not-allowed disabled:opacity-40 hover:enabled:bg-primary hover:enabled:text-white"
+          >
+            ‹
+          </button>
+
+          <button
+            *ngFor="let page of pageNumbers"
+            (click)="goToPage(page)"
+            class="rounded-full border px-3 py-1.5 text-sm transition"
+            [class.bg-primary]="page === currentPage"
+            [class.text-white]="page === currentPage"
+            [class.border-primary]="page === currentPage"
+            [class.text-primary]="page !== currentPage"
+            [class.border-gray]="page !== currentPage"
+          >
+            {{ page }}
+          </button>
+
+          <button
+            (click)="goToPage(currentPage + 1)"
+            [disabled]="currentPage === totalPages"
+            class="rounded-full border border-gray/30 px-3 py-1.5 text-sm text-primary transition disabled:cursor-not-allowed disabled:opacity-40 hover:enabled:bg-primary hover:enabled:text-white"
+          >
+            ›
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 

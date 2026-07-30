@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { UserService, AppUser } from '../services/user.service';
 import { SpecialtyService, Specialty } from '../services/specialty.service';
 import { ClinicService, Clinic } from '../services/clinic.service';
@@ -31,10 +32,15 @@ export class UsersComponent implements OnInit {
 
   daysOfWeek = ['saturday', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 
+  // Pagination
+  currentPage = 1;
+  itemsPerPage = 10;
+
   constructor(
     private userService: UserService,
     private specialtyService: SpecialtyService,
-    private clinicService: ClinicService
+    private clinicService: ClinicService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -42,13 +48,13 @@ export class UsersComponent implements OnInit {
     this.specialtyService.getAll().subscribe({
       next: (res) => this.specialties = res.data
     });
-this.clinicService.getAll().subscribe({
-  next: (res) => {
-    console.log('Clinics response:', res);
-    this.clinics = res;
-    console.log('Clinics array:', this.clinics);
-  }
-});
+    this.clinicService.getAll().subscribe({
+      next: (res) => {
+        console.log('Clinics response:', res);
+        this.clinics = res;
+        console.log('Clinics array:', this.clinics);
+      }
+    });
   }
 
   loadUsers(): void {
@@ -56,10 +62,12 @@ this.clinicService.getAll().subscribe({
     this.userService.getAll(this.roleFilter).subscribe({
       next: (response) => {
         this.users = response.data;
+        this.currentPage = 1;
         this.loading = false;
       },
       error: () => {
         this.errorMessage = 'Could not load users';
+        this.toastr.error('Could not load users', 'Error');
         this.loading = false;
       }
     });
@@ -68,6 +76,26 @@ this.clinicService.getAll().subscribe({
   filterByRole(role: string): void {
     this.roleFilter = role;
     this.loadUsers();
+  }
+
+  // ---- Pagination helpers ----
+
+  get totalPages(): number {
+    return Math.ceil(this.users.length / this.itemsPerPage) || 1;
+  }
+
+  get pageNumbers(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  get pagedUsers(): AppUser[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.users.slice(start, start + this.itemsPerPage);
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
   }
 
   openAddForm(): void {
@@ -100,7 +128,10 @@ this.clinicService.getAll().subscribe({
         };
         this.showForm = true;
       },
-      error: () => this.errorMessage = 'Could not load user details'
+      error: () => {
+        this.errorMessage = 'Could not load user details';
+        this.toastr.error('Could not load user details', 'Error');
+      }
     });
   }
 
@@ -166,6 +197,7 @@ this.clinicService.getAll().subscribe({
         next: () => {
           this.showForm = false;
           this.loadUsers();
+          this.toastr.success('User updated', 'Success');
         },
         error: (err) => this.handleSaveError(err, 'update')
       });
@@ -174,6 +206,7 @@ this.clinicService.getAll().subscribe({
         next: () => {
           this.showForm = false;
           this.loadUsers();
+          this.toastr.success('User created', 'Success');
         },
         error: (err) => this.handleSaveError(err, 'create')
       });
@@ -204,13 +237,21 @@ this.clinicService.getAll().subscribe({
     } else {
       this.errorMessage = action === 'create' ? 'Could not create user' : 'Could not update user';
     }
+
+    this.toastr.error(this.errorMessage, 'Error');
   }
 
   deleteUser(id: string): void {
     if (!confirm('Delete this user? This cannot be undone.')) return;
     this.userService.delete(id).subscribe({
-      next: () => this.loadUsers(),
-      error: () => this.errorMessage = 'Could not delete user'
+      next: () => {
+        this.loadUsers();
+        this.toastr.success('User deleted', 'Success');
+      },
+      error: () => {
+        this.errorMessage = 'Could not delete user';
+        this.toastr.error('Could not delete user', 'Error');
+      }
     });
   }
 }

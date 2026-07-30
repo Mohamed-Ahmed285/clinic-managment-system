@@ -1,15 +1,21 @@
 <nav class="border-b border-line bg-secondary">
-  <div class="container mx-auto px-6 lg:px-24 ">
+  <div class="container mx-auto px-6 lg:px-24">
     <div class="flex h-[70px] items-center justify-between gap-4">
       <!-- Brand -->
       <div class="flex shrink-0 items-center gap-3">
         <a routerLink="/" class="flex items-center gap-3" (click)="closeMenu()">
-          <img src="assets/Home/logo_cropped.png" class="h-10 w-auto object-contain" alt="No-Q Logo" />
+          <img
+            src="assets/Home/logo_cropped.png"
+            class="h-10 w-auto object-contain"
+            alt="No-Q Logo"
+          />
           <!-- <span class="font-display text-xl font-medium text-black">No-Q</span> -->
         </a>
 
-        <span *ngIf="role"
-          class="rounded-full bg-[#e3f5ea] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
+        <span
+          *ngIf="role"
+          class="rounded-full bg-[#e3f5ea] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-primary"
+        >
           {{ role }}
         </span>
       </div>
@@ -18,51 +24,128 @@
       <ul class="hidden items-center gap-1 lg:flex">
         <ng-container *ngIf="role === 'patient'">
           <li>
-            <a routerLink="/patient/appointments" [routerLinkActive]="navLinkActiveClass"
-              class="nav-link">Appointments</a>
+            <a
+              routerLink="/patient/appointments"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link"
+              >Appointments</a
+            >
           </li>
           <li>
-            <a routerLink="/patient/medications" [routerLinkActive]="navLinkActiveClass"
-              class="nav-link">Medications</a>
+            <a
+              routerLink="/patient/medications"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link"
+              >Medications</a
+            >
           </li>
           <li>
-            <a routerLink="/patient/reviews" [routerLinkActive]="navLinkActiveClass" class="nav-link">Reviews</a>
+            <a
+              routerLink="/patient/reviews"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link"
+              >Reviews</a
+            >
           </li>
           <li>
-            <a routerLink="/patient/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link">Profile</a>
+            <a
+              routerLink="/patient/profile"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link"
+              >Profile</a
+            >
           </li>
           <li>
-            <a routerLink="/patient/favorite" [routerLinkActive]="navLinkActiveClass" class="nav-link">Favorites</a>
+            <a
+              routerLink="/patient/favorite"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link"
+              >Favorites</a
+            >
           </li>
           <li>
-            <a routerLink="/patient/notifications" [routerLinkActive]="navLinkActiveClass"
-              class="nav-link">Notifications</a>
+            <a
+              routerLink="/patient/notifications"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link"
+              >Notifications</a
+            >
           </li>
         </ng-container>
 
         <ng-container *ngIf="role === 'doctor'">
           <li>
-            <a routerLink="/doctor/dashboard" [routerLinkActive]="navLinkActiveClass"
-              [routerLinkActiveOptions]="{ exact: true }" class="nav-link">Dashboard</a>
+            <a
+              routerLink="/doctor/dashboard"
+              [routerLinkActive]="navLinkActiveClass"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="nav-link"
+              >Dashboard</a
+            >
           </li>
           <li>
-            <a routerLink="/doctor/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link">Profile</a>
+            <a
+              routerLink="/doctor/profile"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link"
+              >Profile</a
+            >
           </li>
         </ng-container>
 
         <ng-container *ngIf="role === 'admin'">
           <li>
-            <a routerLink="/admin/appointments" [routerLinkActive]="navLinkActiveClass"
-              class="nav-link">Appointments</a>
+            <a
+              routerLink="/admin/analytics"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link"
+              >Dashboard</a
+            >
           </li>
+
           <li>
-            <a routerLink="/admin/clinics" [routerLinkActive]="navLinkActiveClass" class="nav-link">Clinics</a>
+            <a
+              routerLink="/admin/appointments"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link"
+              >Appointments</a
+            >
           </li>
+
           <li>
-            <a routerLink="/admin/users" [routerLinkActive]="navLinkActiveClass" class="nav-link">Users</a>
+            <a
+              routerLink="/admin/clinics"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link"
+              >Clinics</a
+            >
           </li>
+
           <li>
-            <a routerLink="/admin/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link">Profile</a>
+            <a
+              routerLink="/admin/specialties"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link"
+              >Specialties</a
+            >
+          </li>
+
+          <li>
+            <a
+              routerLink="/admin/users"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link"
+              >Users</a
+            >
+          </li>
+
+          <li>
+            <a
+              routerLink="/admin/profile"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link"
+              >Profile</a
+            >
           </li>
         </ng-container>
 
@@ -84,7 +167,8 @@
         <ng-container *ngIf="!isLoggedIn">
           <button
             class="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
-            routerLink="/auth/login">
+            routerLink="/auth/login"
+          >
             Sign in
           </button>
         </ng-container>
@@ -97,94 +181,200 @@
 
           <button
             class="rounded-full border border-line bg-white px-5 py-2 text-sm font-medium text-gray transition-colors hover:border-primary/30 hover:text-primary"
-            (click)="logout()">
+            (click)="logout()"
+          >
             Sign out
           </button>
         </ng-container>
       </div>
 
       <!-- Mobile menu toggle -->
-      <button type="button"
+      <button
+        type="button"
         class="inline-flex items-center justify-center rounded-lg p-2 text-gray transition-colors hover:text-primary lg:hidden"
-        (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen" aria-label="Toggle navigation menu">
-        <i class="fa-solid text-2xl transition-all duration-300" [class.fa-bars]="!isMenuOpen"
-          [class.fa-xmark]="isMenuOpen"></i>
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="isMenuOpen"
+        aria-label="Toggle navigation menu"
+      >
+        <i
+          class="fa-solid text-2xl transition-all duration-300"
+          [class.fa-bars]="!isMenuOpen"
+          [class.fa-xmark]="isMenuOpen"
+        ></i>
       </button>
     </div>
   </div>
 
   <!-- Mobile menu -->
-  <div class="overflow-hidden border-t border-line transition-all duration-300 ease-in-out lg:hidden"
-    [style.max-height]="isMenuOpen ? '420px' : '0px'">
+  <div
+    class="overflow-hidden border-t border-line transition-all duration-300 ease-in-out lg:hidden"
+    [style.max-height]="isMenuOpen ? '420px' : '0px'"
+  >
     <div class="container mx-auto space-y-4 px-6 py-4">
       <ul class="space-y-1">
         <ng-container *ngIf="role === 'patient'">
           <li>
-            <a routerLink="/patient/appointments" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Appointments</a>
+            <a
+              routerLink="/patient/appointments"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link block"
+              (click)="closeMenu()"
+              >Appointments</a
+            >
           </li>
           <li>
-            <a routerLink="/patient/medications" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Medications</a>
+            <a
+              routerLink="/patient/medications"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link block"
+              (click)="closeMenu()"
+              >Medications</a
+            >
           </li>
           <li>
-            <a routerLink="/patient/reviews" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Reviews</a>
+            <a
+              routerLink="/patient/reviews"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link block"
+              (click)="closeMenu()"
+              >Reviews</a
+            >
           </li>
           <li>
-            <a routerLink="/patient/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Profile</a>
+            <a
+              routerLink="/patient/profile"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link block"
+              (click)="closeMenu()"
+              >Profile</a
+            >
           </li>
-                 <li>
-            <a routerLink="/patient/favorite" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">favourites</a>
+          <li>
+            <a
+              routerLink="/patient/favorite"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link block"
+              (click)="closeMenu()"
+              >favourites</a
+            >
           </li>
-                 <li>
-            <a routerLink="/patient/notifications" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Notifications</a>
+          <li>
+            <a
+              routerLink="/patient/notifications"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link block"
+              (click)="closeMenu()"
+              >Notifications</a
+            >
           </li>
         </ng-container>
 
         <ng-container *ngIf="role === 'doctor'">
           <li>
-            <a routerLink="/doctor/dashboard" [routerLinkActive]="navLinkActiveClass"
-              [routerLinkActiveOptions]="{ exact: true }" class="nav-link block" (click)="closeMenu()">Dashboard</a>
+            <a
+              routerLink="/doctor/dashboard"
+              [routerLinkActive]="navLinkActiveClass"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="nav-link block"
+              (click)="closeMenu()"
+              >Dashboard</a
+            >
           </li>
 
           <li>
-            <a routerLink="/doctor/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Profile</a>
+            <a
+              routerLink="/doctor/profile"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link block"
+              (click)="closeMenu()"
+              >Profile</a
+            >
           </li>
         </ng-container>
 
         <ng-container *ngIf="role === 'admin'">
           <li>
-            <a routerLink="/admin/appointments" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Appointments</a>
+            <a
+              routerLink="/admin/analytics"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link block"
+              (click)="closeMenu()"
+            >
+              Dashboard
+            </a>
           </li>
+
           <li>
-            <a routerLink="/admin/clinics" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Clinics</a>
+            <a
+              routerLink="/admin/appointments"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link block"
+              (click)="closeMenu()"
+            >
+              Appointments
+            </a>
           </li>
+
           <li>
-            <a routerLink="/admin/users" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Users</a>
+            <a
+              routerLink="/admin/clinics"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link block"
+              (click)="closeMenu()"
+            >
+              Clinics
+            </a>
           </li>
+
           <li>
-            <a routerLink="/admin/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Profile</a>
+            <a
+              routerLink="/admin/specialties"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link block"
+              (click)="closeMenu()"
+            >
+              Specialties
+            </a>
+          </li>
+
+          <li>
+            <a
+              routerLink="/admin/users"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link block"
+              (click)="closeMenu()"
+            >
+              Users
+            </a>
+          </li>
+
+          <li>
+            <a
+              routerLink="/admin/profile"
+              [routerLinkActive]="navLinkActiveClass"
+              class="nav-link block"
+              (click)="closeMenu()"
+            >
+              Profile
+            </a>
           </li>
         </ng-container>
 
         <ng-container *ngIf="!role">
           <li>
-            <a href="#howItWorks" class="nav-link block" (click)="closeMenu()">How it works</a>
+            <a href="#howItWorks" class="nav-link block" (click)="closeMenu()"
+              >How it works</a
+            >
           </li>
           <li>
-            <a href="#About" class="nav-link block" (click)="closeMenu()">About No-Q</a>
+            <a href="#About" class="nav-link block" (click)="closeMenu()"
+              >About No-Q</a
+            >
           </li>
           <li>
-            <a href="#ourMission" class="nav-link block" (click)="closeMenu()">Our mission</a>
+            <a href="#ourMission" class="nav-link block" (click)="closeMenu()"
+              >Our mission</a
+            >
           </li>
         </ng-container>
       </ul>
@@ -193,7 +383,9 @@
         <ng-container *ngIf="!isLoggedIn">
           <button
             class="w-full rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
-            routerLink="/auth/login" (click)="closeMenu()">
+            routerLink="/auth/login"
+            (click)="closeMenu()"
+          >
             Sign in
           </button>
         </ng-container>
@@ -206,7 +398,8 @@
 
           <button
             class="w-full rounded-full border border-line bg-white px-5 py-2.5 text-sm font-medium text-gray transition-colors hover:border-primary/30 hover:text-primary"
-            (click)="logout(); closeMenu()">
+            (click)="logout(); closeMenu()"
+          >
             Sign out
           </button>
         </ng-container>
