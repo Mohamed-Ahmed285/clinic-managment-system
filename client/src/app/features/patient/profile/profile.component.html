@@ -250,9 +250,9 @@
 
 <div *ngIf="selectedRecord" class="space-y-3">
 
-  <div>
+  <div class="font-display">
     <p class="text-gray-500 text-sm my-2 text-primary font-bold">Doctor</p>
-    <p class="font-semibold">
+    <p class="font-semibold font-display">
       Dr. {{ selectedRecord.doctorId?._id?.name }}
     </p>
   </div>
@@ -282,7 +282,7 @@
   </div>
 </div>
 
-<!-- 2️⃣ Image Error Popup Modal (Tailwind Styled) -->
+<!-- Image Error Popup Modal (Tailwind Styled) -->
 <div
   *ngIf="isErrorPopupOpen"
   class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"

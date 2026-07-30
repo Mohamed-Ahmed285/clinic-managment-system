@@ -165,8 +165,8 @@ export class ReviewsComponent implements OnInit {
       ).subscribe({
 
         next: () => {
+ this.toastr.success('Review updated successfully!', 'Success');
 
-          alert('Review updated successfully');
 
           this.closeModal();
 
@@ -178,7 +178,7 @@ export class ReviewsComponent implements OnInit {
 
           console.error(err);
 
-          alert(err.error || 'Failed to update review');
+         this.toastr.error('Failed to update review successfully!', 'Error');
 
         }
 
@@ -190,7 +190,7 @@ export class ReviewsComponent implements OnInit {
 
       if (!this.newReview.appointmentId) {
 
-        alert('Please select an appointment');
+   this.toastr.success('Pleace select an appointment!', 'Success');
 
         return;
 
@@ -200,7 +200,7 @@ export class ReviewsComponent implements OnInit {
 
         next: () => {
 
-          alert('Review added successfully');
+      this.toastr.success('Review added successfully!', 'Success');
 
           this.closeModal();
 
@@ -212,7 +212,7 @@ export class ReviewsComponent implements OnInit {
 
           console.error(err);
 
-          alert(err.error || 'Failed to add review');
+       this.toastr.error('Failed to add Review!', 'Error');
 
         }
 
@@ -233,8 +233,8 @@ export class ReviewsComponent implements OnInit {
     this.reviewService.deleteReview(id).subscribe({
 
       next: () => {
+ this.toastr.success('Review Deleted successfully!', 'Success');
 
-        alert('Review deleted successfully');
 
         this.loadReviews();
 
@@ -243,8 +243,8 @@ export class ReviewsComponent implements OnInit {
       error: (err) => {
 
         console.error(err);
+ this.toastr.error('Failed to delete review!', 'Error');
 
-        alert(err.error || 'Failed to delete review');
 
       }
 
