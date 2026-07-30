@@ -183,8 +183,8 @@ export class AppointmentsComponent implements OnInit {
         console.log(err);
 
         this.pendingFavoriteIds.delete(doctorId);
+ this.toastr.error('doctor wasn not added', 'Error');
 
-        alert(err.error);
       },
     });
   }

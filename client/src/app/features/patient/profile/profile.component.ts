@@ -47,7 +47,7 @@ export class ProfileComponent implements OnInit {
 
     if (!file) return;
 
-    // 1. فحص ظاهري للـ MIME type
+
     const allowedExtensions = [
       'image/jpeg',
       'image/png',
@@ -59,7 +59,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    // 2. فحص البصمة الداخلية للملف (Magic Numbers)
+
     const isValidRealImage = await this.validateRealImageSignature(file);
 
     if (!isValidRealImage) {
@@ -67,7 +67,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    // نجاح الفحص
+
     this.errorMessage = null;
     this.selectedFile = file;
 
@@ -110,17 +110,17 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  // إظهار إيرور الصورة وتصفير الـ Input
+
   private showImageError(event: any, message: string) {
     this.errorMessage = message;
     this.openErrorPopup();
 
-    event.target.value = ''; // تصفير الـ input
+    event.target.value = '';
     this.selectedFile = null as any;
     this.selectedImage = null;
   }
 
-  // التحكم في بوب أب إيرور الصورة
+
   openErrorPopup() {
     this.isErrorPopupOpen = true;
   }
@@ -130,7 +130,7 @@ export class ProfileComponent implements OnInit {
     this.errorMessage = null;
   }
   selectedRecord: any = null;
-  // التحكم في بوب أب المواعيد/السجلات العادي
+ 
   openPopup(record: any) {
     this.selectedRecord = record;
     this.isPopupOpen = true;
