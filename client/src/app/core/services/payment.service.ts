@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class PaymentService {
 
   private apiUrl = 'http://localhost:3000/payment';
-   //private apiUrl = 'https://no-q-production-9d3d.up.railway.app/payment';
+   
 
   constructor(private http: HttpClient) {}
 

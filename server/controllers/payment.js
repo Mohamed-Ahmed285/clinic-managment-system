@@ -76,14 +76,14 @@ const webhook = async (req, res) => {
   try {
     const session = event.data.object;
     const appointmentId = session.metadata?.appointmentId;
+
     if (!appointmentId) {
-      console.error("Stripe checkout session is missing appointmentId metadata:", session.id);
       return res.status(400).send("Missing appointment metadata");
     }
 
     const appointment = await Appointment.findById(appointmentId);
+
     if (!appointment) {
-      console.error("Appointment not found for Stripe checkout session:", session.id);
       return res.status(404).send("Appointment not found");
     }
 
@@ -91,45 +91,65 @@ const webhook = async (req, res) => {
     appointment.status = "confirmed";
     await appointment.save();
 
-    // Stripe can retry a delivered event. The timestamp prevents duplicate
-    // confirmation messages but leaves failed email deliveries retryable.
-    if (!appointment.paymentConfirmationEmailSentAt) {
-      const user = await User.findById(appointment.patientId);
-      const doctor = await Doctor.findById(appointment.doctorId);
-      const doctorUser = doctor ? await User.findById(doctor._id) : null;
+    
+    res.status(200).send("Webhook received");
 
-      if (!user || !doctorUser) {
-        throw new Error("Patient or doctor user was not found for payment confirmation email");
-      }
+  
+    (async () => {
+      try {
+        const user = await User.findById(appointment.patientId);
+        const doctor = await Doctor.findById(appointment.doctorId);
+        const doctorUser = doctor
+          ? await User.findById(doctor._id)
+          : null;
 
-      await sendEmail({
-        to: user.email,
-        subject: "Appointment Confirmation",
-        html: `
+        if (!user || !doctorUser) {
+          console.error("Patient or doctor user not found");
+          return;
+        }
+
+        await sendEmail({
+          to: user.email,
+          subject: "Appointment Confirmation",
+          html: `
           <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;border:1px solid #ddd;border-radius:10px;overflow:hidden;">
             <div style="background:#0d6efd;color:white;padding:20px;text-align:center;">
-              <h1>NO-Q</h1><h2>Appointment Confirmation</h2>
+              <h1>NO-Q</h1>
+              <h2>Appointment Confirmation</h2>
             </div>
+
             <div style="padding:25px;color:#333;">
               <p>Hello <strong>${user.name}</strong>,</p>
+
               <p>We are pleased to inform you that your payment has been received successfully.</p>
-              <p><strong>Doctor:</strong> Dr. ${doctorUser.name}<br><strong>Payment Status:</strong> <span style="color:green;">Paid</span></p>
+
+              <p>
+                <strong>Doctor:</strong> Dr. ${doctorUser.name}<br>
+                <strong>Payment Status:</strong>
+                <span style="color:green;">Paid ✅</span>
+              </p>
+
               <p>Your appointment has been successfully confirmed.</p>
+
               <p>Thank you for choosing <strong>NO-Q</strong>.</p>
-              <hr><p style="font-size:13px;color:#777;">This is an automated email. Please do not reply to this message.</p>
+
+              <hr>
+
+              <p style="font-size:13px;color:#777;">
+                This is an automated email. Please do not reply to this message.
+              </p>
             </div>
-          </div>`,
-      });
+          </div>
+          `,
+        });
 
-      appointment.paymentConfirmationEmailSentAt = new Date();
-      await appointment.save();
-    }
-
-    return res.status(200).send("Webhook received");
+        console.log("Confirmation email sent successfully");
+      } catch (err) {
+        console.error("Email sending failed:", err.message);
+      }
+    })();
   } catch (error) {
-    console.error("Stripe webhook processing failed:", error.message);
+    console.error("Stripe webhook processing failed:", error);
     return res.status(500).send("Webhook processing failed");
   }
 };
-
-module.exports = { createCheckoutSession, webhook };
