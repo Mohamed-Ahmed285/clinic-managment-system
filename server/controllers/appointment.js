@@ -351,7 +351,29 @@ const createAppointment = async (req, res) => {
             return res.status(400).send(built.error);
         }
 
-        const appointment = await appointmentModel.create(built.payload);
+        // If a cancelled appointment already exists for this exact doctor/clinic/date/time slot,
+        // reuse that document instead of creating a brand new one.
+        const existingCancelled = await appointmentModel.findOne({
+            doctorId: built.payload.doctorId,
+            clinicId: built.payload.clinicId,
+            date: built.appointmentDate,
+            startTime: built.startTime,
+            status: "cancelled"
+        });
+
+        let appointment;
+        let isRebook = false;
+
+        if (existingCancelled) {
+            isRebook = true;
+            existingCancelled.set(built.payload);
+            existingCancelled.cancelledBy = undefined;
+            existingCancelled.cancellationReason = undefined;
+            appointment = await existingCancelled.save();
+        } else {
+            appointment = await appointmentModel.create(built.payload);
+        }
+
         await appointment.populate(populateAppointment);
 
         await Promise.all([
@@ -359,7 +381,9 @@ const createAppointment = async (req, res) => {
                 recipientId: doctor._id,
                 recipientType: "doctor",
                 title: "New Appointment",
-                message: "A new appointment has been booked.",
+                message: isRebook
+                    ? "A previously cancelled slot has been rebooked."
+                    : "A new appointment has been booked.",
                 type: "appointmentBooked",
                 relatedAppointmentId: appointment._id
             }),
@@ -373,7 +397,7 @@ const createAppointment = async (req, res) => {
             })
         ]);
 
-        return res.status(201).json(appointment);
+        return res.status(isRebook ? 200 : 201).json(appointment);
     } catch (err) {
         return res.status(500).send(err.message);
     }

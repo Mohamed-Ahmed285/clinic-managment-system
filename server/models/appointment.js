@@ -34,6 +34,9 @@ appointmentSchema.index(
   },
   {
     unique: true,
+    partialFilterExpression: { 
+      status: { $ne: "cancelled" }
+    }
   }
 );
 
