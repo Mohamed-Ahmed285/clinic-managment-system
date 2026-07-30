@@ -13,6 +13,8 @@ export class LoginComponent {
   password = 'password123';
   rememberMe = false;
   showPassword = false;
+  errorMessage = '';
+  isSubmitting = false;
 
   constructor(
     private authService: AuthService,
@@ -20,14 +22,28 @@ export class LoginComponent {
   ) {}
 
   onSubmit() {
+    if (this.isSubmitting) {
+      return;
+    }
+
+    this.errorMessage = '';
+
+    if (!this.email.trim() || !this.password) {
+      this.errorMessage = 'Please enter your email and password.';
+      return;
+    }
+
     const credentials = {
       email: this.email,
       password: this.password
     };
 
+    this.isSubmitting = true;
+
     // Send the request
     this.authService.login(credentials).subscribe({
       next: (response) => {
+        this.isSubmitting = false;
         switch (response.user.role) {
           case 'patient':
             this.router.navigate(['/patient']);
@@ -46,7 +62,16 @@ export class LoginComponent {
         }
       },
       error: (err) => {
+        this.isSubmitting = false;
         console.error('Login failed', err);
+
+        if (err.error?.message) {
+          this.errorMessage = err.error.message;
+        } else if (typeof err.error === 'string' && err.error) {
+          this.errorMessage = err.error;
+        } else {
+          this.errorMessage = 'Login failed. Please check your credentials and try again.';
+        }
       }
     });
   }

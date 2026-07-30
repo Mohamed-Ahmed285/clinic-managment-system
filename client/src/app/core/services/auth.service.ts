@@ -65,6 +65,22 @@ export class AuthService {
     return this.http.post<any>(`${this.api}/patient/register`, data);
   }
 
+  forgetPassword(email: string): Observable<any> {
+    return this.http.post(
+      `${this.api}/user/forgetPassword`,
+      { email },
+      { responseType: 'text' }
+    );
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.put(
+      `${this.api}/user/resetPassword/${token}`,
+      { newPassword },
+      { responseType: 'text' }
+    );
+  }
+
   getUser() {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
