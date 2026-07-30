@@ -7,6 +7,7 @@ const sendEmail = async(options)=>{
         host: process.env.EMAIL_HOST,
         port: process.env.EMAIL_PORT,
         secure: Number(process.env.EMAIL_PORT) === 465, // true لو بورت 465 (SSL)، غير كده false (TLS)
+        family: 4,
         auth:{
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
