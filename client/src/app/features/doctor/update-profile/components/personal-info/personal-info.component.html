@@ -9,6 +9,7 @@
             *ngIf="info.profileImage"
             [src]="info.profileImage"
             alt="Profile photo"
+            class="rounded-full"
           />
           <span *ngIf="!info.profileImage">
             {{ initials }}

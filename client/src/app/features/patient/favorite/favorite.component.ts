@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FavoriteService } from 'src/app/core/services/favorite.service';
-
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-favorite',
   templateUrl: './favorite.component.html',
@@ -11,7 +11,10 @@ export class FavoriteComponent implements OnInit {
   isLoading = true;
   removingIds = new Set<string>();
 
-  constructor(private favoriteService: FavoriteService) {}
+  constructor(
+    private favoriteService: FavoriteService,
+    private toastr: ToastrService,
+  ) {}
 
   ngOnInit(): void {
     this.loadFavorites();
@@ -73,7 +76,7 @@ export class FavoriteComponent implements OnInit {
         this.favorites = this.favorites.filter(
           (favorite: any) => this.getDoctorId(favorite) !== doctorId,
         );
-
+this.toastr.success('You removed this doctor from your favourite', 'Success');
         this.removingIds.delete(doctorId);
       },
       error: (err) => {

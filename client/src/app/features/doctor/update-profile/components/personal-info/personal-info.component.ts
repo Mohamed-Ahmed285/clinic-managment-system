@@ -2,22 +2,22 @@ import { Component, Input, OnInit } from '@angular/core';
 import { PersonalInfo } from '../../models/profile.model';
 import { SpecialtyService, Specialty } from 'src/app/core/services/specialty.service';
 import { DoctorService } from 'src/app/core/services/doctor.service';
-
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-personal-info',
   templateUrl: './personal-info.component.html',
-  styleUrls: ['./personal-info.component.css']
+  styleUrls: ['./personal-info.component.css'],
 })
 export class PersonalInfoComponent implements OnInit {
-
   @Input() info!: PersonalInfo;
 
   specialties: Specialty[] = [];
 
   constructor(
-  private specialtyService: SpecialtyService,
-  private doctorService: DoctorService
-) {}
+    private specialtyService: SpecialtyService,
+    private doctorService: DoctorService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.loadSpecialties();
@@ -30,7 +30,7 @@ export class PersonalInfoComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load specialties', err);
-      }
+      },
     });
   }
 
@@ -44,40 +44,31 @@ export class PersonalInfoComponent implements OnInit {
       .split(' ')
       .filter(Boolean)
       .slice(0, 2)
-      .map(part => part[0].toUpperCase())
+      .map((part) => part[0].toUpperCase())
       .join('');
   }
 
-onPhotoUpload(event: Event): void {
+  onPhotoUpload(event: Event): void {
+    const input = event.target as HTMLInputElement;
 
-  const input = event.target as HTMLInputElement;
-
-  if (!input.files?.length) {
-    return;
-  }
-
-  const file = input.files[0];
-
-  console.log('Selected photo:', file);
-
-
-  this.doctorService.uploadProfilePhoto(file).subscribe({
-
-    next: (res) => {
-
-      console.log('Upload success:', res);
-
-      this.info.profileImage = res.profileImage;
-
-    },
-
-    error: (err) => {
-
-      console.error('Upload failed:', err);
-
+    if (!input.files?.length) {
+      return;
     }
 
-  });
+    const file = input.files[0];
 
-}
+    console.log('Selected photo:', file);
+
+    this.doctorService.uploadProfilePhoto(file).subscribe({
+      next: (res) => {
+        console.log('Upload success:', res);
+
+        this.info.profileImage = res.profileImage;
+      },
+
+      error: (err) => {
+        console.error('Upload failed:', err);
+      },
+    });
+  }
 }

@@ -20,9 +20,10 @@ export class ProfileComponent implements OnInit {
   isErrorPopupOpen = false;
   errorMessage: string | null = null;
 
-  constructor(private profileService: ProfileService,
-             private toastr: ToastrService
-             ) {}
+  constructor(
+    private profileService: ProfileService,
+    private toastr: ToastrService,
+  ) {}
 
   ngOnInit(): void {
     this.profileService.getProfile().subscribe({
@@ -170,7 +171,7 @@ export class ProfileComponent implements OnInit {
       notificationsEnabled: this.profileData.profile.notificationsEnabled,
     };
 
-    this.profileService.updateUser(formData).subscribe({
+      this.profileService.updateUser(formData).subscribe({
   next: (userRes: any) => {
     this.profileService.updateProfile(body).subscribe({
       next: (patientRes: any) => {
@@ -216,7 +217,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         console.log(err);
-      },
+      }
     });
   }
 }
