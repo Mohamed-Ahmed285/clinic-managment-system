@@ -196,15 +196,6 @@ export class ProfileComponent implements OnInit {
         );
       },
     });
-  },
-  error: (err) => {
-    console.log(err);
-    this.toastr.error(
-      err.error || 'Failed to update user',
-      'Error'
-    );
-  },
-});
   }
 
   medicalRecords: any[] = [];
@@ -219,7 +210,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         console.log(err);
-      },
+      }
     });
   }
 }
