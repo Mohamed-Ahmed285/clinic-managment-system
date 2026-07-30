@@ -62,7 +62,7 @@ const markAllAsRead = async (req, res) => {
       }
     );
 
-    return res.status(200).send("all notifications marked as read");
+    return res.status(200).json({ message: "all notifications marked as read" });
   } catch (err) {
     return res.status(500).send(err.message);
   }
@@ -79,7 +79,7 @@ const deleteNotification = async (req, res) => {
       return res.status(404).send("notification not found");
     }
 
-    return res.status(200).send("notification deleted successfully");
+    return res.status(200).json({ message: "notification deleted successfully" });
   } catch (err) {
     return res.status(500).send(err.message);
   }
