@@ -2,6 +2,29 @@ const mongoose = require("mongoose");
 const reviewModel = require("../models/review");
 const appointmentModel = require("../models/appointment");
 const patientModel = require("../models/patient");
+const doctorModel = require("../models/doctor");
+
+// ========================
+// Helper Function
+// ========================
+
+const updateDoctorRating = async (doctorId) => {
+    const reviews = await reviewModel.find({ doctorId });
+
+    const count = reviews.length;
+
+    const average =
+        count === 0
+            ? 0
+            : reviews.reduce((sum, review) => sum + review.rating, 0) / count;
+
+    await doctorModel.findByIdAndUpdate(doctorId, {
+        rating: {
+            average,
+            count
+        }
+    });
+};
 
 // ========================
 // Review Controller
@@ -9,9 +32,10 @@ const patientModel = require("../models/patient");
 
 // Create Review
 const createReview = async (req, res) => {
-    
+
     try {
-        var patient = await patientModel.findById(  req.user.id );
+
+        var patient = await patientModel.findById(req.user.id);
 
         if (!patient) {
             return res.status(404).send("patient profile not found");
@@ -27,14 +51,13 @@ const createReview = async (req, res) => {
             return res.status(403).send("you cannot review this appointment");
         }
 
-        console.log(appointment.status)
         const allowedStatus = ["confirmed", "completed"];
 
-if (!allowedStatus.includes(appointment.status)) {
-    return res
-        .status(400)
-        .send("you can only review confirmed or completed appointments");
-}
+        if (!allowedStatus.includes(appointment.status)) {
+            return res
+                .status(400)
+                .send("you can only review confirmed or completed appointments");
+        }
 
         var existingReview = await reviewModel.findOne({
             appointmentId: appointment._id
@@ -59,6 +82,9 @@ if (!allowedStatus.includes(appointment.status)) {
             rating: req.body.rating,
             comment: req.body.comment
         });
+
+        // Update Doctor Rating
+        await updateDoctorRating(appointment.doctorId);
 
         return res.status(201).json({
             message: "review created successfully",
@@ -144,6 +170,7 @@ const updateReview = async (req, res) => {
         }
 
         if (req.body.rating !== undefined) {
+
             if (req.body.rating < 1 || req.body.rating > 5) {
                 return res.status(400).send("rating must be between 1 and 5");
             }
@@ -156,6 +183,9 @@ const updateReview = async (req, res) => {
         }
 
         await review.save();
+
+        // Update doctor rating after editing review
+        await updateDoctorRating(review.doctorId);
 
         return res.status(200).json({
             message: "review updated successfully",
@@ -187,7 +217,13 @@ const deleteReview = async (req, res) => {
             return res.status(403).send("you cannot delete this review");
         }
 
+        // Save doctorId before deleting review
+        const doctorId = review.doctorId;
+
         await reviewModel.findByIdAndDelete(req.params.id);
+
+        // Update doctor rating after deleting review
+        await updateDoctorRating(doctorId);
 
         return res.status(200).json({
             message: "review deleted successfully"
