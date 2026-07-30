@@ -110,6 +110,12 @@ export class AppointmentsComponent implements OnInit {
     afterSixMonths.setMonth(afterSixMonths.getMonth() + 6);
 
     this.maxDate = afterSixMonths.toISOString().split('T')[0];
+
+    window.addEventListener('pageshow', (event: PageTransitionEvent) => {
+  if (event.persisted) {
+    this.loadMyAppointments();
+  }
+});
   }
 
   loadProfile() {
@@ -281,6 +287,7 @@ export class AppointmentsComponent implements OnInit {
     });
     this.appointmentService.bookAppointment(body).subscribe({
       next: (res: any) => {
+        this.loadMyAppointments();
         if (this.profileData.profile.preferredPaymentMethod === 'online') {
           this.paymentService.checkout(res._id).subscribe({
             next: (payment: any) => {
