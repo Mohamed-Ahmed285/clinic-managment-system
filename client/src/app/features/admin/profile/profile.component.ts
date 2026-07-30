@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { ProfileService, AdminProfile } from '../services/profile.service';
 
 @Component({
@@ -15,7 +16,10 @@ export class ProfileComponent implements OnInit {
   editMode = false;
   currentProfile: AdminProfile = { name: '', email: '' };
 
-  constructor(private profileService: ProfileService) {}
+  constructor(
+    private profileService: ProfileService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.loadProfile();
@@ -30,6 +34,7 @@ export class ProfileComponent implements OnInit {
       },
       error: () => {
         this.errorMessage = 'Could not load profile';
+        this.toastr.error('Could not load profile', 'Error');
         this.loading = false;
       }
     });
@@ -52,8 +57,12 @@ export class ProfileComponent implements OnInit {
       next: (updatedUser) => {
         this.profile = updatedUser;
         this.editMode = false;
+        this.toastr.success('Profile updated', 'Success');
       },
-      error: (err) => this.errorMessage = err.error?.message || 'Could not update profile'
+      error: (err) => {
+        this.errorMessage = err.error?.message || 'Could not update profile';
+        this.toastr.error(this.errorMessage, 'Error');
+      }
     });
   }
 }

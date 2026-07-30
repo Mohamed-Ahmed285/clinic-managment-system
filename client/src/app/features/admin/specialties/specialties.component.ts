@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { SpecialtyService, Specialty } from '../services/specialty.service';
 import { DoctorService, Doctor } from '../services/doctor.service';
 
@@ -21,10 +22,15 @@ export class SpecialtiesComponent implements OnInit {
 
   specialtyForm: FormGroup;
 
+  // Pagination
+  currentPage = 1;
+  itemsPerPage = 10;
+
   constructor(
     private specialtyService: SpecialtyService,
     private doctorService: DoctorService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService
   ) {
     this.specialtyForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
@@ -45,10 +51,12 @@ export class SpecialtiesComponent implements OnInit {
     this.specialtyService.getAll().subscribe({
       next: (response) => {
         this.specialties = response.data;
+        this.currentPage = 1; // reset to page 1 whenever the list reloads
         this.loadDoctorCounts();
       },
       error: () => {
         this.errorMessage = 'Could not load specialties';
+        this.toastr.error('Could not load specialties', 'Error');
         this.loading = false;
       }
     });
@@ -82,6 +90,26 @@ export class SpecialtiesComponent implements OnInit {
   getDoctorCount(specialtyId?: string): number {
     if (!specialtyId) return 0;
     return this.doctorCounts[specialtyId] || 0;
+  }
+
+  // ---- Pagination helpers ----
+
+  get totalPages(): number {
+    return Math.ceil(this.specialties.length / this.itemsPerPage) || 1;
+  }
+
+  get pageNumbers(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  get pagedSpecialties(): Specialty[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.specialties.slice(start, start + this.itemsPerPage);
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
   }
 
   openAddForm(): void {
@@ -119,16 +147,24 @@ export class SpecialtiesComponent implements OnInit {
         next: () => {
           this.showForm = false;
           this.loadSpecialties();
+          this.toastr.success('Specialty updated', 'Success');
         },
-        error: () => this.errorMessage = 'Could not update specialty'
+        error: () => {
+          this.errorMessage = 'Could not update specialty';
+          this.toastr.error('Could not update specialty', 'Error');
+        }
       });
     } else {
       this.specialtyService.create(payload).subscribe({
         next: () => {
           this.showForm = false;
           this.loadSpecialties();
+          this.toastr.success('Specialty created', 'Success');
         },
-        error: () => this.errorMessage = 'Could not create specialty'
+        error: () => {
+          this.errorMessage = 'Could not create specialty';
+          this.toastr.error('Could not create specialty', 'Error');
+        }
       });
     }
   }
@@ -136,8 +172,14 @@ export class SpecialtiesComponent implements OnInit {
   deleteSpecialty(id: string): void {
     if (!confirm('Delete this specialty?')) return;
     this.specialtyService.delete(id).subscribe({
-      next: () => this.loadSpecialties(),
-      error: () => this.errorMessage = 'Could not delete specialty'
+      next: () => {
+        this.loadSpecialties();
+        this.toastr.success('Specialty deleted', 'Success');
+      },
+      error: () => {
+        this.errorMessage = 'Could not delete specialty';
+        this.toastr.error('Could not delete specialty', 'Error');
+      }
     });
   }
 }

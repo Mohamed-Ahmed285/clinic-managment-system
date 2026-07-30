@@ -1,5 +1,5 @@
 <nav class="border-b border-line bg-secondary">
-  <div class="container mx-auto px-6 lg:px-24 ">
+  <div class="container mx-auto px-6 lg:px-24">
     <div class="flex h-[70px] items-center justify-between gap-4">
       <!-- Brand -->
       <div class="flex shrink-0 items-center gap-3">
@@ -52,15 +52,26 @@
 
         <ng-container *ngIf="role === 'admin'">
           <li>
+            <a routerLink="/admin/analytics" [routerLinkActive]="navLinkActiveClass" class="nav-link">Dashboard</a>
+          </li>
+
+          <li>
             <a routerLink="/admin/appointments" [routerLinkActive]="navLinkActiveClass"
               class="nav-link">Appointments</a>
           </li>
+
           <li>
             <a routerLink="/admin/clinics" [routerLinkActive]="navLinkActiveClass" class="nav-link">Clinics</a>
           </li>
+
+          <li>
+            <a routerLink="/admin/specialties" [routerLinkActive]="navLinkActiveClass" class="nav-link">Specialties</a>
+          </li>
+
           <li>
             <a routerLink="/admin/users" [routerLinkActive]="navLinkActiveClass" class="nav-link">Users</a>
           </li>
+
           <li>
             <a routerLink="/admin/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link">Profile</a>
           </li>
@@ -160,20 +171,45 @@
 
         <ng-container *ngIf="role === 'admin'">
           <li>
-            <a routerLink="/admin/appointments" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Appointments</a>
+            <a routerLink="/admin/analytics" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">
+              Dashboard
+            </a>
           </li>
+
+          <li>
+            <a routerLink="/admin/appointments" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">
+              Appointments
+            </a>
+          </li>
+
           <li>
             <a routerLink="/admin/clinics" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Clinics</a>
+              (click)="closeMenu()">
+              Clinics
+            </a>
           </li>
+
+          <li>
+            <a routerLink="/admin/specialties" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
+              (click)="closeMenu()">
+              Specialties
+            </a>
+          </li>
+
           <li>
             <a routerLink="/admin/users" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Users</a>
+              (click)="closeMenu()">
+              Users
+            </a>
           </li>
+
           <li>
             <a routerLink="/admin/profile" [routerLinkActive]="navLinkActiveClass" class="nav-link block"
-              (click)="closeMenu()">Profile</a>
+              (click)="closeMenu()">
+              Profile
+            </a>
           </li>
         </ng-container>
 

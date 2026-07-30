@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { ClinicService, Clinic } from '../services/clinic.service';
 
 @Component({
@@ -20,7 +21,8 @@ export class ClinicsComponent implements OnInit {
 
   constructor(
     private clinicService: ClinicService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService
   ) {
     this.clinicForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
@@ -54,6 +56,7 @@ export class ClinicsComponent implements OnInit {
       },
       error: () => {
         this.errorMessage = 'Could not load clinics';
+        this.toastr.error('Could not load clinics', 'Error');
         this.loading = false;
       }
     });
@@ -104,16 +107,24 @@ export class ClinicsComponent implements OnInit {
         next: () => {
           this.showForm = false;
           this.loadClinics();
+          this.toastr.success('Clinic updated', 'Success');
         },
-        error: () => this.errorMessage = 'Could not update clinic'
+        error: () => {
+          this.errorMessage = 'Could not update clinic';
+          this.toastr.error('Could not update clinic', 'Error');
+        }
       });
     } else {
       this.clinicService.create(payload).subscribe({
         next: () => {
           this.showForm = false;
           this.loadClinics();
+          this.toastr.success('Clinic created', 'Success');
         },
-        error: () => this.errorMessage = 'Could not create clinic'
+        error: () => {
+          this.errorMessage = 'Could not create clinic';
+          this.toastr.error('Could not create clinic', 'Error');
+        }
       });
     }
   }
@@ -121,8 +132,14 @@ export class ClinicsComponent implements OnInit {
   deleteClinic(id: string): void {
     if (!confirm('Delete this clinic?')) return;
     this.clinicService.delete(id).subscribe({
-      next: () => this.loadClinics(),
-      error: () => this.errorMessage = 'Could not delete clinic'
+      next: () => {
+        this.loadClinics();
+        this.toastr.success('Clinic deleted', 'Success');
+      },
+      error: () => {
+        this.errorMessage = 'Could not delete clinic';
+        this.toastr.error('Could not delete clinic', 'Error');
+      }
     });
   }
 }

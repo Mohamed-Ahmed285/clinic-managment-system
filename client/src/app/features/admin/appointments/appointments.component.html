@@ -1,38 +1,55 @@
 <div class="min-h-screen bg-secondary p-8">
-
   <!-- Header -->
   <div class="mb-8 border-b border-primary/20 pb-5">
-    <div class="text-xs uppercase tracking-[0.2em] text-gray">Administration</div>
-    <h2 class="font-['Fraunces'] text-4xl font-semibold text-primary">Appointments</h2>
-    <p class="mt-1 text-sm text-gray">All appointments across every clinic and their current status.</p>
+    <div class="text-xs uppercase tracking-[0.2em] text-gray">
+      Administration
+    </div>
+    <h2 class="font-['Fraunces'] text-4xl font-semibold text-primary">
+      Appointments
+    </h2>
+    <p class="mt-1 text-sm text-gray">
+      All appointments across every clinic and their current status.
+    </p>
   </div>
 
   <!-- Stat cards -->
   <div class="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
     <div class="rounded-xl border border-gray/20 bg-white p-4">
       <div class="text-xs uppercase tracking-wider text-gray">Total</div>
-      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">{{ allAppointments.length }}</div>
+      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">
+        {{ allAppointments.length }}
+      </div>
     </div>
     <div class="rounded-xl border border-gray/20 bg-white p-4">
       <div class="text-xs uppercase tracking-wider text-gray">Pending</div>
-      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">{{ countByStatus('pending') }}</div>
+      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">
+        {{ countByStatus("pending") }}
+      </div>
     </div>
     <div class="rounded-xl border border-gray/20 bg-white p-4">
       <div class="text-xs uppercase tracking-wider text-gray">Confirmed</div>
-      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">{{ countByStatus('confirmed') }}</div>
+      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">
+        {{ countByStatus("confirmed") }}
+      </div>
     </div>
     <div class="rounded-xl border border-gray/20 bg-white p-4">
       <div class="text-xs uppercase tracking-wider text-gray">Completed</div>
-      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">{{ countByStatus('completed') }}</div>
+      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">
+        {{ countByStatus("completed") }}
+      </div>
     </div>
     <div class="rounded-xl border border-gray/20 bg-white p-4">
       <div class="text-xs uppercase tracking-wider text-gray">Cancelled</div>
-      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">{{ countByStatus('cancelled') }}</div>
+      <div class="mt-1 font-['Fraunces'] text-2xl text-primary">
+        {{ countByStatus("cancelled") }}
+      </div>
     </div>
   </div>
 
   <!-- Search + filters -->
-  <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+  <div
+    class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+  >
     <input
       type="text"
       [(ngModel)]="searchTerm"
@@ -72,10 +89,13 @@
   <p *ngIf="loading" class="mb-4 text-sm text-gray">Loading appointments...</p>
 
   <!-- Table -->
-  <div *ngIf="!loading" class="rounded-xl border border-gray/20 bg-white shadow">
+  <div
+    *ngIf="!loading"
+    class="rounded-xl border border-gray/20 bg-white shadow"
+  >
     <div class="flex items-center justify-between px-6 pt-6">
       <h3 class="font-['Fraunces'] text-xl text-primary">
-        {{ activeFilter ? (activeFilter | titlecase) : 'All' }} appointments
+        {{ activeFilter ? (activeFilter | titlecase) : "All" }} appointments
       </h3>
       <span class="text-sm text-gray">{{ appointments.length }} results</span>
     </div>
@@ -95,12 +115,18 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray/10">
-          <tr *ngFor="let appt of appointments">
-            <td class="py-3 pr-4">{{ appt.date | date:'mediumDate' }}</td>
+          <tr *ngFor="let appt of pagedAppointments">
+            <td class="py-3 pr-4">{{ appt.date | date: "mediumDate" }}</td>
             <td class="py-3 pr-4">{{ appt.startTime }}</td>
-            <td class="py-3 pr-4 font-medium">{{ appt.patientId?._id?.name || 'Unknown' }}</td>
-            <td class="py-3 pr-4">{{ appt.doctorId?._id?.name || 'Unknown' }}</td>
-            <td class="py-3 pr-4 text-gray">{{ appt.doctorId?.specialtyId?.name || '—' }}</td>
+            <td class="py-3 pr-4 font-medium">
+              {{ appt.patientId?._id?.name || "Unknown" }}
+            </td>
+            <td class="py-3 pr-4">
+              {{ appt.doctorId?._id?.name || "Unknown" }}
+            </td>
+            <td class="py-3 pr-4 text-gray">
+              {{ appt.doctorId?.specialtyId?.name || "—" }}
+            </td>
             <td class="py-3 pr-4 text-gray">{{ appt.clinicId?.name }}</td>
             <td class="py-3 pr-4">
               <span
@@ -110,7 +136,7 @@
                   'bg-blue-100 text-blue-700': appt.status === 'confirmed',
                   'bg-green-100 text-green-700': appt.status === 'completed',
                   'bg-red-100 text-red-700': appt.status === 'cancelled',
-                  'bg-gray-100 text-gray-700': appt.status === 'rescheduled'
+                  'bg-gray-100 text-gray-700': appt.status === 'rescheduled',
                 }"
               >
                 {{ appt.status }}
@@ -125,7 +151,9 @@
                 Complete
               </button>
               <button
-                *ngIf="appt.status !== 'cancelled' && appt.status !== 'completed'"
+                *ngIf="
+                  appt.status !== 'cancelled' && appt.status !== 'completed'
+                "
                 (click)="cancelAppointment(appt._id)"
                 class="ml-2 rounded-md border border-red-300 px-2.5 py-1 text-xs text-red-600 hover:bg-red-50"
               >
@@ -135,7 +163,47 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- Pagination -->
+      <div
+        *ngIf="totalPages > 1"
+        class="mt-6 flex flex-col items-center justify-between gap-3 border-t border-gray/10 pt-4 sm:flex-row"
+      >
+        <span class="text-xs text-gray">
+          Page {{ currentPage }} of {{ totalPages }}
+        </span>
+
+        <div class="flex items-center gap-1">
+          <button
+            (click)="goToPage(currentPage - 1)"
+            [disabled]="currentPage === 1"
+            class="rounded-full border border-gray/30 px-3 py-1.5 text-sm text-primary transition disabled:cursor-not-allowed disabled:opacity-40 hover:enabled:bg-primary hover:enabled:text-white"
+          >
+            ‹
+          </button>
+
+          <button
+            *ngFor="let page of pageNumbers"
+            (click)="goToPage(page)"
+            class="rounded-full border px-3 py-1.5 text-sm transition"
+            [class.bg-primary]="page === currentPage"
+            [class.text-white]="page === currentPage"
+            [class.border-primary]="page === currentPage"
+            [class.text-primary]="page !== currentPage"
+            [class.border-gray]="page !== currentPage"
+          >
+            {{ page }}
+          </button>
+
+          <button
+            (click)="goToPage(currentPage + 1)"
+            [disabled]="currentPage === totalPages"
+            class="rounded-full border border-gray/30 px-3 py-1.5 text-sm text-primary transition disabled:cursor-not-allowed disabled:opacity-40 hover:enabled:bg-primary hover:enabled:text-white"
+          >
+            ›
+          </button>
+        </div>
+      </div>
     </div>
   </div>
-
 </div>
