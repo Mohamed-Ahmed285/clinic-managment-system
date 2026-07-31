@@ -12,7 +12,8 @@ export class ClinicsComponent implements OnInit {
   clinics: Clinic[] = [];
   loading = true;
   errorMessage = '';
-
+showConfirm = false;
+selectedClinicId = '';
   showForm = false;
   editMode = false;
   editingId: string | null = null;
@@ -41,7 +42,10 @@ export class ClinicsComponent implements OnInit {
   ngOnInit(): void {
     this.loadClinics();
   }
-
+openConfirm(id: string): void {
+  this.selectedClinicId = id;
+  this.showConfirm = true;
+}
   // convenience getters
   get name() { return this.clinicForm.get('name'); }
   get email() { return this.clinicForm.get('email'); }
@@ -130,9 +134,12 @@ export class ClinicsComponent implements OnInit {
   }
 
   deleteClinic(id: string): void {
-    if (!confirm('Delete this clinic?')) return;
+    // if (!confirm('Delete this clinic?')) return;
     this.clinicService.delete(id).subscribe({
       next: () => {
+          this.showConfirm = false;
+      this.selectedClinicId = '';
+
         this.loadClinics();
         this.toastr.success('Clinic deleted', 'Success');
       },

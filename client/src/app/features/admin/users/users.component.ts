@@ -4,13 +4,15 @@ import { ToastrService } from 'ngx-toastr';
 import { UserService, AppUser } from '../services/user.service';
 import { SpecialtyService, Specialty } from '../services/specialty.service';
 import { ClinicService, Clinic } from '../services/clinic.service';
-
+import { ConfirmPopUpComponent } from 'src/app/shared/components/confirm-pop-up/confirm-pop-up.component';
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.css']
+  styleUrls: ['./users.component.css'],
 })
 export class UsersComponent implements OnInit {
+  showConfirm = false;
+  selectedUserId = '';
   users: AppUser[] = [];
   specialties: Specialty[] = [];
   clinics: Clinic[] = [];
@@ -27,10 +29,18 @@ export class UsersComponent implements OnInit {
     password: '',
     role: 'patient',
     address: { city: '', state: '', country: '' },
-    clinics: []
+    clinics: [],
   };
 
-  daysOfWeek = ['saturday', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+  daysOfWeek = [
+    'saturday',
+    'sunday',
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+  ];
 
   // Pagination
   currentPage = 1;
@@ -40,23 +50,26 @@ export class UsersComponent implements OnInit {
     private userService: UserService,
     private specialtyService: SpecialtyService,
     private clinicService: ClinicService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {
     this.loadUsers();
     this.specialtyService.getAll().subscribe({
-      next: (res) => this.specialties = res.data
+      next: (res) => (this.specialties = res.data),
     });
     this.clinicService.getAll().subscribe({
       next: (res) => {
         console.log('Clinics response:', res);
         this.clinics = res;
         console.log('Clinics array:', this.clinics);
-      }
+      },
     });
   }
-
+  openConfirm(id: string): void {
+    this.selectedUserId = id;
+    this.showConfirm = true;
+  }
   loadUsers(): void {
     this.loading = true;
     this.userService.getAll(this.roleFilter).subscribe({
@@ -69,7 +82,7 @@ export class UsersComponent implements OnInit {
         this.errorMessage = 'Could not load users';
         this.toastr.error('Could not load users', 'Error');
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -107,7 +120,7 @@ export class UsersComponent implements OnInit {
       password: '',
       role: 'patient',
       address: { city: '', state: '', country: '' },
-      clinics: []
+      clinics: [],
     };
     this.showForm = true;
   }
@@ -124,14 +137,14 @@ export class UsersComponent implements OnInit {
           address: { city: '', state: '', country: '' },
           clinics: [],
           ...fetchedUser,
-          ...profile
+          ...profile,
         };
         this.showForm = true;
       },
       error: () => {
         this.errorMessage = 'Could not load user details';
         this.toastr.error('Could not load user details', 'Error');
-      }
+      },
     });
   }
 
@@ -150,7 +163,7 @@ export class UsersComponent implements OnInit {
       clinicId: '',
       consultationFee: 0,
       availability: [{ day: [], startTime: '', endTime: '' }],
-      isActiveAtClinic: true
+      isActiveAtClinic: true,
     });
   }
 
@@ -160,7 +173,9 @@ export class UsersComponent implements OnInit {
 
   addWorkingHour(clinicIndex: number): void {
     this.currentUser.clinics?.[clinicIndex].availability.push({
-      day: [], startTime: '', endTime: ''
+      day: [],
+      startTime: '',
+      endTime: '',
     });
   }
 
@@ -169,7 +184,8 @@ export class UsersComponent implements OnInit {
   }
 
   toggleDay(clinicIndex: number, hourIndex: number, day: string): void {
-    const hour = this.currentUser.clinics?.[clinicIndex].availability[hourIndex];
+    const hour =
+      this.currentUser.clinics?.[clinicIndex].availability[hourIndex];
     if (!hour) return;
     const i = hour.day.indexOf(day);
     if (i === -1) {
@@ -180,7 +196,11 @@ export class UsersComponent implements OnInit {
   }
 
   isDaySelected(clinicIndex: number, hourIndex: number, day: string): boolean {
-    return this.currentUser.clinics?.[clinicIndex].availability[hourIndex]?.day.includes(day) ?? false;
+    return (
+      this.currentUser.clinics?.[clinicIndex].availability[
+        hourIndex
+      ]?.day.includes(day) ?? false
+    );
   }
 
   // ============ save / delete ============
@@ -193,14 +213,16 @@ export class UsersComponent implements OnInit {
     this.errorMessage = '';
 
     if (this.editMode && this.currentUser._id) {
-      this.userService.update(this.currentUser._id, this.currentUser).subscribe({
-        next: () => {
-          this.showForm = false;
-          this.loadUsers();
-          this.toastr.success('User updated', 'Success');
-        },
-        error: (err) => this.handleSaveError(err, 'update')
-      });
+      this.userService
+        .update(this.currentUser._id, this.currentUser)
+        .subscribe({
+          next: () => {
+            this.showForm = false;
+            this.loadUsers();
+            this.toastr.success('User updated', 'Success');
+          },
+          error: (err) => this.handleSaveError(err, 'update'),
+        });
     } else {
       this.userService.create(this.currentUser).subscribe({
         next: () => {
@@ -208,7 +230,7 @@ export class UsersComponent implements OnInit {
           this.loadUsers();
           this.toastr.success('User created', 'Success');
         },
-        error: (err) => this.handleSaveError(err, 'create')
+        error: (err) => this.handleSaveError(err, 'create'),
       });
     }
   }
@@ -231,27 +253,32 @@ export class UsersComponent implements OnInit {
       rawMessage.includes('unique');
 
     if (isDuplicate) {
-      this.errorMessage = 'An account with this email already exists. Please use a different email.';
+      this.errorMessage =
+        'An account with this email already exists. Please use a different email.';
     } else if (backendMessage) {
       this.errorMessage = backendMessage;
     } else {
-      this.errorMessage = action === 'create' ? 'Could not create user' : 'Could not update user';
+      this.errorMessage =
+        action === 'create' ? 'Could not create user' : 'Could not update user';
     }
 
     this.toastr.error(this.errorMessage, 'Error');
   }
 
   deleteUser(id: string): void {
-    if (!confirm('Delete this user? This cannot be undone.')) return;
+    // if (!confirm('Delete this user? This cannot be undone.')) return;
     this.userService.delete(id).subscribe({
       next: () => {
+         this.showConfirm = false;
+         this.selectedUserId = '';
+
         this.loadUsers();
         this.toastr.success('User deleted', 'Success');
       },
       error: () => {
         this.errorMessage = 'Could not delete user';
         this.toastr.error('Could not delete user', 'Error');
-      }
+      },
     });
   }
 }

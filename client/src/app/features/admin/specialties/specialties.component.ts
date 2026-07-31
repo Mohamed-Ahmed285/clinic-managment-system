@@ -25,6 +25,8 @@ export class SpecialtiesComponent implements OnInit {
   // Pagination
   currentPage = 1;
   itemsPerPage = 10;
+  showConfirm = false;
+selectedSpecialtyId = '';
 
   constructor(
     private specialtyService: SpecialtyService,
@@ -42,6 +44,10 @@ export class SpecialtiesComponent implements OnInit {
   ngOnInit(): void {
     this.loadSpecialties();
   }
+  openConfirm(id: string): void {
+  this.selectedSpecialtyId = id;
+  this.showConfirm = true;
+}
 
   get name() { return this.specialtyForm.get('name'); }
   get description() { return this.specialtyForm.get('description'); }
@@ -65,9 +71,9 @@ export class SpecialtiesComponent implements OnInit {
   loadDoctorCounts(): void {
     this.doctorService.getAll().subscribe({
       next: (response) => {
-       
+
         const doctors: Doctor[] = response;
-        
+
         this.doctorCounts = {};
 
         for (const doctor of doctors) {
@@ -170,9 +176,11 @@ export class SpecialtiesComponent implements OnInit {
   }
 
   deleteSpecialty(id: string): void {
-    if (!confirm('Delete this specialty?')) return;
+    // if (!confirm('Delete this specialty?')) return;
     this.specialtyService.delete(id).subscribe({
       next: () => {
+        this.showConfirm = false;
+      this.selectedSpecialtyId = '';
         this.loadSpecialties();
         this.toastr.success('Specialty deleted', 'Success');
       },
