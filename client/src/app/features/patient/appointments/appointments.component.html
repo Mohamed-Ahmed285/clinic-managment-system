@@ -410,7 +410,7 @@
         >
           <option value="">Choose Time</option>
 
-          <option *ngFor="let time of availableTimes" [value]="time">
+          <option *ngFor="let time of availableTimes" [value]="time" [disabled]="isTimeDisabled(time)">
             {{ time }}
           </option>
         </select>
