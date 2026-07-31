@@ -1,4 +1,7 @@
 const clinicModel = require("../models/clinic");
+const appointmentModel = require("../models/appointment");
+const doctorModel = require("../models/doctor");
+const notificationService = require("../services/notificationService");
 
 const timePattern = /^\d{2}:\d{2}$/;
 
@@ -155,11 +158,80 @@ try {
 
 const deleteClinic = async (req, res) => {
 try {
-    const clinic = await clinicModel.findByIdAndDelete(req.params.id);
+    const clinic = await clinicModel.findById(req.params.id);
     if (!clinic) {
         return res.status(404).send("clinic not found");
     }
-    return res.status(200).json( {message :"clinic deleted successfully"});
+
+    // Only today-and-future appointments at this clinic that aren't already
+    // cancelled/completed are affected by the clinic closing down.
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const affectedAppointments = await appointmentModel.find({
+        clinicId: clinic._id,
+        status: { $nin: ["cancelled", "completed"] },
+        date: { $gte: todayStart }
+    });
+
+    // Cancel each affected appointment, mark online-paid ones as refunded
+    // (refund itself is handled manually/offline), and notify the patient.
+    await Promise.all(
+        affectedAppointments.map(async (appointment) => {
+            appointment.status = "cancelled";
+            appointment.cancelledBy = "admin";
+            appointment.cancellationReason = "Clinic has been removed";
+
+            const wasPaidOnline = appointment.paymentMethod === "online" && appointment.paymentStatus === "paid";
+            if (wasPaidOnline) {
+                appointment.paymentStatus = "refunded";
+            }
+
+            await appointment.save();
+
+            const message = wasPaidOnline
+                ? `Your appointment at ${clinic.name} has been cancelled because the clinic is no longer available. Since you paid online, your payment has been marked as refunded and will be processed manually.`
+                : `Your appointment at ${clinic.name} has been cancelled because the clinic is no longer available.`;
+
+            return notificationService.createNotification({
+                recipientId: appointment.patientId,
+                recipientType: "patient",
+                title: "Appointment Cancelled",
+                message,
+                type: "appointmentCancelled",
+                relatedAppointmentId: appointment._id
+            });
+        })
+    );
+
+    // Every doctor currently assigned to this clinic, not just those with
+    // upcoming appointments, needs to know the clinic is gone.
+    const affectedDoctors = await doctorModel.find({ "clinics.clinicId": clinic._id });
+
+    await Promise.all(
+        affectedDoctors.map(async (doctor) => {
+            doctor.clinics = doctor.clinics.filter(
+                (assignment) => assignment.clinicId.toString() !== clinic._id.toString()
+            );
+            await doctor.save();
+
+            return notificationService.createNotification({
+                recipientId: doctor._id,
+                recipientType: "doctor",
+                title: "Clinic Removed",
+                message: `${clinic.name} has been removed by the administration. It has been removed from your assigned clinics, and any of your upcoming appointments there have been cancelled.`,
+                type: "system"
+            });
+        })
+    );
+
+    await clinicModel.findByIdAndDelete(clinic._id);
+
+    return res.status(200).json({
+        message: "clinic deleted successfully",
+        cancelledAppointments: affectedAppointments.length,
+        notifiedDoctors: affectedDoctors.length
+    });
 } catch (err) {
     return res.status(500).send(err.message);
 }};
