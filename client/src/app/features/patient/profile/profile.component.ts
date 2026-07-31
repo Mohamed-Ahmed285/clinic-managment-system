@@ -208,16 +208,43 @@ export class ProfileComponent implements OnInit {
   medicalRecords: any[] = [];
 
   loadMedicalRecords() {
-    const patientId = this.profileData.profile._id;
+  const patientId = this.profileData.profile._id;
 
-    this.profileService.getMedicalRecords(patientId).subscribe({
-      next: (res: any) => {
-        console.log(res);
-        this.medicalRecords = res;
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    });
-  }
+  this.profileService.getMedicalRecords(patientId).subscribe({
+    next: (res: any) => {
+      console.log(res);
+      this.medicalRecords = res;
+      this.groupRecordsByDoctor();
+    },
+    error: (err) => {
+      console.log(err);
+    }
+  });
+}
+  groupedRecords: any[] = [];
+
+groupRecordsByDoctor() {
+  const groups = new Map<string, any>();
+
+  this.medicalRecords.forEach((record: any) => {
+    const doctorId = record.doctorId?._id?._id || record.doctorId?._id;
+    const doctorName = record.doctorId?._id?.name;
+
+    if (!groups.has(doctorId)) {
+      groups.set(doctorId, {
+        doctorId,
+        doctorName,
+        isOpen: false,
+        visits: []
+      });
+    }
+    groups.get(doctorId).visits.push(record);
+  });
+
+  this.groupedRecords = Array.from(groups.values());
+}
+
+toggleDropdown(group: any) {
+  group.isOpen = !group.isOpen;
+}
 }
