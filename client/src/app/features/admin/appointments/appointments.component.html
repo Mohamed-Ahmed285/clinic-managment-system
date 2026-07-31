@@ -1,3 +1,8 @@
+<app-cancel-reason-model
+  *ngIf="showCancelModal"
+  (confirm)="confirmCancel($event)"
+  (close)="closeCancelModal()">
+</app-cancel-reason-model>
 <div class="min-h-screen bg-secondary p-8">
   <!-- Header -->
   <div class="mb-8 border-b border-primary/20 pb-5">
@@ -154,7 +159,7 @@
                 *ngIf="
                   appt.status !== 'cancelled' && appt.status !== 'completed'
                 "
-                (click)="cancelAppointment(appt._id)"
+                (click)="openCancelModal(appt._id)"
                 class="ml-2 rounded-md border border-red-300 px-2.5 py-1 text-xs text-red-600 hover:bg-red-50"
               >
                 Cancel

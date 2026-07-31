@@ -409,5 +409,25 @@ export class AppointmentsComponent implements OnInit {
       this.handleError('Unable to start payment.');
     }
   });
+  }
+  isTimeDisabled(time: string): boolean {
+  if (!this.appointmentDate) return false;
+
+  const today = new Date().toISOString().split('T')[0];
+
+
+  if (this.appointmentDate !== today) {
+    return false;
+  }
+
+  const now = new Date();
+  now.setHours(now.getHours() + 1); 
+
+  const [hours, minutes] = time.split(':').map(Number);
+
+  const appointment = new Date();
+  appointment.setHours(hours, minutes, 0, 0);
+
+  return appointment <= now;
 }
 }
