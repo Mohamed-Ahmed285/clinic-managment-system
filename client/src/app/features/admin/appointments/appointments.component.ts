@@ -14,7 +14,7 @@ export class AppointmentsComponent implements OnInit {
   searchTerm = '';
   selectedAppointmentId = '';
   showCancelModal = false;
-  statuses = ['pending', 'confirmed', 'completed', 'cancelled', 'rescheduled'];
+  statuses = ['pending', 'confirmed', 'completed', 'cancelled'];
 
   // Pagination
   currentPage = 1;
