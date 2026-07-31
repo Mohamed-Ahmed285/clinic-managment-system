@@ -29,7 +29,8 @@ try{
         password:req.body.password,
         phone:req.body.phone,
         profileImage:req.body.profileImage,
-        role:role
+        role:role,
+        isEmailVerified:true // created directly by an admin, so trusted - skips the email verification flow
     });
     savedUser = await newUser.save();
  
@@ -74,6 +75,9 @@ try{
     var isMatch = await bcrypt.compare(req.body.password, user.password);
     if(!isMatch){
         return res.status(400).send("email or password is incorrect");
+    }
+    if(!user.isEmailVerified){
+        return res.status(403).send("please verify your email before logging in, check your inbox for the verification link");
     }
     var token = jwt.sign(
         {id:user._id, role:user.role},
@@ -285,6 +289,25 @@ try{
     return res.status(500).send(err.message);
 }};
  
+//----------------- verify email -----------------
+const verifyEmail = async(req,res)=>{
+try{
+    var hashedToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
+    var user = await userModel.findOne({
+        emailVerificationToken:hashedToken,
+        emailVerificationExpire:{$gt:Date.now()}
+    });
+    if(!user){
+        return res.status(400).send("verification link is invalid or has expired");
+    }
+    user.isEmailVerified = true;
+    user.emailVerificationToken = undefined;
+    user.emailVerificationExpire = undefined;
+    await user.save();
+    return res.status(200).send("email verified successfully, you can now log in");
+}catch(err){
+    return res.status(500).send(err.message);
+}};
 //----------------- reset password -----------------
 const resetPassword = async(req,res)=>{
 try{
@@ -362,6 +385,7 @@ module.exports = {
     getMe,
     forgetPassword,
     resetPassword,
+    verifyEmail,
     updateMe,
     updatePassword,
     createUser

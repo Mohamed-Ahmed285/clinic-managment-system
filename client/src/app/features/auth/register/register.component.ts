@@ -76,11 +76,11 @@ constructor(
     next: (res: any) => {
 
       this.toastr.success(
-        'Account created! We sent a confirmation email to ' + this.email.trim() + '.',
+        'Account created! Please check ' + this.email.trim() + ' and verify your email before you can log in.',
         'Welcome to NoQ'
       );
 
-      setTimeout(() => this.router.navigate(['/auth/login']), 2000);
+      setTimeout(() => this.router.navigate(['/auth/login']), 3000);
 
     },
 

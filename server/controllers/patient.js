@@ -3,6 +3,7 @@ const doctorModel = require("../models/doctor");
 const userModel = require("../models/user");
 const todoModel = require("../models/todo");
 const sendEmail = require("../utils/sendEmail");
+const crypto = require("crypto");
 
 //register only forr patient 
 const register = async(req,res)=>{
@@ -14,13 +15,18 @@ try{
         return res.status(400).json({ message: "User already exists" });
     }
 
+    var verifyToken = crypto.randomBytes(32).toString("hex");
+    var hashedVerifyToken = crypto.createHash("sha256").update(verifyToken).digest("hex");
+
     var newUser = new userModel({
         name:req.body.name,
         email,
         password:req.body.password,
         phone:req.body.phone,
         profileImage:req.body.profileImage,
-        role:"patient"
+        role:"patient",
+        emailVerificationToken: hashedVerifyToken,
+        emailVerificationExpire: Date.now() + 60*60*1000 // 1 hour
     });
     savedUser = await newUser.save();
 
@@ -37,13 +43,13 @@ try{
     // Registration itself already succeeded at this point, so a failed
     // confirmation email should never fail the signup response - just log it.
     try{
-        const loginUrl = `${process.env.FRONTEND_URL}/auth/login`;
+        const verifyUrl = `${process.env.FRONTEND_URL}/auth/verify-email/${verifyToken}`;
         const html = `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="utf-8">
-          <title>Welcome to NoQ</title>
+          <title>Verify your email</title>
         </head>
         <body style="font-family: 'Fraunces', Georgia, serif; background-color: #F4FCFC; margin: 0; padding: 40px 20px;">
 
@@ -62,13 +68,21 @@ try{
                 <p style="font-size: 16px; color: #333333; margin-top: 0; margin-bottom: 20px;">Hi ${savedUser.name},</p>
 
                 <p style="font-size: 16px; color: #555555; line-height: 1.6; margin-bottom: 30px;">
-                  Your account has been created successfully with the email <strong>${savedUser.email}</strong>. You can now book appointments, track your visits, and manage your care, all in one place.
+                  Your account has been created with the email <strong>${savedUser.email}</strong>. Please verify your email address to activate your account, you won't be able to log in until it's verified. This link is valid for <strong>1 hour</strong>.
                 </p>
 
                 <!-- Button -->
                 <div style="text-align: center; margin-bottom: 30px;">
-                  <a href="${loginUrl}" style="background-color: #04585c; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-size: 16px; font-weight: bold; display: inline-block;">Log In to Your Account</a>
+                  <a href="${verifyUrl}" style="background-color: #04585c; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-size: 16px; font-weight: bold; display: inline-block;">Verify Email Address</a>
                 </div>
+
+                <!-- Fallback Link -->
+                <p style="font-size: 14px; color: #777777; margin-bottom: 5px;">
+                  If the button doesn't work, copy and paste this link into your browser:
+                </p>
+                <p style="font-size: 14px; margin-bottom: 30px; word-break: break-all;">
+                  <a href="${verifyUrl}" style="color: #0d6efd;">${verifyUrl}</a>
+                </p>
 
                 <hr style="border: none; border-top: 1px solid #eeeeee; margin: 0 0 20px 0;">
 
@@ -86,7 +100,7 @@ try{
 
         await sendEmail({
             to: savedUser.email,
-            subject: "Welcome to NoQ - Registration Confirmed",
+            subject: "Verify your email to activate your NoQ account",
             html: html
         });
     }catch(emailErr){
