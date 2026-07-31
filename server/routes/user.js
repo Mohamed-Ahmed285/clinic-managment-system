@@ -9,6 +9,7 @@ const {
     updateMe,
     forgetPassword,
     resetPassword,
+    verifyEmail,
     updatePassword,
     createUser
 } = require("../controllers/user");
@@ -22,6 +23,7 @@ router.get("/me", verifyToken, getMe);
 router.put("/me", verifyToken, upload.single("profileImage"), updateMe);
 router.post("/forgetPassword", forgetPassword);
 router.put("/resetPassword/:token", resetPassword);
+router.get("/verifyEmail/:token", verifyEmail);
 router.put("/updatePassword", verifyToken, updatePassword);
 router.post("/createUser",verifyToken,authorize("user:create"),createUser);
 

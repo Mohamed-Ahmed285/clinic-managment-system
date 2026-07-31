@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
@@ -11,7 +12,8 @@ export class RegisterComponent {
 
 constructor(
   private authService: AuthService,
-  private router: Router
+  private router: Router,
+  private toastr: ToastrService
 ) {}
   name = '';
   email = '';
@@ -73,7 +75,12 @@ constructor(
   this.authService.register(payload).subscribe({
     next: (res: any) => {
 
-      this.router.navigate(['/auth/login']);
+      this.toastr.success(
+        'Account created! Please check ' + this.email.trim() + ' and verify your email before you can log in.',
+        'Welcome to NoQ'
+      );
+
+      setTimeout(() => this.router.navigate(['/auth/login']), 3000);
 
     },
 
