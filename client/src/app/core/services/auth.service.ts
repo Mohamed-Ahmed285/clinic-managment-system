@@ -81,6 +81,13 @@ export class AuthService {
     );
   }
 
+  verifyEmail(token: string): Observable<any> {
+    return this.http.get(
+      `${this.api}/user/verifyEmail/${token}`,
+      { responseType: 'text' }
+    );
+  }
+
   getUser() {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;

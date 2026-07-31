@@ -374,6 +374,10 @@ const createAppointment = async (req, res) => {
             appointment = await appointmentModel.create(built.payload);
         }
 
+        await doctorModel.findByIdAndUpdate(doctor._id, {
+            $inc: { "bookingStats.totalAppointments": 1 }
+        });
+
         await appointment.populate(populateAppointment);
 
         await Promise.all([
@@ -541,6 +545,10 @@ const cancelAppointment = async (req, res) => {
     appointment.status = "cancelled";
     await appointment.save();
 
+    await doctorModel.findByIdAndUpdate(appointment.doctorId, {
+        $inc: { "bookingStats.cancelledAppointments": 1 }
+    });
+
     // Populate data for notifications and response
     await appointment.populate(populateAppointment);
 
@@ -611,7 +619,9 @@ const completeAppointment = async (req, res) => {
         if(req.user.role === "admin"){
             appointment.status = "completed";
             await appointment.save();
-
+            await doctorModel.findByIdAndUpdate(appointment.doctorId, {
+                $inc: { "bookingStats.completedAppointments": 1 }
+            });
             return res.status(200).json({
                 message: "Appointment completed successfully.",
                 appointment
@@ -644,6 +654,10 @@ const completeAppointment = async (req, res) => {
 
         appointment.status = "completed";
         await appointment.save();
+
+        await doctorModel.findByIdAndUpdate(appointment.doctorId, {
+            $inc: { "bookingStats.completedAppointments": 1 }
+        });
 
         return res.status(200).json({
             message: "Appointment completed successfully.",

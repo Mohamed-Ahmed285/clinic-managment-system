@@ -10,31 +10,23 @@
 
   <!-- ============ SECTION TABS ============ -->
   <div class="mb-6 flex flex-wrap gap-2">
-    <button (click)="showSection('overview')"
-      class="rounded-md border border-gray/20 px-3 py-1.5 text-sm"
-      [class.bg-primary]="selectedSection === 'overview'"
-      [class.text-white]="selectedSection === 'overview'"
+    <button (click)="showSection('overview')" class="rounded-md border border-gray/20 px-3 py-1.5 text-sm"
+      [class.bg-primary]="selectedSection === 'overview'" [class.text-white]="selectedSection === 'overview'"
       [class.text-gray]="selectedSection !== 'overview'">
       Overview
     </button>
-    <button (click)="showSection('appointments')"
-      class="rounded-md border border-gray/20 px-3 py-1.5 text-sm"
-      [class.bg-primary]="selectedSection === 'appointments'"
-      [class.text-white]="selectedSection === 'appointments'"
+    <button (click)="showSection('appointments')" class="rounded-md border border-gray/20 px-3 py-1.5 text-sm"
+      [class.bg-primary]="selectedSection === 'appointments'" [class.text-white]="selectedSection === 'appointments'"
       [class.text-gray]="selectedSection !== 'appointments'">
       Appointments
     </button>
-    <button (click)="showSection('doctors')"
-      class="rounded-md border border-gray/20 px-3 py-1.5 text-sm"
-      [class.bg-primary]="selectedSection === 'doctors'"
-      [class.text-white]="selectedSection === 'doctors'"
+    <button (click)="showSection('doctors')" class="rounded-md border border-gray/20 px-3 py-1.5 text-sm"
+      [class.bg-primary]="selectedSection === 'doctors'" [class.text-white]="selectedSection === 'doctors'"
       [class.text-gray]="selectedSection !== 'doctors'">
       Doctors
     </button>
-    <button (click)="showSection('performance')"
-      class="rounded-md border border-gray/20 px-3 py-1.5 text-sm"
-      [class.bg-primary]="selectedSection === 'performance'"
-      [class.text-white]="selectedSection === 'performance'"
+    <button (click)="showSection('performance')" class="rounded-md border border-gray/20 px-3 py-1.5 text-sm"
+      [class.bg-primary]="selectedSection === 'performance'" [class.text-white]="selectedSection === 'performance'"
       [class.text-gray]="selectedSection !== 'performance'">
       Performance
     </button>
@@ -83,7 +75,7 @@
   <!-- ================= APPOINTMENTS ================= -->
   <div *ngIf="selectedSection === 'appointments' && !loading">
 
-    <div *ngIf="appointmentStats" class="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+    <div *ngIf="appointmentStats" class="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       <div class="rounded-xl border border-gray/20 bg-white p-6 text-center shadow">
         <h3 class="font-['Fraunces'] text-3xl text-primary">{{ appointmentStats.pending }}</h3>
         <p class="mt-2 text-xs uppercase tracking-wider text-yellow-700">Pending</p>
@@ -99,10 +91,6 @@
       <div class="rounded-xl border border-gray/20 bg-white p-6 text-center shadow">
         <h3 class="font-['Fraunces'] text-3xl text-primary">{{ appointmentStats.cancelled }}</h3>
         <p class="mt-2 text-xs uppercase tracking-wider text-red-700">Cancelled</p>
-      </div>
-      <div class="rounded-xl border border-gray/20 bg-white p-6 text-center shadow">
-        <h3 class="font-['Fraunces'] text-3xl text-primary">{{ appointmentStats.rescheduled }}</h3>
-        <p class="mt-2 text-xs uppercase tracking-wider text-purple-700">Rescheduled</p>
       </div>
     </div>
 
