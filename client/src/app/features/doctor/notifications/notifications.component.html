@@ -6,191 +6,42 @@
     </div>
   </div>
 
-  <!-- Unread -->
-  <h3 class="notification-section-title">Unread</h3>
-
   <ul class="notification-list">
-
-    <li class="notification-row" *ngFor="let note of unreadNotifications">
-
-      <span class="notification-row__dot notification-row__dot--unread"></span>
-
+    <li class="notification-row" *ngFor="let note of visibleNotifications">
       <div class="notification-row__body">
-
         <div class="notification-row__top">
-
           <div class="notification-content">
+            <p class="notification-row__subject">{{ note.subject }}</p>
+            <p class="notification-row__preview">{{ note.preview }}</p>
+            <p class="notification-row__time">{{ note.timeAgo }}</p>
 
-            <p class="notification-row__subject">
-              {{ note.subject }}
-            </p>
-
-            <p class="notification-row__preview">
-              {{ note.preview }}
-            </p>
-
-            <p class="notification-row__time">
-              {{ note.timeAgo }}
-            </p>
-
-            <button
-              class="details-btn"
-              (click)="toggleDetails(note)">
-
-              {{ note.expanded
-                ? 'Hide appointment details ▲'
-                : 'Show appointment details ▼' }}
-
+            <button class="details-btn" (click)="toggleDetails(note)">
+              {{ note.expanded ? 'Hide appointment details' : 'Show appointment details' }}
             </button>
 
-            <div
-              class="appointment-details"
-              *ngIf="note.expanded">
-
-              <p>
-                <strong>Patient:</strong>
-                {{ note.appointmentDetails?.patientName }}
-              </p>
-
-              <p>
-                <strong>Clinic:</strong>
-                {{ note.appointmentDetails?.clinicName }}
-              </p>
-
-              <p>
-                <strong>Date:</strong>
-                {{ note.appointmentDetails?.date }}
-              </p>
-
-              <p>
-                <strong>Time:</strong>
-                {{ note.appointmentDetails?.time }}
-              </p>
-
-              <p>
-                <strong>Fee:</strong>
-                {{ note.appointmentDetails?.fee }} EGP
-              </p>
-
-              <p>
-                <strong>Status:</strong>
-                {{ note.appointmentDetails?.status }}
-              </p>
-
+            <div class="appointment-details" *ngIf="note.expanded">
+              <p><strong>Patient:</strong> {{ note.appointmentDetails?.patientName }}</p>
+              <p><strong>Clinic:</strong> {{ note.appointmentDetails?.clinicName }}</p>
+              <p><strong>Date:</strong> {{ note.appointmentDetails?.date }}</p>
+              <p><strong>Time:</strong> {{ note.appointmentDetails?.time }}</p>
+              <p><strong>Fee:</strong> {{ note.appointmentDetails?.fee }} EGP</p>
+              <p><strong>Status:</strong> {{ note.appointmentDetails?.status }}</p>
             </div>
-
           </div>
 
           <button
-            *ngIf="!note.read"
-            class="mark-read-btn"
-            (click)="markAsRead(note.id)">
+            class="dismiss-btn"
+            (click)="dismiss(note.id)"
+            aria-label="Dismiss notification"
+            title="Dismiss notification">
             <i class="fa-solid fa-check"></i>
           </button>
-
         </div>
-
       </div>
-
     </li>
 
-    <li
-      *ngIf="unreadNotifications.length === 0"
-      class="empty-state">
-      No unread notifications.
+    <li *ngIf="visibleNotifications.length === 0" class="empty-state">
+      No appointment notifications.
     </li>
-
   </ul>
-
-  <hr class="notification-divider">
-
-  <!-- Read -->
-  <h3 class="notification-section-title">Read</h3>
-
-  <ul class="notification-list">
-
-    <li class="notification-row" *ngFor="let note of readNotifications">
-
-      <span class="notification-row__dot"></span>
-
-      <div class="notification-row__body">
-
-        <div class="notification-row__top">
-
-          <div class="notification-content">
-
-            <p class="notification-row__subject">
-              {{ note.subject }}
-            </p>
-
-            <p class="notification-row__preview">
-              {{ note.preview }}
-            </p>
-
-            <p class="notification-row__time">
-              {{ note.timeAgo }}
-            </p>
-
-            <button
-              class="details-btn"
-              (click)="toggleDetails(note)">
-
-              {{ note.expanded
-                ? 'Hide appointment details ▲'
-                : 'Show appointment details ▼' }}
-
-            </button>
-
-            <div
-              class="appointment-details"
-              *ngIf="note.expanded">
-
-              <p>
-                <strong>Patient:</strong>
-                {{ note.appointmentDetails?.patientName }}
-              </p>
-
-              <p>
-                <strong>Clinic:</strong>
-                {{ note.appointmentDetails?.clinicName }}
-              </p>
-
-              <p>
-                <strong>Date:</strong>
-                {{ note.appointmentDetails?.date }}
-              </p>
-
-              <p>
-                <strong>Time:</strong>
-                {{ note.appointmentDetails?.time }}
-              </p>
-
-              <p>
-                <strong>Fee:</strong>
-                {{ note.appointmentDetails?.fee }} EGP
-              </p>
-
-              <p>
-                <strong>Status:</strong>
-                {{ note.appointmentDetails?.status }}
-              </p>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </li>
-
-    <li
-      *ngIf="readNotifications.length === 0"
-      class="empty-state">
-      No read notifications.
-    </li>
-
-  </ul>
-
 </section>

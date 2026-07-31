@@ -1,17 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Appointment, NotificationItem, PanelStat, RatingSummary } from '../models/dashboard.model';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { DoctorService, DashboardResponse } from 'src/app/core/services/doctor.service';
+import { RealtimeNotificationsService } from 'src/app/core/services/realtime-notifications.service';
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
 
   todayLabel = 'Today';
-  
-dashboard: DashboardResponse | null = null;  
+
+  dashboard: DashboardResponse | null = null;
 
   appointments: Appointment[] = [];
 
@@ -29,13 +32,33 @@ dashboard: DashboardResponse | null = null;
 
    loadingDashboard = true;
 
+  // holds the socket subscription so we can clean it up in ngOnDestroy
+  private notificationSub?: Subscription;
+
 constructor(
   private doctorService: DoctorService,
-  private notificationService: NotificationService
+  private notificationService: NotificationService,
+  private realtimeNotifications: RealtimeNotificationsService
 ) {}
+
   ngOnInit(): void {
     this.loadDashboard();
     this.loadNotifications();
+
+    // open the socket connection and join this doctor's room
+    this.realtimeNotifications.connect();
+
+    // whenever a new notification is pushed from the server, just re-fetch
+    // the full, filtered, correctly-ordered list from the REST endpoint
+    // instead of trying to hand-merge the partial socket payload
+    this.notificationSub = this.realtimeNotifications.notifications$.subscribe(() => {
+      this.loadNotifications();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.notificationSub?.unsubscribe();
+    this.realtimeNotifications.disconnect();
   }
 
 loadDashboard(): void {
@@ -126,7 +149,7 @@ formatTime(time: string): string {
 
   return `${displayHour}:${minutes.toString().padStart(2, '0')} ${period}`;
 }
-  
+
 
   loadNotifications(): void {
 
@@ -134,13 +157,14 @@ formatTime(time: string): string {
 
     next: (res) => {
 
-      this.notifications = res.map(item => ({
+      this.notifications = res
+        .filter(item => Boolean(item.relatedAppointmentId))
+        .map(item => ({
         id: item._id,
         senderName: item.recipientType,
         subject: item.title,
         preview: item.message,
-        timeAgo: new Date(item.createdAt).toLocaleString(),
-        read: item.isRead
+        timeAgo: new Date(item.createdAt).toLocaleString()
       }));
   console.log("Notifications:", this.notifications);
     },
