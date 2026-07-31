@@ -69,7 +69,7 @@ export class ReviewsComponent implements OnInit {
 
     this.reviewableAppointments = this.appointments.filter(
       (appointment) =>
-        ['confirmed', 'completed'].includes(appointment.status) &&
+        ['completed'].includes(appointment.status) &&
         !reviewedIds.has(appointment._id),
     );
   }
