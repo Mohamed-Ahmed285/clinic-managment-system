@@ -46,7 +46,7 @@ export class LoginComponent {
         this.isSubmitting = false;
         switch (response.user.role) {
           case 'patient':
-            this.router.navigate(['/patient']);
+            this.router.navigate(['/']);
             break;
 
           case 'doctor':
