@@ -1,0 +1,53 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+>
+  <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+
+    <h2 class="font-['Fraunces'] text-2xl text-primary">
+      Cancel Appointment
+    </h2>
+
+    <p class="mt-2 text-sm text-gray">
+      Please enter the reason for cancelling this appointment.
+    </p>
+
+    <div class="mt-5">
+      <label class="mb-2 block text-sm font-medium text-gray">
+        Cancellation Reason
+      </label>
+
+      <textarea
+        [(ngModel)]="reason"
+        rows="4"
+        placeholder="Type the cancellation reason..."
+        class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+      ></textarea>
+
+      <p
+        *ngIf="submitted && !reason.trim()"
+        class="mt-1 text-xs text-red-500"
+      >
+        Cancellation reason is required.
+      </p>
+    </div>
+
+    <div class="mt-6 flex justify-end gap-3">
+      <button
+        type="button"
+        (click)="onClose()"
+        class="rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-100"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        (click)="onConfirm()"
+        class="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+      >
+        Confirm Cancellation
+      </button>
+    </div>
+
+  </div>
+</div>

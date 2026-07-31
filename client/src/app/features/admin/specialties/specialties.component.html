@@ -1,3 +1,10 @@
+<app-confirm-pop-up
+  *ngIf="showConfirm"
+  title="Delete Specialty"
+  message="Are you sure you want to delete this specialty?"
+  (confirm)="deleteSpecialty(selectedSpecialtyId)"
+  (cancel)="showConfirm = false">
+</app-confirm-pop-up>
 <div class="min-h-screen bg-secondary p-8">
 
   <!-- Header -->
@@ -49,7 +56,7 @@
             <td class="py-3 pr-4 text-gray">{{ getDoctorCount(specialty._id) }}</td>
             <td class="py-3 pr-4 text-right">
               <button (click)="openEditForm(specialty)" class="rounded-md border border-gray/30 px-2.5 py-1 text-xs hover:bg-secondary">Edit</button>
-              <button (click)="deleteSpecialty(specialty._id!)" class="ml-2 rounded-md border border-red-300 px-2.5 py-1 text-xs text-red-600 hover:bg-red-50">Delete</button>
+              <button (click)="openConfirm(specialty._id!)" class="ml-2 rounded-md border border-red-300 px-2.5 py-1 text-xs text-red-600 hover:bg-red-50">Delete</button>
             </td>
           </tr>
         </tbody>

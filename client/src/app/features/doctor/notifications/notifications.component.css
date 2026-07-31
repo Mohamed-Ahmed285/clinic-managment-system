@@ -34,7 +34,7 @@
 
 .notification-row {
   display: grid;
-  grid-template-columns: 10px 1fr;
+  grid-template-columns: 1fr auto;
   gap: 14px;
   padding: 16px 0;
   border-top: 1px solid var(--border);
@@ -42,18 +42,6 @@
 
 .notification-row:first-child {
   border-top: none;
-}
-
-.notification-row__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-top: 6px;
-  background: transparent;
-}
-
-.notification-row__dot--unread {
-  background: var(--teal);
 }
 
 .notification-row__top {
@@ -88,7 +76,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.mark-read-btn {
+.dismiss-btn {
   border: none;
   background: transparent;
   cursor: pointer;
@@ -98,21 +86,7 @@
   transition: 0.2s;
   margin-left: auto; 
 }
-.notification-section-title {
-     font-family: 'Fraunces', serif;
-  font-size: 18px;
-  font-weight: 500;
-  margin: 18px 0 12px;
-  color: #1f2937;
-}
-
-.notification-divider {
-  margin: 20px 0;
-  border: 20;
-  border-top: 2px solid #e5e7eb;
-}
-
-.mark-read-btn:hover {
+.dismiss-btn:hover {
   color: #16a34a;
   transform: scale(1.15);
 }

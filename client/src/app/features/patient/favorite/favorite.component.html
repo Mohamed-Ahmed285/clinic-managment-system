@@ -1,19 +1,16 @@
 <div class="bg-secondary py-8">
-  <div class="container mx-auto lg:px-24 md:px-24 pt-0 py-12 px-10">
-
+<div class="max-w-5xl mx-auto lg:px-12 md:px-10 px-6 py-12">
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
 
       <div>
-        <p class="uppercase tracking-[5px] text-gray-500 text-sm italic">
-          Account
-        </p>
 
-        <h1 class="text-5xl font-semibold mt-2 italic">
+
+        <h1 class="text-4xl font-semibold font-display mt-1">
           My Favorites
         </h1>
 
-        <p class="text-gray-600 mt-3 text-xl italic">
+        <p class="text-[#949b9b] mt-2 text-sm font-display">
           Keep track of your favorite doctors for quick booking.
         </p>
       </div>
@@ -21,22 +18,22 @@
     </div>
 
     <!-- Main Card -->
-    <div class="bg-white rounded-3xl shadow-sm border border-[#e0e9eb] mt-10 p-6 lg:p-8">
+    <div class="bg-white rounded-[14px] shadow-sm border border-[#e0e9eb] mt-8 px-8 py-7">
 
-      <div class="flex justify-between items-center mb-8 flex-wrap gap-3">
+      <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
 
-        <h2 class="text-4xl font-semibold italic">
+        <h2 class="text-2xl font-semibold font-display mb-1">
           Favorite Doctors
         </h2>
 
-        <span class="text-gray-500 text-lg" *ngIf="!isLoading">
+        <span class="text-gray-500 text-sm font-display" *ngIf="!isLoading">
           {{ favorites.length }} {{ favorites.length === 1 ? 'Doctor' : 'Doctors' }}
         </span>
 
       </div>
 
       <!-- Loading -->
-      <p class="text-gray-500 text-lg" *ngIf="isLoading">
+      <p class="text-gray-500 text-sm font-display" *ngIf="isLoading">
         Loading your favorite doctors...
       </p>
 
@@ -45,12 +42,12 @@
 
         <i class="fa-regular fa-heart text-5xl text-gray-300"></i>
 
-        <p class="text-gray-600 text-xl mt-5 italic">
+        <p class="text-gray-600 text-lg font-semibold font-display mt-5">
           You haven't saved any doctors yet.
         </p>
 
         <button
-          class="bg-primary text-white px-6 py-3 rounded-xl mt-6 hover:opacity-90 transition"
+          class="bg-[#1f4e46] text-white px-6 py-3 rounded-xl text-sm font-display mt-6 hover:opacity-90 transition"
           routerLink="/patient/appointments">
           Browse doctors
         </button>
@@ -59,48 +56,48 @@
 
       <!-- Doctors -->
       <div
-        class="border border-[#e0e9eb] rounded-3xl p-6 mb-6"
+        class="border border-[#e0e9eb] rounded-[14px] p-6 mb-6"
         *ngFor="let doctor of favorites">
 
         <div class="flex flex-col lg:flex-row justify-between gap-6">
 
-          <div class="flex gap-5">
+          <div class="flex gap-4">
 
             <img
               *ngIf="doctor._id?.profileImage; else initials"
               [src]="doctor._id.profileImage"
               [alt]="doctor._id?.name"
-              class="w-24 h-24 rounded-full object-cover" />
+              class="w-14 h-14 rounded-full object-cover" />
 
             <ng-template #initials>
-              <div class="w-24 h-24 rounded-full bg-primary text-white flex items-center justify-center text-3xl">
+              <div class="w-14 h-14 rounded-full bg-green-200 flex items-center justify-center text-lg font-semibold text-[#1f4e46]">
                 {{ getInitials(doctor._id?.name) }}
               </div>
             </ng-template>
 
             <div>
 
-              <h3 class="text-3xl font-semibold">
+              <h3 class="text-lg font-semibold text-[#1f4e46] font-display">
                 Dr. {{ doctor._id?.name }}
               </h3>
 
-              <p class="text-gray-500 mt-1">
+              <p class="text-gray-500 text-sm font-display mt-1">
                 {{ doctor.specialtyId?.name }}
               </p>
 
-              <div class="flex items-center gap-2 mt-3">
+              <div class="flex items-center gap-2 mt-2">
 
                 <i
                   *ngFor="let star of getStars(doctor.rating?.average)"
-                  [class]="star + ' text-yellow-400'"></i>
+                  [class]="star + ' text-yellow-400 text-sm'"></i>
 
-                <span class="text-gray-500">
+                <span class="text-gray-500 text-sm font-display">
                   ({{ doctor.rating?.average || 0 }})
                 </span>
 
               </div>
 
-              <p class="text-gray mt-4">
+              <p class="text-gray-500 text-sm font-display mt-2">
                 {{ doctor.experienceYears || 0 }} Years Experience
               </p>
 
@@ -111,13 +108,13 @@
           <div class="flex items-center gap-3 flex-wrap">
 
             <button
-              class="bg-primary text-white px-6 py-3 rounded-xl hover:opacity-90 transition"
+              class="bg-[#1f4e46] text-white font-semibold rounded-lg px-5 py-2.5 text-sm font-display hover:opacity-90 transition"
               routerLink="/patient/appointments">
               Book appointment
             </button>
 
             <button
-              class="border border-red-500 text-red-500 px-6 py-3 rounded-xl hover:bg-red-500 hover:text-white transition disabled:opacity-50"
+              class="border border-red-500 text-red-500 px-5 py-2.5 rounded-lg text-sm font-display hover:bg-red-500 hover:text-white transition disabled:opacity-50"
               [disabled]="isRemoving(doctor)"
               (click)="removeFavorite(doctor)">
               Remove
