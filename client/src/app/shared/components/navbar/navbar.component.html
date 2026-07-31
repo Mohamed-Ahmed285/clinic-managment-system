@@ -23,6 +23,14 @@
       <!-- Desktop navigation -->
       <ul class="hidden items-center gap-1 lg:flex">
         <ng-container *ngIf="role === 'patient'">
+            <li>
+              <a  routerLink="/"
+                [routerLinkActive]="navLinkActiveClass"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="nav-link"
+                >Home</a
+              >
+            </li>
           <li>
             <a
               routerLink="/patient/appointments"
@@ -47,14 +55,7 @@
               >Reviews</a
             >
           </li>
-          <li>
-            <a
-              routerLink="/patient/profile"
-              [routerLinkActive]="navLinkActiveClass"
-              class="nav-link"
-              >Profile</a
-            >
-          </li>
+
           <li>
             <a
               routerLink="/patient/favorite"
@@ -74,6 +75,7 @@
         </ng-container>
 
         <ng-container *ngIf="role === 'doctor'">
+
           <li>
             <a
               routerLink="/doctor/dashboard"
@@ -83,17 +85,11 @@
               >Dashboard</a
             >
           </li>
-          <li>
-            <a
-              routerLink="/doctor/profile"
-              [routerLinkActive]="navLinkActiveClass"
-              class="nav-link"
-              >Profile</a
-            >
-          </li>
+ 
         </ng-container>
 
         <ng-container *ngIf="role === 'admin'">
+
           <li>
             <a
               routerLink="/admin/analytics"
@@ -139,14 +135,6 @@
             >
           </li>
 
-          <li>
-            <a
-              routerLink="/admin/profile"
-              [routerLinkActive]="navLinkActiveClass"
-              class="nav-link"
-              >Profile</a
-            >
-          </li>
         </ng-container>
 
         <ng-container *ngIf="!role">
@@ -173,19 +161,23 @@
           </button>
         </ng-container>
 
-        <ng-container *ngIf="isLoggedIn">
-          <div class="text-right leading-tight">
-            <p class="text-sm font-semibold text-black">{{ userName }}</p>
-            <p class="text-xs text-gray-light">{{ accountTypeLabel }}</p>
-          </div>
+<ng-container *ngIf="isLoggedIn">
+  <a
+    [routerLink]="role === 'patient' ? '/patient/profile' : role === 'doctor' ? '/doctor/profile' : '/admin/profile'"
+    class="text-right leading-tight hover:opacity-70 transition-opacity"
+    title="My Profile"
+  >
+    <p class="text-sm font-semibold text-black">{{ userName }}</p>
+    <p class="text-xs text-gray-light">{{ accountTypeLabel }}</p>
+  </a>
 
-          <button
-            class="rounded-full border border-line bg-white px-5 py-2 text-sm font-medium text-gray transition-colors hover:border-primary/30 hover:text-primary"
-            (click)="logout()"
-          >
-            Sign out
-          </button>
-        </ng-container>
+  <button
+    class="rounded-full border border-line bg-white px-5 py-2 text-sm font-medium text-gray transition-colors hover:border-primary/30 hover:text-primary"
+    (click)="logout()"
+  >
+    Sign out
+  </button>
+</ng-container>
       </div>
 
       <!-- Mobile menu toggle -->
@@ -213,6 +205,15 @@
     <div class="container mx-auto space-y-4 px-6 py-4">
       <ul class="space-y-1">
         <ng-container *ngIf="role === 'patient'">
+            <li>
+          <a  routerLink="/"
+            [routerLinkActive]="navLinkActiveClass"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="nav-link block"
+            (click)="closeMenu()"
+            >Home</a
+          >
+        </li>
           <li>
             <a
               routerLink="/patient/appointments"

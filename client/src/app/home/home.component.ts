@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth.service';
+
 
 @Component({
   selector: 'app-home',
@@ -8,8 +11,17 @@ import { Component } from '@angular/core';
 export class HomeComponent {
   showPopup = false;
 
-  openPopup() {
-    this.showPopup = true;
+   constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+openPopup() {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/patient/appointments']);
+    } else {
+      this.showPopup = true;
+    }
   }
 
   closePopup() {
