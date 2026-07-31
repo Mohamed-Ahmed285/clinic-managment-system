@@ -12,8 +12,8 @@ export class ClinicsComponent implements OnInit {
   clinics: Clinic[] = [];
   loading = true;
   errorMessage = '';
-showConfirm = false;
-selectedClinicId = '';
+  showConfirm = false;
+  selectedClinicId = '';
   showForm = false;
   editMode = false;
   editingId: string | null = null;
@@ -30,6 +30,8 @@ selectedClinicId = '';
       phone: [''],
       email: ['', [Validators.email]],
       image: [''],
+      startHour: [''],
+      endHour: [''],
       address: this.fb.group({
         street: [''],
         city: ['', [Validators.required]],
@@ -42,10 +44,12 @@ selectedClinicId = '';
   ngOnInit(): void {
     this.loadClinics();
   }
-openConfirm(id: string): void {
-  this.selectedClinicId = id;
-  this.showConfirm = true;
-}
+
+  openConfirm(id: string): void {
+    this.selectedClinicId = id;
+    this.showConfirm = true;
+  }
+
   // convenience getters
   get name() { return this.clinicForm.get('name'); }
   get email() { return this.clinicForm.get('email'); }
@@ -71,6 +75,7 @@ openConfirm(id: string): void {
     this.editingId = null;
     this.clinicForm.reset({
       name: '', phone: '', email: '', image: '',
+      startHour: '', endHour: '',
       address: { street: '', city: '', state: '', country: '' }
     });
     this.showForm = true;
@@ -84,6 +89,8 @@ openConfirm(id: string): void {
       phone: clinic.phone || '',
       email: clinic.email || '',
       image: clinic.image || '',
+      startHour: clinic.startHour || '',
+      endHour: clinic.endHour || '',
       address: {
         street: clinic.address?.street || '',
         city: clinic.address?.city || '',
@@ -134,12 +141,10 @@ openConfirm(id: string): void {
   }
 
   deleteClinic(id: string): void {
-    // if (!confirm('Delete this clinic?')) return;
     this.clinicService.delete(id).subscribe({
       next: () => {
-          this.showConfirm = false;
-      this.selectedClinicId = '';
-
+        this.showConfirm = false;
+        this.selectedClinicId = '';
         this.loadClinics();
         this.toastr.success('Clinic deleted', 'Success');
       },

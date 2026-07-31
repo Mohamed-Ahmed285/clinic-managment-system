@@ -9,6 +9,8 @@ export interface Clinic {
   phone?: string;
   email?: string;
   image?: string;
+  startHour?: string;
+  endHour?: string;
   address: {
     street?: string;
     city: string;
