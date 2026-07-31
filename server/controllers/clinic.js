@@ -159,7 +159,7 @@ try {
     if (!clinic) {
         return res.status(404).send("clinic not found");
     }
-    return res.status(200).send("clinic deleted successfully");
+    return res.status(200).json( {message :"clinic deleted successfully"});
 } catch (err) {
     return res.status(500).send(err.message);
 }};
