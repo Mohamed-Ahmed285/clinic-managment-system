@@ -24,7 +24,6 @@ export interface NotificationItem {
   subject: string;
   preview: string;
   timeAgo: string;
-  read: boolean;
 
   expanded?: boolean;
 

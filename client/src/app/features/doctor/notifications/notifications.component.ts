@@ -13,22 +13,18 @@ export class NotificationsComponent {
 
   constructor(private notificationService: NotificationService) {}
 
-  markAsRead(id: string) {
-    this.notificationService.markAsRead(id).subscribe(() => {
-      const notification = this.notifications.find(n => n.id === id);
-
-      if (notification) {
-        notification.read = true;
+  dismiss(id: string): void {
+    this.notificationService.deleteNotification(id).subscribe(() => {
+      const index = this.notifications.findIndex(note => note.id === id);
+      if (index !== -1) {
+        this.notifications.splice(index, 1);
       }
     });
   }
-  get unreadNotifications(): NotificationItem[] {
-  return this.notifications.filter(n => !n.read);
-}
 
-get readNotifications(): NotificationItem[] {
-  return this.notifications.filter(n => n.read);
-}
+  get visibleNotifications(): NotificationItem[] {
+    return this.notifications.slice(0, 10);
+  }
 
 toggleDetails(note: NotificationItem) {
   console.log("clicked", note);
