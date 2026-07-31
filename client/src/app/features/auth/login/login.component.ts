@@ -9,8 +9,8 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class LoginComponent {
   // Component properties updated directly by your HTML
-  email = 'patient@example.com';
-  password = 'password123';
+  email = '';
+  password = '';
   rememberMe = false;
   showPassword = false;
   errorMessage = '';
