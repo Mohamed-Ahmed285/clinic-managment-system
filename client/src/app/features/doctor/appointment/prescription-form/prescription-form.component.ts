@@ -98,7 +98,8 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
       name: ['', Validators.required],
       dosage: ['', Validators.required],
       frequency: ['', Validators.required],
-      duration: [''],
+      durationValue: [1, [Validators.required, Validators.min(1)]],
+      durationUnit: ['days', Validators.required],
       times: this.fb.array([]),
       notes: ['']
     });

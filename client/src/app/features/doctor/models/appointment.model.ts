@@ -19,7 +19,8 @@ export interface Medication {
   name: string;
   dosage: string;
   frequency: string;
-  duration: string;
+  durationValue: number;
+  durationUnit: 'days' | 'weeks';
   times: string[];
   notes: string;
 }

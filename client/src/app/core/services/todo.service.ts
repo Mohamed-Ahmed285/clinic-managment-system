@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 
 export interface TodoScheduleDose {
   _id: string;
+  date: string;
   time: string;
   completed: boolean;
   completedAt: string | null;
@@ -17,6 +18,8 @@ export interface TodoItem {
   dosage?: string;
   frequency?: string;
   notes?: string;
+  startDate?: string;
+  durationDays?: number;
   schedule: TodoScheduleDose[];
 }
 

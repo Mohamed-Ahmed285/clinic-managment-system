@@ -44,7 +44,8 @@ export interface MedicationPayload {
   name: string;
   dosage: string;
   frequency: string;
-  duration?: string;
+  durationValue?: number;
+  durationUnit?: 'days' | 'weeks';
   times?: string[];
   notes?: string;
 }

@@ -1,6 +1,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TodoService, TodoResponse, TodoItem, TodoScheduleDose } from 'src/app/core/services/todo.service';
 
+interface DoseContext {
+  todo: TodoResponse;
+  item: TodoItem;
+  dose: TodoScheduleDose;
+}
+
+interface DayGroup {
+  dateKey: string;
+  date: Date;
+  doses: TodoScheduleDose[];
+}
+
+type DayStatus = 'today' | 'complete' | 'missed' | 'partial' | 'upcoming';
+
 @Component({
   selector: 'app-medications',
   templateUrl: './medications.component.html',
@@ -19,6 +33,11 @@ export class MedicationsComponent implements OnInit, OnDestroy {
   // every minute so the page stays accurate if left open.
   private nowTime = '';
   private clockHandle: ReturnType<typeof setInterval> | null = null;
+
+  // Which "medication + day" chips are expanded to show individual dose
+  // times, keyed by `${itemId}_${dateKey}`. Today is auto-expanded once
+  // todos load.
+  private expandedDays = new Set<string>();
 
   constructor(private todoService: TodoService) {}
 
@@ -49,6 +68,11 @@ export class MedicationsComponent implements OnInit, OnDestroy {
     this.todoService.getMyTodos().subscribe({
       next: (todos) => {
         this.todos = todos;
+        // Make sure today's doses are visible by default for every medication.
+        const todayKey = new Date().toDateString();
+        todos.forEach((todo) =>
+          todo.items.forEach((item) => this.expandedDays.add(`${item._id}_${todayKey}`))
+        );
         this.loading = false;
       },
       error: (err) => {
@@ -88,6 +112,8 @@ export class MedicationsComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ---------- whole-course totals (per prescription) ----------
+
   totalDoses(todo: TodoResponse): number {
     return todo.items.reduce((sum, item) => sum + item.schedule.length, 0);
   }
@@ -99,14 +125,123 @@ export class MedicationsComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Doses in the order they'll actually happen during the day, regardless of
-  // the order the doctor added them in.
-  sortedSchedule(item: TodoItem): TodoScheduleDose[] {
-    return [...item.schedule].sort((a, b) => a.time.localeCompare(b.time));
+  // ---------- Today, across every medication and every prescription ----------
+
+  get todaysDoses(): DoseContext[] {
+    const today = new Date();
+    const result: DoseContext[] = [];
+
+    for (const todo of this.todos) {
+      for (const item of todo.items) {
+        for (const dose of item.schedule) {
+          if (this.isSameDay(new Date(dose.date), today)) {
+            result.push({ todo, item, dose });
+          }
+        }
+      }
+    }
+
+    return result.sort((a, b) => a.dose.time.localeCompare(b.dose.time));
   }
 
+  get todaysCompletedCount(): number {
+    return this.todaysDoses.filter((d) => d.dose.completed).length;
+  }
+
+  // ---------- per-medication day grouping (the full course) ----------
+
+  daysForItem(item: TodoItem): DayGroup[] {
+    const groups = new Map<string, DayGroup>();
+
+    for (const dose of item.schedule) {
+      const date = new Date(dose.date);
+      const key = date.toDateString();
+      if (!groups.has(key)) {
+        groups.set(key, { dateKey: key, date, doses: [] });
+      }
+      groups.get(key)!.doses.push(dose);
+    }
+
+    return Array.from(groups.values())
+      .sort((a, b) => a.date.getTime() - b.date.getTime())
+      .map((group) => ({
+        ...group,
+        doses: [...group.doses].sort((a, b) => a.time.localeCompare(b.time))
+      }));
+  }
+
+  isDayExpanded(item: TodoItem, day: DayGroup): boolean {
+    return this.expandedDays.has(`${item._id}_${day.dateKey}`);
+  }
+
+  toggleDayExpanded(item: TodoItem, day: DayGroup): void {
+    const key = `${item._id}_${day.dateKey}`;
+    if (this.expandedDays.has(key)) {
+      this.expandedDays.delete(key);
+    } else {
+      this.expandedDays.add(key);
+    }
+  }
+
+  dayLabel(date: Date): string {
+    const today = new Date();
+    if (this.isSameDay(date, today)) {
+      return 'Today';
+    }
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    if (this.isSameDay(date, tomorrow)) {
+      return 'Tomorrow';
+    }
+    return date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+
+  dayStatus(day: DayGroup): DayStatus {
+    if (this.isSameDay(day.date, new Date())) {
+      return 'today';
+    }
+
+    const allDone = day.doses.every((d) => d.completed);
+    const someDone = day.doses.some((d) => d.completed);
+
+    if (day.date.getTime() < this.startOfToday().getTime()) {
+      return allDone ? 'complete' : someDone ? 'partial' : 'missed';
+    }
+
+    return allDone ? 'complete' : 'upcoming';
+  }
+
+  dayChipClasses(day: DayGroup): string {
+    switch (this.dayStatus(day)) {
+      case 'today':
+        return 'border-primary text-primary bg-secondary';
+      case 'complete':
+        return 'bg-primary text-white border-primary';
+      case 'missed':
+        return 'bg-red-50 text-red-600 border-red-400';
+      case 'partial':
+        return 'bg-yellow-50 text-yellow-700 border-yellow-400';
+      default:
+        return 'border-gray text-gray-500';
+    }
+  }
+
+  dayDoseSummary(day: DayGroup): string {
+    const completed = day.doses.filter((d) => d.completed).length;
+    return `${completed}/${day.doses.length}`;
+  }
+
+  // ---------- shared dose chip styling ----------
+
   isOverdue(dose: TodoScheduleDose): boolean {
-    return !dose.completed && dose.time < this.nowTime;
+    if (dose.completed) {
+      return false;
+    }
+    const doseDate = new Date(dose.date);
+    if (this.isSameDay(doseDate, new Date())) {
+      return dose.time < this.nowTime;
+    }
+    return doseDate.getTime() < this.startOfToday().getTime();
   }
 
   doseChipClasses(dose: TodoScheduleDose): string {
@@ -127,5 +262,19 @@ export class MedicationsComponent implements OnInit, OnDestroy {
       return 'fa-triangle-exclamation';
     }
     return 'fa-clock';
+  }
+
+  private isSameDay(a: Date, b: Date): boolean {
+    return (
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate()
+    );
+  }
+
+  private startOfToday(): Date {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
   }
 }
