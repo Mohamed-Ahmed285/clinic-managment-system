@@ -20,7 +20,8 @@ const medicationSchema = new mongoose.Schema(
     times: [{
         type: String
     }],
-        duration:{type:String},         
+        durationValue: { type: Number, required: true, min: 1 },
+        durationUnit: { type: String, enum: ["days", "weeks"], default: "days", required: true },
         notes:{type:String}
     }
 );
