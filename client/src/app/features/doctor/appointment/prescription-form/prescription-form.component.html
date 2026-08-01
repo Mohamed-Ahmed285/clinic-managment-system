@@ -47,8 +47,14 @@
             </select>
           </div>
           <div class="field">
-            <label class="field-label">Duration</label>
-            <input type="text" formControlName="duration" placeholder="7 days" />
+            <label class="field-label">Duration <span class="required-mark">*</span></label>
+            <div class="times-row">
+              <input type="number" min="1" step="1" formControlName="durationValue" style="max-width: 90px" />
+              <select formControlName="durationUnit">
+                <option value="days">Days</option>
+                <option value="weeks">Weeks</option>
+              </select>
+            </div>
           </div>
         </div>
 
